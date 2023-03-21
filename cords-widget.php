@@ -18,7 +18,7 @@ class CORDSWidgetPlugin
 		add_action("admin_init", array($this, "settings"));
 
 		// Add Widget
-		add_action("wp_body_open", array($this, "widget"));
+		add_action("wp_footer", array($this, "widget"));
 	}
 
 
@@ -31,9 +31,9 @@ class CORDSWidgetPlugin
 		add_settings_field("cp_keywords", "Site Keywords", array($this, 'keywordsHTML'), "cords-settings", "cp_first_section");
 		register_setting("cordsplugin", "cp_keywords", array("sanitize_callback" => "sanitize_text_field", "default" => ""));
 
-		// Toggle Widget
-		add_settings_field("cp_show_widget", "Show Widget", array($this, 'showWidgetHTML'), "cords-settings", "cp_first_section");
-		register_setting("cordsplugin", "cp_show_widget", array("sanitize_callback" => "sanitize_text_field", "default" => "true"));
+		// Description setting
+		add_settings_field("cp_description", "Site Description", array($this, 'descriptionHTML'), "cords-settings", "cp_first_section");
+		register_setting("cordsplugin", "cp_description", array("sanitize_callback" => "sanitize_text_field", "default" => ""));
 	}
 	function settingsPage()
 	{
@@ -44,9 +44,9 @@ class CORDSWidgetPlugin
 	{ ?>
 		<input name="cp_keywords" type="text" value="<?php echo esc_attr(get_option("cp_keywords")) ?>" />
 	<?php }
-	function showWidgetHTML()
+	function descriptionHTML()
 	{ ?>
-		<input name="cp_show_widget" type="checkbox" value="true" <?php checked(get_option("cp_show_widget"), "true") ?> />
+		<input name="cp_description" type="text" value="<?php echo esc_attr(get_option("cp_description")) ?>" />
 	<?php }
 
 	// Settings page html form
@@ -67,9 +67,7 @@ class CORDSWidgetPlugin
 	// Adds widget html 
 	function widget()
 	{
-		if (get_option("cp_show_widget") == "true") {
-			return '<div id="widget" data-keywords="' . get_option("cp_keywords") . '" data-description="' . get_option("blogdescription") . '"></div><script src="https://billyhawkes.github.io/widget/dist/widget.js"></script>';
-		}
+		echo '<div id="widget" data-keywords="' . get_option("cp_keywords") . '" data-description="' . get_option("cp_description") . '"></div><script src="https://billyhawkes.github.io/widget/dist/widget.js"></script>';
 	}
 }
 
