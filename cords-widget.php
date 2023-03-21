@@ -18,7 +18,7 @@ class CORDSWidgetPlugin
 		add_action("admin_init", array($this, "settings"));
 
 		// Add Widget
-		add_action("wp_footer", array($this, "widget"));
+		add_action("wp_body_open", array($this, "widget"));
 	}
 
 
@@ -68,7 +68,7 @@ class CORDSWidgetPlugin
 	function widget()
 	{
 		if (get_option("cp_show_widget") == "true") {
-			echo '<div id="widget" data-keywords="' . get_option("cp_keywords") . '" data-description="' . get_option("blogdescription") . '"></div><script src="https://billyhawkes.github.io/widget/dist/widget.js"></script>';
+			return '<div id="widget" data-keywords="' . get_option("cp_keywords") . '" data-description="' . get_option("blogdescription") . '"></div><script src="https://billyhawkes.github.io/widget/dist/widget.js"></script>';
 		}
 	}
 }
