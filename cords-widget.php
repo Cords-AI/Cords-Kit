@@ -30,10 +30,6 @@ class CORDSWidgetPlugin
 		// Keywords setting
 		add_settings_field("cp_keywords", "Site Keywords", array($this, 'keywordsHTML'), "cords-settings", "cp_first_section");
 		register_setting("cordsplugin", "cp_keywords", array("sanitize_callback" => "sanitize_text_field", "default" => ""));
-
-		// Description setting
-		add_settings_field("cp_description", "Site Description", array($this, 'descriptionHTML'), "cords-settings", "cp_first_section");
-		register_setting("cordsplugin", "cp_description", array("sanitize_callback" => "sanitize_text_field", "default" => ""));
 	}
 	function settingsPage()
 	{
@@ -44,11 +40,6 @@ class CORDSWidgetPlugin
 	{ ?>
 		<input name="cp_keywords" type="text" value="<?php echo esc_attr(get_option("cp_keywords")) ?>" />
 	<?php }
-	function descriptionHTML()
-	{ ?>
-		<input name="cp_description" type="text" value="<?php echo esc_attr(get_option("cp_description")) ?>" />
-	<?php }
-
 	// Settings page html form
 	function settingsHTML()
 	{ ?>
@@ -67,7 +58,7 @@ class CORDSWidgetPlugin
 	// Adds widget html 
 	function widget()
 	{
-		echo '<div id="widget" data-keywords="' . get_option("cp_keywords") . '" data-description="' . get_option("cp_description") . '"></div><script src="https://billyhawkes.github.io/widget/dist/widget.js"></script>';
+		echo '<cords-widget keywords="' . get_option("cp_keywords") . '"></cords-widget><script type="module" src="https://cords-widget.vercel.app/widget.js"></script>';
 	}
 }
 
