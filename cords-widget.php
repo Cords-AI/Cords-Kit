@@ -26,6 +26,10 @@ class CORDSWidgetPlugin
 	{
 		add_settings_section("cp_first_section", null, null, "cords-settings");
 
+		// Keywords
+		add_settings_field("cp_keywords", "Keywords", array($this, 'textInputHTML',), "cords-settings", "cp_first_section", array("name" => "cp_keywords", "type" => "text"));
+		register_setting("cordsplugin", "cp_keywords", array("sanitize_callback" => "sanitize_text_field", "default" => ""));
+
 		// Name EN
 		add_settings_field("cp_name_en", "Name (English)", array($this, 'textInputHTML',), "cords-settings", "cp_first_section", array("name" => "cp_name_en", "type" => "text"));
 		register_setting("cordsplugin", "cp_name_en", array("sanitize_callback" => "sanitize_text_field", "default" => ""));
@@ -75,7 +79,10 @@ class CORDSWidgetPlugin
 	// Adds widget html 
 	function widget()
 	{
-		echo '<cords-widget keywords="' . get_option("cp_name_en") . '"></cords-widget><script type="module" src="https://cords-widget.vercel.app/widget.js"></script>';
+		echo '<cords-widget 
+				keywords="' . get_option("cp_keywords") . '" 
+				></cords-widget>
+			<script type="module" src="https://cords-widget.vercel.app/widget.js"></script>';
 	}
 }
 
