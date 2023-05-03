@@ -19,6 +19,7 @@ class CORDSWidgetPlugin
 
 		// Post Meta Box
 		add_action("add_meta_boxes", array($this, "add_post_meta_boxes"));
+
 		/* Save post meta on the 'save_post' hook. */
 		add_action('save_post', array($this, "cords_save_post_meta"), 10, 2);
 
@@ -30,7 +31,7 @@ class CORDSWidgetPlugin
 	function cords_save_post_meta($post_id, $post)
 	{
 		/* Verify the nonce before proceeding. */
-		if (!isset($_POST['cords_name_nonce']) || !wp_verify_nonce($_POST['cords_name_nonce'], basename(__FILE__))) {
+		if (!isset($_POST['cords_meta_nonce']) || !wp_verify_nonce($_POST['cords_meta_nonce'], basename(__FILE__))) {
 			return $post_id;
 		}
 
@@ -41,34 +42,41 @@ class CORDSWidgetPlugin
 			return $post_id;
 		}
 
-		/* Get the posted data and sanitize it for use as an HTML class. */
-		$new_meta_value = (isset($_POST['cords_name']) ? sanitize_text_field($_POST['cords_name']) : '');
+		$meta_keys = ["cords_name_en", "cords_description_en", "cords_name_fr", "cords_description_fr"];
 
-		/* Get the meta key. */
-		$meta_key = 'cords_name';
+		$content = apply_filters("the_content", $post->post_content);
+		$meta_data = ["url" => get_permalink($post_id), "content" => $content, "id" => $post_id];
+		$changed = false;
 
-		/* Get the meta value of the custom field key. */
-		$meta_value = get_post_meta($post_id, $meta_key, true);
+		foreach ($meta_keys as $meta_key) {
+			/* Get the posted data and sanitize it. */
+			$new_meta_value = (isset($_POST[$meta_key]) ? sanitize_text_field($_POST[$meta_key]) : '');
 
-		$changed = true;
-		/* If a new meta value was added and there was no previous value, add it. */
-		if ($new_meta_value && '' == $meta_value) {
-			add_post_meta($post_id, $meta_key, $new_meta_value, true);
-		}
-		/* If the new meta value does not match the old value, update it. */ elseif ($new_meta_value && $new_meta_value != $meta_value) {
-			update_post_meta($post_id, $meta_key, $new_meta_value);
-		}
-		/* If there is no new meta value but an old value exists, delete it. */ elseif ('' == $new_meta_value && $meta_value) {
-			delete_post_meta($post_id, $meta_key, $meta_value);
-		} else {
-			$changed = false;
+			/* Get the meta value of the custom field key. */
+			$meta_value = get_post_meta($post_id, $meta_key, true);
+
+			$meta_data[$meta_key] = $new_meta_value;
+
+			/* If a new meta value was added and there was no previous value, add it. */
+			if ($new_meta_value && '' == $meta_value) {
+				add_post_meta($post_id, $meta_key, $new_meta_value, true);
+				$changed = true;
+			}
+			/* If the new meta value does not match the old value, update it. */ elseif ($new_meta_value && $new_meta_value != $meta_value) {
+				update_post_meta($post_id, $meta_key, $new_meta_value);
+				$changed = true;
+			}
+			/* If there is no new meta value but an old value exists, delete it. */ elseif ('' == $new_meta_value && $meta_value) {
+				delete_post_meta($post_id, $meta_key, $meta_value);
+				$changed = true;
+			}
 		}
 		if ($changed) {
 			wp_remote_post(
 				"http://localhost:3000/api/cords",
 				array(
 					'method' => 'POST',
-					'body' => json_encode(array($meta_key => $new_meta_value)),
+					'body' => json_encode($meta_data),
 				)
 			);
 		}
@@ -76,19 +84,62 @@ class CORDSWidgetPlugin
 
 	function add_post_meta_boxes()
 	{
-		add_meta_box("cords_post_meta_data", "CORDS", array($this, "post_meta_box_html"), ["page", "post"], "normal", "high");
+		add_meta_box("cords_post_meta_data", "CORDS", array($this, "post_meta_box_html"), ["page"], "normal", "high");
 	}
 
-	function post_meta_box_html($post)
+	function post_meta_box_html($page)
 	{ ?>
-		<?php wp_nonce_field(basename(__FILE__), 'cords_name_nonce'); ?>
-		<div>
-			<label for="cords_name">
-				Name
+		<?php wp_nonce_field(basename(__FILE__), 'cords_meta_nonce'); ?>
+		<style>
+			#cords_meta_container {
+				display: flex;
+				flex-direction: column;
+			}
+
+			#cords_meta_container label {
+				font-weight: bold;
+				margin-bottom: 10px;
+				display: flex;
+				flex-direction: column;
+			}
+
+			#cords_meta_container input {
+				font-weight: normal;
+				margin-top: 5px;
+			}
+
+			#cords_meta_explanation {
+				font-weight: bold;
+				padding: 15px;
+				margin-bottom: 10px;
+				background-color: rgb(71 85 105);
+				color: white;
+				border-radius: 10px;
+			}
+		</style>
+		<div id="cords_meta_container">
+			<div id="cords_meta_explanation">
+				Please enter this pages information to allow indexing.
+			</div>
+			<label>
+				Name (English)
+				<input type="text" name="cords_name_en" value="<?php echo esc_attr(get_post_meta($page->ID, 'cords_name_en', true)) ?>" />
 			</label>
-			<input type="text" name="cords_name" value="<?php echo esc_attr(get_post_meta($post->ID, 'cords_name', true)) ?>">
+			<label>
+				Description (English)
+				<input type="text" name="cords_description_en" value="<?php echo esc_attr(get_post_meta($page->ID, 'cords_description_en', true)) ?>" />
+			</label>
+			<label>
+				Name (French)
+				<input type="text" name="cords_name_fr" value="<?php echo esc_attr(get_post_meta($page->ID, 'cords_name_fr', true)) ?>" />
+			</label>
+			<label>
+				Description (French)
+				<input type="text" name="cords_description_fr" value="<?php echo esc_attr(get_post_meta($page->ID, 'cords_description_fr', true)) ?>" />
+			</label>
 		</div>
-	<?php }
+	<?php
+	}
 
 
 	// Settings page setup 
