@@ -200,10 +200,10 @@ class CORDSWidgetPlugin
 	// Adds widget html 
 	function widget()
 	{
-		echo '<cords-widget 
-				keywords="' . get_option("cp_keywords") . '" 
-				></cords-widget>
-			<script type="module" src="https://cords-widget.vercel.app/widget.js"></script>';
+		echo '<iframe
+				src="https://cords-widget-dev.vercel.app"
+				style="position:fixed;inset:0;width:100v;height:100vh;z-index:100;"
+			/>';
 	}
 }
 
