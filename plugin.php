@@ -16,7 +16,7 @@ add_action('admin_menu', 'cords_init_menu');
  *
  * @return void
  */
-function jobplace_init_menu()
+function cords_init_menu()
 {
 	add_menu_page('CORDS', 'CORDS', 'manage_options', 'cords', 'cords_admin_page', 'dashicons-admin-post', '2.1');
 }
@@ -40,6 +40,6 @@ add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
  */
 function cords_admin_enqueue_scripts()
 {
-	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'plugin/dist/assets/index.css');
-	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'plugin/dist/assets/index.js', array('wp-element'), '1.0.0', true);
+	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.css');
+	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.js', array('wp-element'), '1.0.0', true);
 }
