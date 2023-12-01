@@ -42,4 +42,22 @@ function cords_admin_enqueue_scripts()
 {
 	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.css');
 	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.js', array('wp-element'), '1.0.0', true);
+	wp_localize_script('cords-script', 'wpApiSettings', array(
+		'root' => esc_url_raw(rest_url()),
+		'nonce' => wp_create_nonce('wp_rest')
+	));
 }
+
+function cords_register_meta()
+{
+	register_meta('post', 'cords_enabled', array(
+		'show_in_rest' => true,
+		'type' => 'boolean',
+		'single' => true,
+		'auth_callback' => function () {
+			return current_user_can('edit_posts');
+		}
+	));
+}
+
+add_action('init', 'cords_register_meta');
