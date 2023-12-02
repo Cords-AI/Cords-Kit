@@ -53,6 +53,7 @@ function cords_register_meta()
 	register_meta('post', 'cords_enabled', array(
 		'show_in_rest' => true,
 		'type' => 'boolean',
+		'default' => true,
 		'single' => true,
 		'auth_callback' => function () {
 			return current_user_can('edit_posts');
