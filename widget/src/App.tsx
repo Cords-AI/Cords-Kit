@@ -7,7 +7,6 @@ import {
 } from "solid-icons/fa";
 import { Show, createEffect, createSignal, lazy } from "solid-js";
 import { Transition } from "solid-transition-group";
-import { initializeAnalytics } from "./lib/analytics";
 
 const Home = lazy(() => import("./routes/Home"));
 const Clipboard = lazy(() => import("./routes/Clipboard"));
@@ -29,9 +28,6 @@ const App = () => {
 			"*"
 		);
 	});
-
-	// Initialize clipboard
-	initializeAnalytics();
 
 	return (
 		<div class="w-full h-full max-w-full max-h-full p-4">
