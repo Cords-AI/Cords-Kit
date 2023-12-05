@@ -32,12 +32,6 @@ function cords_admin_page()
 }
 
 add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
-
-/**
- * Enqueue scripts and styles.
- *
- * @return void
- */
 function cords_admin_enqueue_scripts()
 {
 	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.css');
@@ -48,6 +42,7 @@ function cords_admin_enqueue_scripts()
 	));
 }
 
+add_action('init', 'cords_register_meta');
 function cords_register_meta()
 {
 	register_meta('post', 'cords_enabled', array(
@@ -61,4 +56,14 @@ function cords_register_meta()
 	));
 }
 
-add_action('init', 'cords_register_meta');
+add_action("wp_enqueue_scripts", "cords_enqueue_scripts");
+function cords_enqueue_scripts()
+{
+	wp_enqueue_script("cords-widget-script", plugin_dir_url(__FILE__) . 'widget/resize-script.js');
+}
+
+add_action("wp_footer", "widget");
+function widget()
+{
+	echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="http://localhost:8000" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
+}
