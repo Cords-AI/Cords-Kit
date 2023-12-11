@@ -11,10 +11,12 @@ const PageSchema = z.object({
 	}),
 	meta: z.object({
 		cords_enabled: z.boolean().optional(),
+		cords_widget: z.boolean().optional(),
 	}),
 });
+type Page = z.infer<typeof PageSchema>;
 
-const updatePage = async ({ id, enabled }: { id: number; enabled: boolean }) => {
+const updatePage = async ({ id, meta }: { id: number; meta: Page["meta"] }) => {
 	await fetch(`${(window as any).wpApiSettings.root}wp/v2/pages/${id}`, {
 		method: "POST",
 		headers: {
@@ -23,9 +25,7 @@ const updatePage = async ({ id, enabled }: { id: number; enabled: boolean }) => 
 		},
 		credentials: "include",
 		body: JSON.stringify({
-			meta: {
-				cords_enabled: enabled,
-			},
+			meta,
 		}),
 	});
 	// TODO: Optimistic update
@@ -59,6 +59,7 @@ const Pages = () => {
 						<th>Title</th>
 						<th>Content</th>
 						<th>CORDS Enabled</th>
+						<th>CORDS Widget</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -75,12 +76,33 @@ const Pages = () => {
 									onChange={(e) =>
 										mutation.mutate({
 											id: page.id,
-											enabled: e.target.value === "true",
+											meta: {
+												...page.meta,
+												cords_enabled: e.target.value === "true",
+											},
 										})
 									}
 								>
 									<option value="true">True</option>
 									<option value="false">False</option>
+								</select>
+							</td>
+							<td>
+								<select
+									name="enabled"
+									value={page.meta.cords_widget ? "true" : "false"}
+									onChange={(e) =>
+										mutation.mutate({
+											id: page.id,
+											meta: {
+												...page.meta,
+												cords_widget: e.target.value === "true",
+											},
+										})
+									}
+								>
+									<option value="true">Show</option>
+									<option value="false">Hide</option>
 								</select>
 							</td>
 						</tr>

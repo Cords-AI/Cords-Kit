@@ -54,6 +54,15 @@ function cords_register_meta()
 			return current_user_can('edit_posts');
 		}
 	));
+	register_meta('post', 'cords_widget', array(
+		'show_in_rest' => true,
+		'type' => 'boolean',
+		'default' => true,
+		'single' => true,
+		'auth_callback' => function () {
+			return current_user_can('edit_posts');
+		}
+	));
 }
 
 add_action("wp_enqueue_scripts", "cords_enqueue_scripts");
@@ -65,5 +74,16 @@ function cords_enqueue_scripts()
 add_action("wp_footer", "widget");
 function widget()
 {
-	echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="http://localhost:8000" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
+	global $post;
+	error_log('Post ID: ' . $post->ID);
+
+	// Check if $post is available
+	if (isset($post)) {
+		$show_widget = get_post_meta($post->ID, 'cords_widget', true);
+
+		// Check if meta value exists and is not empty
+		if (!empty($show_widget)) {
+			echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="http://localhost:8000" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
+		}
+	}
 }
