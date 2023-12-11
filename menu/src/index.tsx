@@ -7,19 +7,19 @@ import "./index.css";
 
 const root = document.getElementById("cords");
 
-if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
-	throw new Error(
-		"Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got mispelled?"
-	);
+if (!root) {
+	console.log("No root element found");
 }
 
 const queryClient = new QueryClient();
 
-render(
-	() => (
-		<QueryClientProvider client={queryClient}>
-			<App />
-		</QueryClientProvider>
-	),
-	root!
-);
+if (root) {
+	render(
+		() => (
+			<QueryClientProvider client={queryClient}>
+				<App />
+			</QueryClientProvider>
+		),
+		root!
+	);
+}

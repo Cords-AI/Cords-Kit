@@ -33,6 +33,7 @@ const updatePage = async ({ id, meta }: { id: number; meta: Page["meta"] }) => {
 };
 
 const getPages = async () => {
+	console.log(`${(window as any).wpApiSettings.root}wp/v2/pages`);
 	const res = await fetch(`${(window as any).wpApiSettings.root}wp/v2/pages`);
 	const data = await res.json();
 	return PageSchema.array().parse(data);
@@ -48,70 +49,75 @@ const App = () => {
 			}),
 	}));
 
-	const { data: pages } = createQuery(() => ({
+	const query = createQuery(() => ({
 		queryFn: getPages,
 		queryKey: ["pages"],
 	}));
 
 	return (
-		<table class="wp-list-table widefat fixed striped table-view-list">
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Content</th>
-					<th>CORDS Enabled</th>
-					<th>CORDS Widget</th>
-				</tr>
-			</thead>
-			<tbody>
-				<For each={pages}>
-					{(page) => (
-						<tr>
-							<td>{page.title.rendered.length ? page.title.rendered : "No Title"}</td>
-							<td>
-								<p>{page.content.rendered.slice(0, 20)}</p>
-							</td>
-							<td>
-								<select
-									name="enabled"
-									value={page.meta.cords_enabled ? "true" : "false"}
-									onChange={(e) =>
-										mutation.mutate({
-											id: page.id,
-											meta: {
-												...page.meta,
-												cords_enabled: e.target.value === "true",
-											},
-										})
-									}
-								>
-									<option value="true">True</option>
-									<option value="false">False</option>
-								</select>
-							</td>
-							<td>
-								<select
-									name="enabled"
-									value={page.meta.cords_widget ? "true" : "false"}
-									onChange={(e) =>
-										mutation.mutate({
-											id: page.id,
-											meta: {
-												...page.meta,
-												cords_widget: e.target.value === "true",
-											},
-										})
-									}
-								>
-									<option value="true">Show</option>
-									<option value="false">Hide</option>
-								</select>
-							</td>
-						</tr>
-					)}
-				</For>
-			</tbody>
-		</table>
+		<main>
+			<h2 class="wp-heading-inline">CORDS</h2>
+			<table class="wp-list-table widefat fixed striped table-view-list">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Content</th>
+						<th>CORDS Enabled</th>
+						<th>CORDS Widget</th>
+					</tr>
+				</thead>
+				<tbody>
+					<For each={query.data}>
+						{(page) => (
+							<tr>
+								<td>
+									{page.title.rendered.length ? page.title.rendered : "No Title"}
+								</td>
+								<td>
+									<p>{page.content.rendered.slice(0, 20)}</p>
+								</td>
+								<td>
+									<select
+										name="enabled"
+										value={page.meta.cords_enabled ? "true" : "false"}
+										onChange={(e) =>
+											mutation.mutate({
+												id: page.id,
+												meta: {
+													...page.meta,
+													cords_enabled: e.target.value === "true",
+												},
+											})
+										}
+									>
+										<option value="true">True</option>
+										<option value="false">False</option>
+									</select>
+								</td>
+								<td>
+									<select
+										name="enabled"
+										value={page.meta.cords_widget ? "true" : "false"}
+										onChange={(e) =>
+											mutation.mutate({
+												id: page.id,
+												meta: {
+													...page.meta,
+													cords_widget: e.target.value === "true",
+												},
+											})
+										}
+									>
+										<option value="true">Show</option>
+										<option value="false">Hide</option>
+									</select>
+								</td>
+							</tr>
+						)}
+					</For>
+				</tbody>
+			</table>
+		</main>
 	);
 };
 
