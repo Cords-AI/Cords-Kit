@@ -10,28 +10,22 @@
 
 
 add_action('admin_menu', 'cords_init_menu');
-
-/**
- * Init Admin Menu.
- *
- * @return void
- */
 function cords_init_menu()
 {
-	add_menu_page('CORDS', 'CORDS', 'manage_options', 'cords', 'cords_admin_page', 'dashicons-admin-post', '2.1');
+	$my_page = add_menu_page('CORDS', 'CORDS', 'manage_options', 'cords', 'cords_admin_page', 'dashicons-admin-post', '2.1');
+	add_action('load-' . $my_page, 'load_admin_js');
+}
+// This function is only called when our plugin's page loads!
+function load_admin_js()
+{
+	// Unfortunately we can't just enqueue our scripts here - it's too early. So register against the proper action hook to do it
+	add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
 }
 
-/**
- * Init Admin Page.
- *
- * @return void
- */
 function cords_admin_page()
 {
 	require_once plugin_dir_path(__FILE__) . 'entry.php';
 }
-
-add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
 function cords_admin_enqueue_scripts()
 {
 	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.css');
