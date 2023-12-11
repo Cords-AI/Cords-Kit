@@ -28,8 +28,8 @@ function cords_admin_page()
 }
 function cords_admin_enqueue_scripts()
 {
-	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.css');
-	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'menu/dist/assets/index.js', array('wp-element'), '1.0.0', true);
+	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'apps/menu/dist/assets/index.css');
+	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'apps/menu/dist/assets/index.js', array('wp-element'), '1.0.0', true);
 	wp_localize_script('cords-script', 'wpApiSettings', array(
 		'root' => esc_url_raw(rest_url()),
 		'nonce' => wp_create_nonce('wp_rest')
@@ -79,7 +79,7 @@ function widget()
 
 		// Check if meta value exists and is not empty
 		if (!empty($show_widget)) {
-			echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="http://localhost:8000?q=' . $encoded_post_content . '" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
+			echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="http://localhost:3000?q=' . $encoded_post_content . '" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
 		}
 	}
 }
