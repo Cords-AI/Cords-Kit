@@ -80,10 +80,12 @@ function widget()
 	// Check if $post is available
 	if (isset($post)) {
 		$show_widget = get_post_meta($post->ID, 'cords_widget', true);
+		$post_content = strip_tags(get_the_content());
+		$encoded_post_content = urlencode($post_content);
 
 		// Check if meta value exists and is not empty
 		if (!empty($show_widget)) {
-			echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="http://localhost:8000" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
+			echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="http://localhost:8000?q=' . $encoded_post_content . '" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
 		}
 	}
 }

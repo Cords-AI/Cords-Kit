@@ -1,3 +1,4 @@
+import { RouteSectionProps } from "@solidjs/router";
 import {
 	FaSolidClipboardCheck,
 	FaSolidHouse,
@@ -5,18 +6,14 @@ import {
 	FaSolidQuestion,
 	FaSolidX,
 } from "solid-icons/fa";
-import { Show, createEffect, createSignal, lazy } from "solid-js";
+import { ImSpinner8 } from "solid-icons/im";
+import { Component, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 
-const Home = lazy(() => import("./routes/Home"));
-const Clipboard = lazy(() => import("./routes/Clipboard"));
-
-const App = () => {
+const App: Component<RouteSectionProps> = (props) => {
 	// signal for widget open/close
 	const [open, setOpen] = createSignal(false);
-	const [page, setPage] = createSignal("home");
 	const toggle = () => setOpen(!open());
-	const id = "30f430fc-1a57-4265-9603-7837da6dbb5c";
 
 	createEffect(() => {
 		window.parent.postMessage(
@@ -64,18 +61,18 @@ const App = () => {
 					>
 						<header class="flex justify-between p-4 items-center bg-white shadow-md z-10">
 							<nav class="flex-1 flex justify-end gap-2">
-								<button
-									onClick={() => setPage("home")}
+								<a
+									href="/"
 									class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800 bg-opacity-50 text-white transition-colors hover:bg-opacity-60"
 								>
 									<FaSolidHouse size={14} />
-								</button>
-								<button
-									onClick={() => setPage("clipboard")}
+								</a>
+								<a
+									href="/clipboard"
 									class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800 bg-opacity-50 text-white transition-colors hover:bg-opacity-60"
 								>
 									<FaSolidClipboardCheck size={14} />
-								</button>
+								</a>
 								<a
 									target="_blank"
 									href="https://cords.dev"
@@ -92,8 +89,15 @@ const App = () => {
 							</nav>
 						</header>
 						<div class="overflow-y-scroll flex-1 h-full">
-							{page() === "home" && <Home id={id} />}
-							{page() === "clipboard" && <Clipboard />}
+							<Suspense
+								fallback={
+									<div class="h-full flex justify-center items-center">
+										<ImSpinner8 class="animate-spin text-slate-500" size={30} />
+									</div>
+								}
+							>
+								{props.children}
+							</Suspense>
 						</div>
 					</div>
 				</Show>

@@ -64,7 +64,7 @@ const BaseServiceSchema = z.object({
 	partner: z.string(),
 	delivery: z.enum(["national", "provincial", "local", "regional"]).nullable(),
 	body: z.object({
-		en: ServiceBodySchema,
+		en: ServiceBodySchema.nullable(),
 		fr: ServiceBodySchema.nullable(),
 	}),
 });

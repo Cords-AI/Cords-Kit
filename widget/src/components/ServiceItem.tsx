@@ -9,11 +9,13 @@ type Props = {
 
 const ServiceItem: Component<Props> = (props) => {
 	return (
-		<div class="bg-white p-4 flex flex-col items-start">
+		<div class="bg-white p-4 flex flex-col items-start max-w-full">
 			<div class="flex-row flex mb-3 justify-between">
 				<p class="text-base flex-1">{props.service.name.en}</p>
 			</div>
-			<p class="text-sm text-slate-500 line-clamp-2 mb-4">{props.service.description.en}</p>
+			<p class="text-sm text-slate-500 line-clamp-2 mb-4 max-w-full">
+				{props.service.description.en}
+			</p>
 			<div class="flex gap-2">
 				<button
 					onClick={() => {
