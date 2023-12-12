@@ -6,7 +6,6 @@ import { ServiceSchema } from "../lib/service";
 
 const fetchSimilar = async (q: string) => {
 	const res = await fetch(`https://api.cords.ai/search?q=${q}&lat=43.6532&lng=-79.3832`);
-	console.log(res);
 	const body = await res.json();
 	return z
 		.object({
@@ -17,7 +16,6 @@ const fetchSimilar = async (q: string) => {
 
 const fetchRelated = async (id: string) => {
 	const res = await fetch(`https://api.cords.ai/resource/${id}/related`);
-	console.log(res);
 	const body = await res.json();
 	return z
 		.object({

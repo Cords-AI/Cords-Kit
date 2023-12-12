@@ -8,7 +8,7 @@ import "./index.css";
 const root = document.getElementById("cords");
 
 if (!root) {
-	console.log("No root element found");
+	console.error("No root element found");
 }
 
 const queryClient = new QueryClient();
