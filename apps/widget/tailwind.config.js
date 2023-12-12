@@ -1,20 +1,41 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx,css,md,mdx,html,json,scss}"],
-	darkMode: "class",
 	theme: {
-		fontFamily: {
-			sans: ["Helvetica", "sans-serif"],
-			serif: ["Times", "serif"],
-		},
 		extend: {
-			fontFamily: {
-				lato: ["Lato", "Helvetica", "sans-serif"],
-			},
 			colors: {
-				primary: "#0072CE",
+				steel: "#6b7b99",
+				slate: "#475266",
+				charcoal: "#242933",
+				"off-white": "#f7f9fc",
+				"off-white-emphasis": "#ebeff5",
+				subdued: "#ebeff5",
+				"off-black": "rgb(0, 4, 13)",
+				hairline: "hsl(220, 32%, 93%)",
+				"hairline-subdued": "hsl(220, 32%, 93%) / 0.6",
+				blue: "#0055ff",
+				"blue-dark": "#0044cc",
+				"blue-active": "#0044cc",
+				red: "#da4432",
+				warning: "#ed9600",
+				positive: "#00b98b",
+				primary: "#0055ff",
+				quasarNegative: "#da4432",
+				elevation1: "#fff",
+				elevation2: "#f7f9fc",
+				elevation3: "#ebeff5",
+				body: "#475266",
+				"body-background": "#fff",
+				link: "#0055ff",
+				"link-hover": "#0044cc",
+				"typography-heading-color": "#242933",
+				"typography-copy-color": "#475266",
+				"typography-strong-color": "#242933",
+			},
+			fontWeight: {
+				header: 500,
+				body: 400,
 			},
 		},
 	},
-	plugins: [require("@tailwindcss/line-clamp")],
 };

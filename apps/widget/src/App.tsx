@@ -1,14 +1,8 @@
 import { RouteSectionProps } from "@solidjs/router";
-import {
-	FaSolidClipboardCheck,
-	FaSolidHouse,
-	FaSolidMagnifyingGlass,
-	FaSolidQuestion,
-	FaSolidX,
-} from "solid-icons/fa";
-import { ImSpinner8 } from "solid-icons/im";
 import { Component, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
+import logo from "/assets/logo.svg";
+import spinner from "/assets/spinner.svg";
 
 const App: Component<RouteSectionProps> = (props) => {
 	// signal for widget open/close
@@ -49,42 +43,39 @@ const App: Component<RouteSectionProps> = (props) => {
 							onClick={toggle}
 							class="font-lato fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-2xl hover:opacity-90 transition-opacity"
 						>
-							<FaSolidQuestion size={24} />
+							<span class="material-symbols-outlined">question_mark</span>
 						</button>
 					}
 				>
 					<div
-						class="flex flex-col h-full w-full rounded-xl overflow-hidden bg-slate-100"
+						class="flex flex-col h-full w-full rounded-xl overflow-hidden bg-elevation2"
 						style={{
 							"box-shadow": "0 4px 16px rgba(0,0,0,.25)",
 						}}
 					>
-						<header class="flex justify-between p-4 items-center bg-white shadow-md z-10">
+						<header class="flex justify-between p-4 items-center bg-elevation1 border-b border-b-hairline z-10">
+							<a href="/">
+								<img src={logo} alt="Cords Logo" />
+							</a>
 							<nav class="flex-1 flex justify-end gap-2">
 								<a
-									href="/"
-									class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800 bg-opacity-50 text-white transition-colors hover:bg-opacity-60"
-								>
-									<FaSolidHouse size={14} />
-								</a>
-								<a
 									href="/clipboard"
-									class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800 bg-opacity-50 text-white transition-colors hover:bg-opacity-60"
+									class="flex h-7 w-7 items-center justify-center text-slate"
 								>
-									<FaSolidClipboardCheck size={14} />
+									<span class="material-symbols-outlined">assignment</span>
 								</a>
 								<a
 									target="_blank"
 									href="https://cords.dev"
-									class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800 bg-opacity-50 text-white transition-colors hover:bg-opacity-60"
+									class="flex h-7 w-7 items-center justify-center"
 								>
-									<FaSolidMagnifyingGlass size={14} />
+									<span class="material-symbols-outlined">search</span>
 								</a>
 								<button
 									onClick={toggle}
-									class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800 bg-opacity-50 text-white transition-colors hover:bg-opacity-60"
+									class="flex h-7 w-7 items-center justify-center"
 								>
-									<FaSolidX size={14} />
+									<span class="material-symbols-outlined">close</span>
 								</button>
 							</nav>
 						</header>
@@ -92,7 +83,7 @@ const App: Component<RouteSectionProps> = (props) => {
 							<Suspense
 								fallback={
 									<div class="h-full flex justify-center items-center">
-										<ImSpinner8 class="animate-spin text-slate-500" size={30} />
+										<img src={spinner} alt="Loading spinner" />
 									</div>
 								}
 							>

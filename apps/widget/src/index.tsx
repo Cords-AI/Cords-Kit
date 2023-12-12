@@ -2,6 +2,7 @@
 import { render } from "solid-js/web";
 import "./index.css";
 
+import "@fontsource-variable/inter";
 import { Route, Router } from "@solidjs/router";
 import { lazy } from "solid-js";
 import App from "./App";

@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+	font-family: "Inter Variable";
+	@apply text-slate;
+}
+
+.material-symbols-outlined {
+	font-variation-settings:
+		"FILL" 0,
+		"wght" 300,
+		"GRAD" 0,
+		"opsz" 24;
+}
+
+@layer base {
+	body {
+		@apply bg-elevation1 text-slate;
+	}
+	h1,
+	.h1 {
+		@apply scroll-m-20 text-3xl font-header tracking-tight lg:text-5xl text-charcoal;
+	}
+	h2,
+	.h2 {
+		@apply scroll-m-20 text-2xl font-header tracking-tight text-charcoal;
+	}
+	h3,
+	.h3 {
+		@apply scroll-m-20 text-xl font-header tracking-tight text-charcoal;
+	}
+	h4,
+	.h4 {
+		@apply scroll-m-20 font-header tracking-tight text-charcoal;
+	}
+	p,
+	.p {
+		@apply leading-7 font-body text-slate;
+	}
+}

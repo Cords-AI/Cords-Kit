@@ -36,9 +36,12 @@ const Home: Component = () => {
 
 	return (
 		<>
-			<div class="py-2 text-black flex flex-col gap-2">
+			<div class="text-black flex flex-col">
 				<Show when={data() && data().related}>
-					<h3 class="px-4 pt-4 text-lg">Similar</h3>
+					<div class="p-10 bg-elevation1">
+						<h4>Similar</h4>
+						<p class="text-xs text-steel">View similar services to the current page</p>
+					</div>
 					<For each={data().similar}>
 						{(service) => {
 							return <ServiceItem service={service} />;
@@ -46,7 +49,10 @@ const Home: Component = () => {
 					</For>
 				</Show>
 				<Show when={data() && data().related}>
-					<h3 class="px-4 pt-4 text-lg">Related</h3>
+					<div class="p-10 bg-elevation1">
+						<h4>Related</h4>
+						<p class="text-xs text-steel">Other services you may be interested in</p>
+					</div>
 					<For each={data().related}>
 						{(service) => {
 							return <ServiceItem service={service} />;
