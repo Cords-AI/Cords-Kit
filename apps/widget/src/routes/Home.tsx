@@ -38,7 +38,7 @@ const Home: Component = () => {
 		<>
 			<div class="text-black flex flex-col">
 				<Show when={data() && data().related}>
-					<div class="p-10 bg-elevation1">
+					<div class="p-8 bg-elevation1">
 						<h4>Similar</h4>
 						<p class="text-xs text-steel">View similar services to the current page</p>
 					</div>
@@ -49,7 +49,7 @@ const Home: Component = () => {
 					</For>
 				</Show>
 				<Show when={data() && data().related}>
-					<div class="p-10 bg-elevation1">
+					<div class="p-8 bg-elevation1">
 						<h4>Related</h4>
 						<p class="text-xs text-steel">Other services you may be interested in</p>
 					</div>

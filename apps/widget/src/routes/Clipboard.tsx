@@ -34,15 +34,19 @@ const Clipboard = () => {
 						height={120}
 						alt="Person searching a large clipboard with a magnifying glass"
 					/>
-					<h3 class="mt-10 mb-4">Your clipboard is empty.</h3>
-					<p>Save search results to your clipboard for easy access anytime.</p>
+					<div class="flex justify-center items-center px-8 flex-col">
+						<h3 class="mt-10 mb-4">Your clipboard is empty.</h3>
+						<p class="text-center">
+							Save search results to your clipboard for easy access anytime.
+						</p>
+					</div>
 				</div>
 			}
 		>
-			<div class="py-2 text-black flex flex-col gap-2">
-				<div class="p-10">
-					<h3>Clipboard</h3>
-					<p class="text-xs text-steel"></p>
+			<div class="flex flex-col bg-elevation1 h-full">
+				<div class="p-8 bg-elevation1">
+					<h4>Clipboard</h4>
+					<p class="text-xs text-steel">View your clipboarded services</p>
 				</div>
 				<For each={clipboardServices()}>
 					{(service) => <ServiceItem service={service} />}

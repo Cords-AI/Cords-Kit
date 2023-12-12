@@ -79,7 +79,7 @@ const App: Component<RouteSectionProps> = (props) => {
 								</button>
 							</nav>
 						</header>
-						<div class="overflow-y-scroll flex-1 h-full">
+						<div class="overflow-y-auto flex-1 h-full">
 							<Suspense
 								fallback={
 									<div class="h-full flex justify-center items-center">
