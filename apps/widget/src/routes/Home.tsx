@@ -49,7 +49,7 @@ const Home: Component = () => {
 					</For>
 				</Show>
 				<Show when={data() && data().related}>
-					<div class="p-8 bg-elevation1">
+					<div class="p-8 mt-2 bg-elevation1">
 						<h4>Related</h4>
 						<p class="text-xs text-steel">Other services you may be interested in</p>
 					</div>
