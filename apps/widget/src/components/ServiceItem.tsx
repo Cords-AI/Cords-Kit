@@ -1,7 +1,8 @@
-import { FaRegularBookmark, FaRegularMap, FaSolidBookmark, FaSolidGlobe } from "solid-icons/fa";
+import { convert } from "html-to-text";
 import { Component } from "solid-js";
 import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
 import { Service } from "../lib/service";
+import { formatServiceAddress } from "../lib/utils";
 
 type Props = {
 	service: Service;
@@ -9,13 +10,9 @@ type Props = {
 
 const ServiceItem: Component<Props> = (props) => {
 	return (
-		<div class="bg-white p-4 flex flex-col items-start max-w-full">
-			<div class="flex-row flex mb-3 justify-between">
-				<p class="text-base flex-1">{props.service.name.en}</p>
-			</div>
-			<p class="text-sm text-slate-500 line-clamp-2 mb-4 max-w-full">
-				{props.service.description.en}
-			</p>
+		<div class="bg-elevation1 px-10 py-5 flex flex-col gap-1.5 items-start max-w-full border-hairline border-t">
+			<p class="font-header text-primary">{props.service.name.en}</p>
+			<p class="text-sm line-clamp-2 max-w-full">{convert(props.service.description.en)}</p>
 			<div class="flex gap-2">
 				<button
 					onClick={() => {
@@ -25,16 +22,18 @@ const ServiceItem: Component<Props> = (props) => {
 							setClipboardIDs([...clipboardIDs(), props.service.id]);
 						}
 					}}
-					class="flex gap-2 text-sm justify-center items-center border px-2.5 py-1.5 border-slate-200 rounded-full"
+					class="flex gap-1 text-sm justify-center items-center border px-1.5 border-slate rounded-md"
 				>
 					{clipboardIDs().includes(props.service.id) ? (
 						<>
-							<FaSolidBookmark size={16} class="text-gray-500" />
-							Saved
+							<span class="material-symbols-outlined text-lg text-primary">
+								assignment
+							</span>
+							<span class="text-primary">Saved</span>
 						</>
 					) : (
 						<>
-							<FaRegularBookmark size={16} class="text-gray-500" />
+							<span class="material-symbols-outlined text-lg">assignment</span>
 							Save
 						</>
 					)}
@@ -42,17 +41,19 @@ const ServiceItem: Component<Props> = (props) => {
 				<a
 					href={props.service.website.en}
 					target="_blank"
-					class="flex gap-2 text-sm justify-center items-center border px-2.5 py-1.5 border-slate-200 rounded-full"
+					class="flex gap-1 text-sm justify-center items-center border px-1.5 border-slate rounded-md"
 				>
-					<FaSolidGlobe size={16} class="text-gray-500" />
+					<span class="material-symbols-outlined text-lg">language</span>
 					Website
 				</a>
 				<a
-					href={`https://maps.google.com?q=${props.service.address}`}
+					href={`https://maps.google.com?q=${formatServiceAddress(
+						props.service.address
+					)}`}
 					target="_blank"
-					class="flex gap-2 text-sm justify-center items-center border px-2.5 py-1.5 border-slate-200 rounded-full"
+					class="flex gap-1 text-sm justify-center items-center border px-1.5 border-slate rounded-md"
 				>
-					<FaRegularMap size={16} class="text-gray-500" />
+					<span class="material-symbols-outlined text-lg">map</span>
 					Directions
 				</a>
 			</div>
