@@ -33,7 +33,6 @@ const updatePage = async ({ id, meta }: { id: number; meta: Page["meta"] }) => {
 };
 
 const getPages = async () => {
-	console.log(`${(window as any).wpApiSettings.root}wp/v2/pages`);
 	const res = await fetch(`${(window as any).wpApiSettings.root}wp/v2/pages`);
 	const data = await res.json();
 	return PageSchema.array().parse(data);

@@ -15,7 +15,6 @@ export const fetchClipboard = async (clipboardIDs: string[]) => {
 			}`)
 	);
 	const res = await fetch(`https://api.cords.ai/search?${ids}`);
-	console.log(res);
 	const data = await res.json();
 	return z.object({ data: ServiceSchema.array() }).parse(data).data;
 };
