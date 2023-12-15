@@ -18,8 +18,11 @@ function cords_init_menu()
 // This function is only called when our plugin's page loads!
 function load_admin_js()
 {
-	// Unfortunately we can't just enqueue our scripts here - it's too early. So register against the proper action hook to do it
-	add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
+	$screen = get_current_screen();
+	error_log('Screen ID: ' . $screen->id);
+	if ($screen && $screen->id === 'cords') {
+		add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
+	}
 }
 
 function cords_admin_page()
