@@ -63,16 +63,15 @@ function cords_enqueue_scripts()
 add_action("wp_footer", "widget");
 function widget()
 {
-	global $post;
-
 	// Check if $post is available
-	if (!is_admin() && !did_action('elementor/loaded') && isset($post)) {
-		$show_widget = get_post_meta($post->ID, 'cords_widget', true);
+	if (is_page() && !is_admin() && !in_array('elementor-editor-active', get_body_class())) {
+		$post_id = get_the_ID();
+		$show_widget = get_post_meta($post_id, 'cords_widget', true);
 		$post_content = strip_tags(get_the_content());
 		$encoded_post_content = urlencode($post_content);
 
 		// Check if meta value exists and is not empty
-		if (!empty($show_widget)) {
+		if (!empty($show_widget) && $show_widget === "1") {
 			echo '<div id="cords-widget" style="border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;"><iframe src="' . (wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.vercel.app")  . '?q=' . $encoded_post_content . '" style="pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;" /></div>';
 		}
 	}
