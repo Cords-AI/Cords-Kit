@@ -28,7 +28,6 @@ function cords_admin_page()
 }
 function cords_admin_enqueue_scripts()
 {
-	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'apps/wp-admin/dist/assets/index.css');
 	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'apps/wp-admin/dist/assets/index.js', array('wp-element'), '1.0.0', true);
 	wp_localize_script('cords-script', 'wpApiSettings', array(
 		'root' => esc_url_raw(rest_url()),
