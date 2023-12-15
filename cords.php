@@ -12,30 +12,23 @@
 add_action('admin_menu', 'cords_init_menu');
 function cords_init_menu()
 {
-	$my_page = add_menu_page('CORDS', 'CORDS', 'manage_options', 'cords', 'cords_admin_page', 'dashicons-admin-post', '2.1');
-	add_action('load-' . $my_page, 'load_admin_js');
+	add_menu_page('CORDS', 'CORDS', 'manage_options', 'cords', 'cords_admin_page', 'dashicons-admin-post', '2.1');
 }
-// This function is only called when our plugin's page loads!
-function load_admin_js()
-{
-	$screen = get_current_screen();
-	error_log('Screen ID: ' . $screen->id);
-	if ($screen && $screen->id === 'cords') {
-		add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
-	}
-}
-
 function cords_admin_page()
 {
 	echo '<div id="cords"></div>';
 }
-function cords_admin_enqueue_scripts()
+
+add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
+function cords_admin_enqueue_scripts($hook)
 {
-	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'apps/wp-admin/dist/assets/index.js', array('wp-element'), '1.0.0', true);
-	wp_localize_script('cords-script', 'wpApiSettings', array(
-		'root' => esc_url_raw(rest_url()),
-		'nonce' => wp_create_nonce('wp_rest')
-	));
+	if ($hook === 'toplevel_page_cords') {
+		wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'apps/wp-admin/dist/assets/index.js', array('wp-element'), '1.0.0', true);
+		wp_localize_script('cords-script', 'wpApiSettings', array(
+			'root' => esc_url_raw(rest_url()),
+			'nonce' => wp_create_nonce('wp_rest')
+		));
+	}
 }
 
 add_action('init', 'cords_register_meta');
@@ -71,7 +64,6 @@ add_action("wp_footer", "widget");
 function widget()
 {
 	global $post;
-	error_log('Post ID: ' . $post->ID);
 
 	// Check if $post is available
 	if (isset($post)) {
