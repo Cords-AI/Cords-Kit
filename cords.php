@@ -5,7 +5,7 @@
  * Description: Plugin for implementing CORDS in your WordPress site. Includes indexing and widget support.
  * Version: 0.0.1
  * Author: Billy
- * Author URI: billyhawkes.com
+ * Author URI: https://billyhawkes.com
  */
 
 
@@ -24,12 +24,12 @@ function load_admin_js()
 
 function cords_admin_page()
 {
-	require_once plugin_dir_path(__FILE__) . 'entry.php';
+	echo '<div id="cords"></div>';
 }
 function cords_admin_enqueue_scripts()
 {
-	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'apps/menu/dist/assets/index.css');
-	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'apps/menu/dist/assets/index.js', array('wp-element'), '1.0.0', true);
+	wp_enqueue_style('cords-style', plugin_dir_url(__FILE__) . 'apps/wp-admin/dist/assets/index.css');
+	wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'apps/wp-admin/dist/assets/index.js', array('wp-element'), '1.0.0', true);
 	wp_localize_script('cords-script', 'wpApiSettings', array(
 		'root' => esc_url_raw(rest_url()),
 		'nonce' => wp_create_nonce('wp_rest')
@@ -62,7 +62,7 @@ function cords_register_meta()
 add_action("wp_enqueue_scripts", "cords_enqueue_scripts");
 function cords_enqueue_scripts()
 {
-	wp_enqueue_script("cords-widget-script", plugin_dir_url(__FILE__) . 'apps/widget/resize-script.js');
+	wp_enqueue_script("cords-widget-script", plugin_dir_url(__FILE__) . 'apps/wp-admin/resize-script.js');
 }
 
 add_action("wp_footer", "widget");
