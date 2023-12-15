@@ -43,7 +43,7 @@ const App: Component<RouteSectionProps> = (props) => {
 							onClick={toggle}
 							class="font-lato fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-2xl hover:opacity-90 transition-opacity"
 						>
-							<span class="material-symbols-outlined">info</span>
+							<span class="material-symbols-outlined text-3xl">info</span>
 						</button>
 					}
 				>
