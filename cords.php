@@ -66,7 +66,7 @@ function widget()
 	global $post;
 
 	// Check if $post is available
-	if (isset($post)) {
+	if (!is_admin() && !did_action('elementor/loaded') && isset($post)) {
 		$show_widget = get_post_meta($post->ID, 'cords_widget', true);
 		$post_content = strip_tags(get_the_content());
 		$encoded_post_content = urlencode($post_content);
