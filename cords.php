@@ -24,7 +24,7 @@ function load_admin_js()
 
 function cords_admin_page()
 {
-	require_once plugin_dir_path(__FILE__) . 'entry.php';
+	echo '<div id="cords"></div>';
 }
 function cords_admin_enqueue_scripts()
 {
