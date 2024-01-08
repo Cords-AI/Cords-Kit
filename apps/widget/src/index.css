@@ -17,7 +17,7 @@ body {
 
 @layer base {
 	body {
-		@apply bg-elevation1 text-slate;
+		@apply bg-transparent text-slate;
 	}
 	h1,
 	.h1 {
