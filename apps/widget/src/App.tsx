@@ -53,7 +53,7 @@ const App: Component<RouteSectionProps> = (props) => {
 							"box-shadow": "0 4px 16px rgba(0,0,0,.25)",
 						}}
 					>
-						<header class="flex justify-between p-4 px-8 items-center bg-elevation1 border-b border-b-hairline z-10">
+						<header class="flex justify-between bg-elevation1 p-4 px-8 items-center border-b border-b-hairline z-10">
 							<a href="/">
 								<img src={logo} alt="Cords Logo" />
 							</a>
