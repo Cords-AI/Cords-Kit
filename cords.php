@@ -77,7 +77,9 @@ function enqueue_cords_widget_script()
 	if ($show_widget) {
 		$post_content = strip_tags(get_the_content());
 		$encoded_post_content = urlencode($post_content);
-		$url = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.vercel.app";
+		$api_key = get_option('cords_api_key');
+		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.vercel.app";
+		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key;
 ?>
 		<script>
 			// Resize widget to fit content
@@ -90,7 +92,7 @@ function enqueue_cords_widget_script()
 			// Create widget
 			document.addEventListener('DOMContentLoaded', function() {
 				let iframe = document.createElement('iframe');
-				iframe.src = '<?php echo $url; ?>?q=<?php echo $encoded_post_content; ?>';
+				iframe.src = '<?php echo $url; ?>';
 				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;';
 
 				let widgetContainer = document.createElement('div');
