@@ -23,7 +23,17 @@ add_action('admin_enqueue_scripts', 'cords_admin_enqueue_scripts');
 function cords_admin_enqueue_scripts($hook)
 {
 	if ($hook === 'toplevel_page_cords') {
-		wp_enqueue_script('cords-script', plugin_dir_url(__FILE__) . 'apps/wp-admin/dist/assets/index.js', array('wp-element'), '1.0.0', true);
+		// Include the index.asset.php file
+		$script_asset = require plugin_dir_path(__FILE__) . "apps/wp-admin/build/index.asset.php";
+
+		// Enqueue the script
+		wp_enqueue_script(
+			'cords-script',
+			plugin_dir_url(__FILE__) . 'apps/wp-admin/build/index.js',
+			$script_asset['dependencies'],
+			$script_asset['version'],
+			true
+		);
 		wp_localize_script('cords-script', 'wpApiSettings', array(
 			'root' => esc_url_raw(rest_url()),
 			'nonce' => wp_create_nonce('wp_rest')
