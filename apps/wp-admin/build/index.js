@@ -20,30 +20,62 @@ __webpack_require__.r(__webpack_exports__);
 
 const useState = wp.element.useState;
 const useEffect = wp.element.useEffect;
+const updateOptions = async options => {
+  await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    method: "POST",
+    path: "/cords/v1/options",
+    data: options
+  });
+};
+const updatePage = async ({
+  id,
+  meta
+}) => {
+  await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    method: "POST",
+    path: `/wp/v2/pages/${id}`,
+    data: {
+      meta
+    }
+  });
+};
 const App = () => {
   const [pages, setPages] = useState(null);
+  const [options, setOptions] = useState({
+    api_key: ""
+  });
+  const [load, setLoad] = useState(true);
   useEffect(() => {
     _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
       path: "/wp/v2/pages"
     }).then(pages => {
       setPages(pages);
     });
-  }, []);
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h1", null, "CORDS"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "Welcome to the CORDS admin dashboard."), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("table", {
+    _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+      path: "/cords/v1/options"
+    }).then(options => {
+      setOptions(options);
+    });
+    setLoad(false);
+  }, [load]);
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h1", null, "CORDS"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "Welcome to the CORDS admin dashboard."), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("hr", null), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Pages"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "Select which pages you would like to enable CORDS and/or the widget on."), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("table", {
     className: "wp-list-table widefat fixed striped table-view-list"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("thead", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("tr", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("th", null, "Title"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("th", null, "Content"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("th", null, "CORDS Enabled"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("th", null, "CORDS Widget"))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("tbody", null, pages !== null && pages.map(page => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("tr", {
     key: page.id
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("td", null, page.title.rendered.length ? page.title.rendered : "No Title"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("td", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, page.content.rendered.slice(0, 20))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("td", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
     name: "enabled",
     value: page.meta.cords_enabled ? "true" : "false",
-    onChange: e => {}
-    // mutation.mutate({
-    // 	id: page.id,
-    // 	meta: {
-    // 		...page.meta,
-    // 		cords_enabled: e.target.value === "true",
-    // 	},
-    // })
+    onChange: e => {
+      updatePage({
+        id: page.id,
+        meta: {
+          ...page.meta,
+          cords_enabled: e.target.value === "true"
+        }
+      }).then(() => {
+        setLoad(true);
+      });
+    }
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
     value: "true"
   }, "True"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
@@ -51,19 +83,36 @@ const App = () => {
   }, "False"))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("td", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("select", {
     name: "enabled",
     value: page.meta.cords_widget ? "true" : "false",
-    onChange: e => {}
-    // mutation.mutate({
-    // 	id: page.id,
-    // 	meta: {
-    // 		...page.meta,
-    // 		cords_widget: e.target.value === "true",
-    // 	},
-    // })
+    onChange: e => {
+      updatePage({
+        id: page.id,
+        meta: {
+          ...page.meta,
+          cords_widget: e.target.value === "true"
+        }
+      }).then(() => {
+        setLoad(true);
+      });
+    }
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
     value: "true"
   }, "Show"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("option", {
     value: "false"
-  }, "Hide"))))))));
+  }, "Hide"))))))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "API Key"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "Enter your CORDS API key below. This can be found at", " ", (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
+    href: "https://partners.cords.ai"
+  }, "https://partners.cords.ai")), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
+    type: "text",
+    value: options.api_key,
+    onChange: e => {
+      setOptions({
+        api_key: e.target.value
+      });
+    }
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+    onClick: () => {
+      updateOptions(options);
+    }
+  }, "Save"));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (App);
 
