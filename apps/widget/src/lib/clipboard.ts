@@ -1,6 +1,7 @@
-import { makePersisted } from "@solid-primitives/storage";
+import { cookieStorage, makePersisted } from "@solid-primitives/storage";
 import { createSignal } from "solid-js";
 
 export const [clipboardIDs, setClipboardIDs] = makePersisted(createSignal<string[]>([]), {
-	storage: localStorage,
+	storage: cookieStorage,
+	name: "cords-cookie-clipboard",
 });
