@@ -1,5 +1,5 @@
-import { RouteSectionProps } from "@solidjs/router";
-import { Component, Show, Suspense, createEffect, createSignal } from "solid-js";
+import { A, RouteSectionProps } from "@solidjs/router";
+import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import logo from "/assets/logo.svg";
 import spinner from "/assets/spinner.svg";
@@ -54,23 +54,23 @@ const App: Component<RouteSectionProps> = (props) => {
 						}}
 					>
 						<header class="flex justify-between bg-elevation1 p-4 px-8 items-center border-b border-b-hairline z-10">
-							<a href="/">
+							<A href="/">
 								<img src={logo} alt="Cords Logo" />
-							</a>
+							</A>
 							<nav class="flex-1 flex justify-end gap-2">
-								<a
+								<A
 									href="/clipboard"
 									class="flex h-7 w-7 items-center justify-center text-slate"
 								>
 									<span class="material-symbols-outlined">assignment</span>
-								</a>
-								<a
+								</A>
+								<A
 									target="_blank"
 									href="https://cords.dev"
 									class="flex h-7 w-7 items-center justify-center"
 								>
 									<span class="material-symbols-outlined">search</span>
-								</a>
+								</A>
 								<button
 									onClick={toggle}
 									class="flex h-7 w-7 items-center justify-center"
@@ -93,7 +93,18 @@ const App: Component<RouteSectionProps> = (props) => {
 									</div>
 								}
 							>
-								{props.children}
+								<ErrorBoundary
+									fallback={(e) => (
+										<div class="h-full flex justify-center items-center flex-col">
+											<div class="flex justify-center items-center px-8 flex-col">
+												<h3 class="mt-10 mb-4">Something went wrong.</h3>
+												<p class="text-center">{e.message}</p>
+											</div>
+										</div>
+									)}
+								>
+									{props.children}
+								</ErrorBoundary>
 							</Suspense>
 						</div>
 					</div>

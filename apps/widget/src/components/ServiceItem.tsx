@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import { convert } from "html-to-text";
 import { Component } from "solid-js";
 import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
@@ -38,15 +39,15 @@ const ServiceItem: Component<Props> = (props) => {
 						</>
 					)}
 				</button>
-				<a
+				<A
 					href={props.service.website.en}
 					target="_blank"
 					class="flex gap-1 text-sm justify-center items-center border px-1.5 border-slate rounded-md"
 				>
 					<span class="material-symbols-outlined text-lg">language</span>
 					Website
-				</a>
-				<a
+				</A>
+				<A
 					href={`https://maps.google.com?q=${formatServiceAddress(
 						props.service.address
 					)}`}
@@ -55,7 +56,7 @@ const ServiceItem: Component<Props> = (props) => {
 				>
 					<span class="material-symbols-outlined text-lg">map</span>
 					Directions
-				</a>
+				</A>
 			</div>
 		</div>
 	);

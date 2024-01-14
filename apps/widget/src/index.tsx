@@ -4,6 +4,7 @@ import "./index.css";
 
 import "@fontsource-variable/inter";
 import { Route, Router } from "@solidjs/router";
+import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { lazy } from "solid-js";
 import App from "./App";
 
@@ -18,12 +19,16 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 	);
 }
 
+const queryClient = new QueryClient();
+
 render(
 	() => (
-		<Router root={App}>
-			<Route path="/clipboard" component={Clipboard} />
-			<Route path="/" component={Home} />
-		</Router>
+		<QueryClientProvider client={queryClient}>
+			<Router root={App}>
+				<Route path="/clipboard" component={Clipboard} />
+				<Route path="/" component={Home} />
+			</Router>
+		</QueryClientProvider>
 	),
 	root
 );
