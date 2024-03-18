@@ -10,7 +10,8 @@
 		"format": "prettier --write \"**/*.{ts,tsx,md}\""
 	},
 	"workspaces": [
-		"apps/*"
+		"apps/*",
+		"packages/*"
 	],
 	"dependencies": {
 		"prettier": "^3.1.1",

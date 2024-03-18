@@ -10,6 +10,7 @@ import App from "./App";
 
 const Home = lazy(() => import("./routes/Home"));
 const Clipboard = lazy(() => import("./routes/Clipboard"));
+const Resource = lazy(() => import("./routes/Resource"));
 
 const root = document.getElementById("root");
 
@@ -25,6 +26,7 @@ render(
 	() => (
 		<QueryClientProvider client={queryClient}>
 			<Router root={App}>
+				<Route path="/resource/:id" component={Resource} />
 				<Route path="/clipboard" component={Clipboard} />
 				<Route path="/" component={Home} />
 			</Router>

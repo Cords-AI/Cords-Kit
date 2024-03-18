@@ -40,3 +40,7 @@ body {
 		@apply leading-7 font-body text-slate;
 	}
 }
+
+.btn {
+	@apply text-sm text-white bg-primary w-min px-3 shadow h-8 flex items-center justify-center rounded;
+}
