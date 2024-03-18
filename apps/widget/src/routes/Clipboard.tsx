@@ -1,46 +1,22 @@
-import { useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { For, Show } from "solid-js";
-import { z } from "zod";
 import ServiceItem from "../components/ServiceItem";
 import { clipboardIDs } from "../lib/clipboard";
-import { ServiceSchema } from "../lib/service";
+import { useCords } from "../lib/cords";
 import empty from "/assets/empty.svg";
 
-export const fetchClipboard = async (clipboardIDs: string[], api_key?: string) => {
-	const headers = api_key ? { "x-api-key": api_key } : {};
-	if (clipboardIDs.length === 0) return [];
-	let ids = "";
-	clipboardIDs.forEach(
-		(id, index) =>
-			(ids += `ids${encodeURIComponent(`[${index}]`)}=${id}${
-				index !== clipboardIDs.length - 1 ? "&" : ""
-			}`)
-	);
-	const res = await fetch(`https://api.cords.ai/search?${ids}`, {
-		headers,
-	});
-	if (res.status === 403) {
-		throw new Error("Invalid API key");
-	}
-	const data = await res.json();
-	return z.object({ data: ServiceSchema.array() }).parse(data).data;
-};
-
 const Clipboard = () => {
-	const [searchParams] = useSearchParams<{
-		api_key?: string;
-	}>();
-
+	const cords = useCords();
 	const clipboard = createQuery(() => ({
-		queryKey: ["clipboard", clipboardIDs(), searchParams.api_key],
-		queryFn: () => fetchClipboard(clipboardIDs(), searchParams.api_key),
+		queryKey: ["clipboard", clipboardIDs()],
+		queryFn: () => cords.resourceList(clipboardIDs()),
 		throwOnError: true,
+		suspense: true,
 	}));
 
 	return (
 		<Show
-			when={clipboard.data?.length}
+			when={clipboard.data?.data.length}
 			fallback={
 				<div class="h-full flex justify-center items-center flex-col">
 					<img
@@ -63,7 +39,9 @@ const Clipboard = () => {
 					<h4>Clipboard</h4>
 					<p class="text-xs text-steel">View your clipboarded services</p>
 				</div>
-				<For each={clipboard.data}>{(service) => <ServiceItem service={service} />}</For>
+				<For each={clipboard.data.data}>
+					{(service) => <ServiceItem service={service} />}
+				</For>
 			</div>
 		</Show>
 	);
