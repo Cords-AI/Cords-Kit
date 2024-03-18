@@ -1,9 +1,9 @@
-type LocalizedField = {
+type LocalizedFieldType = {
 	en: string;
 	fr: string;
 };
 
-export type ResourceAddress = {
+export type ResourceAddressType = {
 	street1: string;
 	street2: string;
 	city: string;
@@ -14,14 +14,14 @@ export type ResourceAddress = {
 	lng: number | null;
 };
 
-export type Resource = {
+export type ResourceType = {
 	id: string;
-	name: LocalizedField;
-	description: LocalizedField;
-	website: LocalizedField;
-	email: LocalizedField;
-	address: ResourceAddress;
-	addresses: ResourceAddress[];
+	name: LocalizedFieldType;
+	description: LocalizedFieldType;
+	website: LocalizedFieldType;
+	email: LocalizedFieldType;
+	address: ResourceAddressType;
+	addresses: ResourceAddressType[];
 	phoneNumbers: {
 		phone: string;
 		name: string;

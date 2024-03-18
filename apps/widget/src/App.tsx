@@ -1,6 +1,7 @@
 import { A, RouteSectionProps } from "@solidjs/router";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
+import Error from "./components/Error";
 import Pending from "./components/Pending";
 import logo from "/assets/logo.svg";
 
@@ -80,21 +81,8 @@ const App: Component<RouteSectionProps> = (props) => {
 							</nav>
 						</header>
 						<div class="overflow-y-auto flex-1 h-full">
-							<Suspense
-								fallback={
-									<Pending/>
-								}
-							>
-								<ErrorBoundary
-									fallback={(e) => (
-										<div class="h-full flex justify-center items-center flex-col">
-											<div class="flex justify-center items-center px-8 flex-col">
-												<h3 class="mt-10 mb-4">Something went wrong.</h3>
-												<p class="text-center">{e.message}</p>
-											</div>
-										</div>
-									)}
-								>
+							<Suspense fallback={<Pending />}>
+								<ErrorBoundary fallback={(error) => <Error error={error} />}>
 									{props.children}
 								</ErrorBoundary>
 							</Suspense>

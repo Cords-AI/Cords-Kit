@@ -7,5 +7,5 @@ export const [clipboardIDs, setClipboardIDs] = makePersisted(createSignal<string
 		sameSite: "None",
 		secure: true,
 	},
-	name: "cords-cookie-clipboard",
+	name: "cords-clipboard",
 });
