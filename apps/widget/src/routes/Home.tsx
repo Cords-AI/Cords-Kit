@@ -47,14 +47,12 @@ const Home: Component = () => {
 		queryKey: ["similar", searchParams.q, searchParams.api_key],
 		queryFn: () => fetchSimilar(searchParams.q, searchParams.api_key),
 		retry: 1,
-		throwOnError: true,
 	}));
 
 	const related = createQuery(() => ({
 		queryKey: ["related", similar.data, searchParams.api_key],
 		queryFn: () => fetchRelated(similar.data[0].id, searchParams.api_key),
 		enabled: similar.data?.length > 0,
-		throwOnError: true,
 	}));
 
 	return (

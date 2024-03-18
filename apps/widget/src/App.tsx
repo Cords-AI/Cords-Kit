@@ -1,8 +1,8 @@
 import { A, RouteSectionProps } from "@solidjs/router";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
+import Pending from "./components/Pending";
 import logo from "/assets/logo.svg";
-import spinner from "/assets/spinner.svg";
 
 const App: Component<RouteSectionProps> = (props) => {
 	// signal for widget open/close
@@ -82,15 +82,7 @@ const App: Component<RouteSectionProps> = (props) => {
 						<div class="overflow-y-auto flex-1 h-full">
 							<Suspense
 								fallback={
-									<div class="h-full flex justify-center items-center">
-										<img
-											src={spinner}
-											width={50}
-											height={50}
-											alt="Loading spinner"
-											class="animate-spin"
-										/>
-									</div>
+									<Pending/>
 								}
 							>
 								<ErrorBoundary
