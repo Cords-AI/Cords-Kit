@@ -1,6 +1,6 @@
+import { ResourceType } from "@cords/sdk";
 import { A, useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
-import { ResourceType } from "cords-sdk";
 import { convert } from "html-to-text";
 import { Component, Show } from "solid-js";
 import { useCords } from "../lib/cords";

@@ -1,26 +1,6 @@
 import { ResourceAddressType } from "../dist";
-import type { ResourceType } from "./types";
+import type { CordsError, ResourceType, SearchOptions } from "./types";
 export * from "./types";
-
-export type SearchOptions = {
-	page?: number;
-	lat?: number;
-	lng?: number;
-	distance?: number;
-	filter?: {
-		"211"?: boolean;
-		mentor?: boolean;
-		prosper?: boolean;
-		magnet?: boolean;
-	};
-};
-
-export type CordsError = {
-	detail: string;
-	status: number;
-	title: string;
-	type: string;
-};
 
 export const ResourceOptions = {};
 
@@ -97,7 +77,7 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 		return data as ResourceType;
 	};
 
-	const resourceList = async (ids: string[]) => {
+	const resourceList = async (ids: string[]): Promise<{ data: ResourceType[] }> => {
 		if (ids.length === 0)
 			return {
 				data: [],

@@ -1,5 +1,5 @@
+import { CordsAPI } from "@cords/sdk";
 import { useSearchParams } from "@solidjs/router";
-import { CordsAPI } from "cords-sdk";
 
 export const useCords = () => {
 	const [searchParams] = useSearchParams<{
