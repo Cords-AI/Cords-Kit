@@ -8,19 +8,25 @@ const Home: Component = () => {
 	const cords = useCords();
 	const [searchParams] = useSearchParams<{
 		q?: string;
-		api_key?: string;
 	}>();
 
 	const similar = createQuery(() => ({
-		queryKey: ["similar", searchParams.q, searchParams.api_key],
-		queryFn: () => cords.search(searchParams.q, { lat: 43.6532, lng: -79.3832 }),
+		queryKey: ["similar", searchParams.q],
+		queryFn: () => {
+			try {
+				return cords.search(searchParams.q, { lat: 43.6532, lng: -79.3832 });
+			} catch (e) {
+				console.log("Error fetching similar services", e);
+				return { data: [] };
+			}
+		},
 		retry: 1,
 		throwOnError: true,
 		suspense: true,
 	}));
 
 	const related = createQuery(() => ({
-		queryKey: ["related", similar.data, searchParams.api_key],
+		queryKey: ["related", similar.data],
 		queryFn: () => cords.related(similar.data.data[0].id),
 		enabled: similar.data?.data.length > 0,
 		throwOnError: true,
