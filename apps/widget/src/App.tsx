@@ -1,4 +1,4 @@
-import { A, RouteSectionProps } from "@solidjs/router";
+import { A, RouteSectionProps, useSearchParams } from "@solidjs/router";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import Error from "./components/Error";
@@ -9,6 +9,7 @@ const App: Component<RouteSectionProps> = (props) => {
 	// signal for widget open/close
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
+	const [query] = useSearchParams();
 
 	createEffect(() => {
 		window.parent.postMessage(
@@ -55,12 +56,12 @@ const App: Component<RouteSectionProps> = (props) => {
 						}}
 					>
 						<header class="flex justify-between bg-elevation1 p-4 px-8 items-center border-b border-b-hairline z-10">
-							<A href="/">
+							<A href={`/?${new URLSearchParams(query).toString()}`}>
 								<img src={logo} alt="Cords Logo" />
 							</A>
 							<nav class="flex-1 flex justify-end gap-2">
 								<A
-									href="/clipboard"
+									href={`/clipboard?${new URLSearchParams(query).toString()}`}
 									class="flex h-7 w-7 items-center justify-center text-slate"
 								>
 									<span class="material-symbols-outlined">assignment</span>

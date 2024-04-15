@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A, useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { ResourceType } from "cords-sdk";
 import { convert } from "html-to-text";
@@ -11,6 +11,7 @@ type Props = {
 
 const ServiceItem: Component<Props> = (props) => {
 	const cords = useCords();
+	const [query] = useSearchParams();
 	const resource = createQuery(() => ({
 		queryKey: ["resource", props.service.id],
 		queryFn: () => cords.resource(props.service.id),
@@ -21,7 +22,7 @@ const ServiceItem: Component<Props> = (props) => {
 	return (
 		<Show when={resource.data}>
 			<A
-				href={`/resource/${resource.data.id}`}
+				href={`/resource/${resource.data.id}?${new URLSearchParams(query).toString()}`}
 				class="bg-elevation1 px-8 py-4 flex flex-col gap-1.5 items-start max-w-full border-hairline border-t"
 			>
 				<p class="font-header text-primary">{resource.data.name.en}</p>

@@ -15,11 +15,36 @@ export type SearchOptions = {
 	};
 };
 
+export type CordsError = {
+	detail: string;
+	status: number;
+	title: string;
+	type: string;
+};
+
 export const ResourceOptions = {};
 
 const baseUrl = "https://api.cords.ai";
 
 export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
+	const request = async (input: RequestInfo, init?: RequestInit) => {
+		const res = await fetch(input, {
+			...init,
+			headers: {
+				"x-api-key": apiKey,
+				...init?.headers,
+			},
+		});
+		if (!res.ok) {
+			if (res.status === 403)
+				throw new Error("Bad API key. Ensure you have a valid API key.");
+			const data: CordsError = await res.json();
+			if (data.detail) throw new Error(data.detail);
+			else throw new Error("An error occurred");
+		}
+		return res;
+	};
+
 	const search = async (q: string, options?: SearchOptions) => {
 		const url = new URL("/search", baseUrl);
 		const params = new URLSearchParams({
@@ -39,11 +64,7 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 			}
 		}
 
-		const res = await fetch(`${url}?${params}`, {
-			headers: {
-				"x-api-key": apiKey,
-			},
-		});
+		const res = await request(`${url}?${params}`);
 		const data = await res.json();
 		return data as { data: ResourceType[] };
 	};
@@ -51,12 +72,11 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 	const related = async (id: string) => {
 		const url = new URL(`/resource/${id}/related`, baseUrl);
 
-		const res = await fetch(url, {
-			headers: {
-				"x-api-key": apiKey,
-			},
-		});
-
+		const res = await request(`${url}`);
+		if (!res.ok) {
+			const data: CordsError = await res.json();
+			throw new Error(data.detail);
+		}
 		const data = await res.json();
 		return data as { data: ResourceType[] };
 	};
@@ -69,7 +89,10 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 				"x-api-key": apiKey,
 			},
 		});
-
+		if (!res.ok) {
+			const data: CordsError = await res.json();
+			throw new Error(data.detail);
+		}
 		const data = await res.json();
 		return data as ResourceType;
 	};
@@ -79,22 +102,12 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 			return {
 				data: [],
 			};
-		let idsString = "";
-		ids.forEach(
-			(id, index) =>
-				(idsString += `ids${encodeURIComponent(`[${index}]`)}=${id}${
-					index !== ids.length - 1 ? "&" : ""
-				}`)
-		);
+		const params = new URLSearchParams();
+		ids.forEach((id, index) => params.append(`ids[${index}]`, id));
 
-		const url = new URL(`/search?${idsString}`, baseUrl);
+		const url = new URL(`/search?${params.toString()}`, baseUrl);
 
-		const res = await fetch(url, {
-			headers: {
-				"x-api-key": apiKey,
-			},
-		});
-
+		const res = await fetch(`${url}`);
 		const data = await res.json();
 		return data as { data: ResourceType[] };
 	};
