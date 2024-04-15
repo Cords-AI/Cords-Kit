@@ -30,3 +30,24 @@ export type ResourceType = {
 	partner: string;
 	delivery: "national" | "provincial" | "local" | "regional" | null;
 };
+
+export type SearchOptions = {
+	page?: number;
+	lat?: number;
+	lng?: number;
+	distance?: number;
+	pageSize?: number;
+	filter?: {
+		"211"?: boolean;
+		mentor?: boolean;
+		prosper?: boolean;
+		magnet?: boolean;
+	};
+};
+
+export type CordsError = {
+	detail: string;
+	status: number;
+	title: string;
+	type: string;
+};
