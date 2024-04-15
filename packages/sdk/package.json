@@ -4,6 +4,10 @@
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
 	"version": "0.0.1",
+	"private": false,
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"build": "tsup src/index.ts --format cjs,esm --dts",
 		"dev": "bun run build -- --watch"
