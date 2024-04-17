@@ -1,12 +1,14 @@
 {
 	"compilerOptions": {
-		"target": "ES2016",
-		"module": "commonjs",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"strict": true,
+		"isolatedModules": true,
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"preserveWatchOutput": true,
 		"skipLibCheck": true,
-		"noUncheckedIndexedAccess": true,
-		"noEmit": true
-	}
+		"noEmit": true,
+		"strict": true
+	},
+	"exclude": ["node_modules"]
 }
