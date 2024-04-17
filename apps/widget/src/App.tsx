@@ -2,7 +2,9 @@ import { A, RouteSectionProps, useSearchParams } from "@solidjs/router";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import Error from "./components/Error";
+import LocationFooter from "./components/LocationFooter";
 import Pending from "./components/Pending";
+import { setInitialLocation } from "./lib/location";
 import logo from "/assets/logo.svg";
 
 const App: Component<RouteSectionProps> = (props) => {
@@ -10,6 +12,7 @@ const App: Component<RouteSectionProps> = (props) => {
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
 	const [query] = useSearchParams();
+	setInitialLocation();
 
 	createEffect(() => {
 		window.parent.postMessage(
@@ -88,6 +91,7 @@ const App: Component<RouteSectionProps> = (props) => {
 								</ErrorBoundary>
 							</Suspense>
 						</div>
+						<LocationFooter />
 					</div>
 				</Show>
 			</Transition>
