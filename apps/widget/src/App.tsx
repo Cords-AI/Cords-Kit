@@ -68,7 +68,7 @@ const App: Component<RouteSectionProps> = (props) => {
 								</A>
 								<A
 									target="_blank"
-									href="https://cords.dev"
+									href="https://cords.ai"
 									class="flex h-7 w-7 items-center justify-center"
 								>
 									<span class="material-symbols-outlined">search</span>
