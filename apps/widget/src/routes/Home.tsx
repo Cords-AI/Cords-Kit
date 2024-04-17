@@ -3,6 +3,7 @@ import { createQuery } from "@tanstack/solid-query";
 import { Component, For, Show } from "solid-js";
 import ServiceItem from "../components/ServiceItem";
 import { useCords } from "../lib/cords";
+import { location } from "../lib/location";
 
 const Home: Component = () => {
 	const cords = useCords();
@@ -11,10 +12,10 @@ const Home: Component = () => {
 	}>();
 
 	const similar = createQuery(() => ({
-		queryKey: ["similar", searchParams.q],
+		queryKey: ["similar", searchParams.q, location().lat, location().lng],
 		queryFn: () => {
 			try {
-				return cords.search(searchParams.q, { lat: 43.6532, lng: -79.3832 });
+				return cords.search(searchParams.q, { lat: location().lat, lng: location().lng });
 			} catch (e) {
 				console.log("Error fetching similar services", e);
 				return { data: [] };
