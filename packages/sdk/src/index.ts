@@ -1,5 +1,4 @@
-import { ResourceAddressType } from "../dist";
-import type { CordsError, ResourceType, SearchOptions } from "./types";
+import type { CordsError, ResourceAddressType, ResourceType, SearchOptions } from "./types";
 export * from "./types";
 
 export const ResourceOptions = {};
