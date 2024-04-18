@@ -5,6 +5,7 @@ import logo from "./assets/logo.svg";
 import Error from "./components/Error";
 import LocationFooter from "./components/LocationFooter";
 import Pending from "./components/Pending";
+import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
 
 const App: Component<RouteSectionProps> = (props) => {
@@ -58,15 +59,22 @@ const App: Component<RouteSectionProps> = (props) => {
 							"box-shadow": "0 4px 16px rgba(0,0,0,.25)",
 						}}
 					>
-						<header class="flex justify-between bg-elevation1 p-4 px-8 items-center border-b border-b-hairline z-10">
+						<header class="flex justify-between bg-elevation1 p-4 items-center border-b border-b-hairline z-10">
 							<A href={`/?${new URLSearchParams(query).toString()}`}>
 								<img src={logo} alt="Cords Logo" />
 							</A>
 							<nav class="flex-1 flex justify-end gap-2">
 								<A
 									href={`/clipboard?${new URLSearchParams(query).toString()}`}
-									class="flex h-7 w-7 items-center justify-center text-slate"
+									class="flex relative h-7 w-7 items-center justify-center text-slate"
 								>
+									<Show when={clipboardIDs().length > 0}>
+										<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
+											<p class="text-[8px] text-white">
+												{clipboardIDs().length}
+											</p>
+										</div>
+									</Show>
 									<span class="material-symbols-outlined">assignment</span>
 								</A>
 								<A
