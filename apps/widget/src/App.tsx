@@ -1,18 +1,18 @@
 import { A, RouteSectionProps, useSearchParams } from "@solidjs/router";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
+import logo from "./assets/logo.svg";
 import Error from "./components/Error";
 import LocationFooter from "./components/LocationFooter";
 import Pending from "./components/Pending";
 import { setInitialLocation } from "./lib/location";
-import logo from "/assets/logo.svg";
 
 const App: Component<RouteSectionProps> = (props) => {
 	// signal for widget open/close
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
 	const [query] = useSearchParams();
-	setInitialLocation();
+	setInitialLocation;
 
 	createEffect(() => {
 		window.parent.postMessage(

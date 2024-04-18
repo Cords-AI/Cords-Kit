@@ -1,9 +1,9 @@
 import { createQuery } from "@tanstack/solid-query";
 import { For, Show } from "solid-js";
+import empty from "../assets/empty.svg";
 import ServiceItem from "../components/ServiceItem";
 import { clipboardIDs } from "../lib/clipboard";
 import { useCords } from "../lib/cords";
-import empty from "/assets/empty.svg";
 
 const Clipboard = () => {
 	const cords = useCords();

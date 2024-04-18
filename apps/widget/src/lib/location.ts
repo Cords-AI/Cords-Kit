@@ -1,32 +1,47 @@
+import { cookieStorage, makePersisted } from "@solid-primitives/storage";
 import { createEffect, createSignal } from "solid-js";
 
-export const [location, setLocation] = createSignal<{
-	lat: number;
-	lng: number;
-	name: string;
-}>(null);
+export const [location, setLocation] = makePersisted(
+	createSignal<{
+		lat: number;
+		lng: number;
+		name: string;
+	}>({
+		lat: 43.6532,
+		lng: -79.3832,
+		name: "Toronto, ON",
+	}),
+	{
+		storage: cookieStorage,
+		storageOptions: {
+			sameSite: "None",
+			secure: true,
+		},
+		name: "cords-location",
+	}
+);
 
-export const setInitialLocation = () =>
-	createEffect(() => {
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
-				setLocation({
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
-					name: "Your Location",
-				});
-			},
-			async () => {
-				const res = await fetch("https://api.cords.dev/info");
-				const data = await res.json();
-				setLocation({
-					lat: data.lat,
-					lng: data.lng,
-					name: "Your Location",
-				});
-			},
-			{
-				timeout: 10000,
-			}
-		);
-	});
+export const setInitialLocation = createEffect(() => {
+	navigator.geolocation.getCurrentPosition(
+		(position) => {
+			setLocation({
+				lat: position.coords.latitude,
+				lng: position.coords.longitude,
+				name: "Your Location",
+			});
+		},
+		async () => {
+			const res = await fetch("https://api.cords.dev/info");
+			const data = await res.json();
+			setLocation({
+				lat: data.lat,
+				lng: data.lng,
+				name: "Your Location",
+			});
+		},
+		{
+			enableHighAccuracy: false,
+			timeout: 10000,
+		}
+	);
+});

@@ -15,6 +15,11 @@ const Home: Component = () => {
 		queryKey: ["similar", searchParams.q, location().lat, location().lng],
 		queryFn: () => {
 			try {
+				if (!location().lat || !location().lng)
+					return cords.search(searchParams.q, {
+						lat: 45,
+						lng: -75,
+					});
 				return cords.search(searchParams.q, { lat: location().lat, lng: location().lng });
 			} catch (e) {
 				console.log("Error fetching similar services", e);

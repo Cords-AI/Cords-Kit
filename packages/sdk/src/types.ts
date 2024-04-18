@@ -32,9 +32,9 @@ export type ResourceType = {
 };
 
 export type SearchOptions = {
+	lat: number;
+	lng: number;
 	page?: number;
-	lat?: number;
-	lng?: number;
 	distance?: number;
 	pageSize?: number;
 	filter?: {
