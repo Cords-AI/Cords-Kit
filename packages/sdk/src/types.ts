@@ -14,6 +14,23 @@ export type ResourceAddressType = {
 	lng: number | null;
 };
 
+export type ResourceBodyType = {
+	fees: string;
+	hours: string;
+	topics: string;
+	twitter: string | null;
+	youtube: string | null;
+	facebook: string | null;
+	linkedin: string | null;
+	instagram: string | null;
+	languages: string;
+	eligibility: string;
+	recordOwner: string;
+	accessibility: string;
+	documentsRequired: string;
+	applicationProcess: string;
+};
+
 export type ResourceType = {
 	id: string;
 	name: LocalizedFieldType;
@@ -29,6 +46,10 @@ export type ResourceType = {
 	}[];
 	partner: string;
 	delivery: "national" | "provincial" | "local" | "regional" | null;
+	body: {
+		en: ResourceBodyType;
+		fr: ResourceBodyType;
+	};
 };
 
 export type SearchOptions = {
