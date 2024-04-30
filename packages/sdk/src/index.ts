@@ -87,11 +87,35 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 		return data as { data: ResourceType[] };
 	};
 
+	const nearestNeighbour = async (
+		id: string,
+		options: {
+			lat: number;
+			lng: number;
+		}
+	) => {
+		const url = new URL(`/resource/${id}/nearest-neighbor`, baseUrl);
+
+		const params = new URLSearchParams({
+			lat: options.lat.toString(),
+			lng: options.lng.toString(),
+		});
+
+		const res = await request(url.toString() + "?delivery=local&" + params.toString());
+		if (!res.ok) {
+			const data: CordsError = await res.json();
+			throw new Error(data.detail);
+		}
+		const data = await res.json();
+		return data as { data: ResourceType[] };
+	};
+
 	return {
 		search,
 		related,
 		resource,
 		resourceList,
+		nearestNeighbour,
 	};
 };
 
