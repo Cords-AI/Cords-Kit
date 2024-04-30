@@ -139,6 +139,7 @@ function update_options_route($request)
 {
 	$api_key = sanitize_text_field($request->get_param('api_key'));
 	update_option('cords_api_key', $api_key);
+	wp_cache_flush();
 	return array(
 		'api_key' => $api_key
 	);
