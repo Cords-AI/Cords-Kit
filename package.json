@@ -1,20 +1,20 @@
 {
-	"name": "cords-wp-plugin",
-	"version": "1.0.0",
-	"description": "Cords WP Plugin",
-	"scripts": {
-		"build": "turbo build",
-		"dev": "turbo dev",
-		"lint": "turbo lint",
-		"clean": "turbo clean && rm -rf node_modules",
-		"format": "prettier --write \"**/*.{ts,tsx,md}\""
-	},
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
-	"dependencies": {
-		"prettier": "^3.1.1",
-		"turbo": "latest"
-	}
+  "name": "cords-wp-plugin",
+  "version": "1.0.0",
+  "description": "Cords WP Plugin",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "clean": "turbo clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "prettier": "^3.1.1",
+    "turbo": "^1.13.3"
+  }
 }
