@@ -43,7 +43,7 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 			}
 		}
 
-		const res = await request(`${url}?${params}`);
+		const res = await request(`${url.toString()}?${params}`);
 		const data = await res.json();
 		return data as { data: ResourceType[] };
 	};
@@ -51,7 +51,7 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 	const related = async (id: string) => {
 		const url = new URL(`/resource/${id}/related`, baseUrl);
 
-		const res = await request(`${url}`);
+		const res = await request(url.toString());
 		if (!res.ok) {
 			const data: CordsError = await res.json();
 			throw new Error(data.detail);
@@ -63,11 +63,7 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 	const resource = async (id: string) => {
 		const url = new URL(`/resource/${id}`, baseUrl);
 
-		const res = await fetch(url, {
-			headers: {
-				"x-api-key": apiKey,
-			},
-		});
+		const res = await request(url.toString());
 		if (!res.ok) {
 			const data: CordsError = await res.json();
 			throw new Error(data.detail);
@@ -86,7 +82,7 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 
 		const url = new URL(`/search?${params.toString()}`, baseUrl);
 
-		const res = await fetch(`${url}`);
+		const res = await request(url.toString());
 		const data = await res.json();
 		return data as { data: ResourceType[] };
 	};
