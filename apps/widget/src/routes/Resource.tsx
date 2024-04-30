@@ -1,7 +1,8 @@
 import { formatServiceAddress } from "@cords/sdk";
 import { useNavigate, useParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
-import { Show } from "solid-js";
+import { Show, Suspense } from "solid-js";
+import Related from "../components/Related";
 import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
 import { useCords } from "../lib/cords";
 
@@ -104,10 +105,23 @@ const Resource = () => {
 						<a href={`mailto:${resource.data.email.en}`}>{resource.data.email.en}</a>
 					</p>
 					<p class="font-medium text-xs text-charcoal">Website</p>
-					<a class="text-sm text-primary" href={resource.data.website.en} target="_blank">
+					<a
+						class="text-sm truncate text-primary"
+						href={
+							resource.data.website.en.startsWith("http")
+								? resource.data.website.en
+								: `https://${resource.data.website.en}`
+						}
+						target="_blank"
+					>
 						{resource.data.website.en}
 					</a>
 				</div>
+				<Suspense>
+					<Show when={resource.data.id}>
+						<Related id={resource.data.id} />
+					</Show>
+				</Suspense>
 			</div>
 		</Show>
 	);
