@@ -3,6 +3,7 @@ import { A, useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { convert } from "html-to-text";
 import { Component, For, Show, Suspense } from "solid-js";
+import PartnerLogo from "../components/PartnerLogo";
 import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
@@ -76,25 +77,30 @@ const Resource = () => {
 		<Show when={resource.data}>
 			<div class="flex gap-4 p-4 flex-col">
 				<h1>{resource.data.name.en}</h1>
-				<button
-					onClick={() => {
-						if (clipboardIDs().indexOf(resource.data.id) === -1) {
-							setClipboardIDs((ids) => [...ids, resource.data.id]);
-						} else {
-							setClipboardIDs((ids) => ids.filter((id) => id !== resource.data.id));
-						}
-					}}
-					class="flex relative h-7 w-7 items-center justify-center text-slate"
-				>
-					<Show when={clipboardIDs().indexOf(resource.data.id) !== -1}>
-						<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
-							<span class="material-symbols-outlined material-symbols-outlined-thicker text-[10px]">
-								check
-							</span>
-						</div>
-					</Show>
-					<span class="material-symbols-outlined">assignment</span>
-				</button>
+				<div class="flex items-center justify-between">
+					<PartnerLogo partner={"prosper"} />
+					<button
+						onClick={() => {
+							if (clipboardIDs().indexOf(resource.data.id) === -1) {
+								setClipboardIDs((ids) => [...ids, resource.data.id]);
+							} else {
+								setClipboardIDs((ids) =>
+									ids.filter((id) => id !== resource.data.id)
+								);
+							}
+						}}
+						class="flex relative h-7 w-7 items-center justify-center text-slate"
+					>
+						<Show when={clipboardIDs().indexOf(resource.data.id) !== -1}>
+							<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
+								<span class="material-symbols-outlined material-symbols-outlined-thicker text-[10px]">
+									check
+								</span>
+							</div>
+						</Show>
+						<span class="material-symbols-outlined">assignment</span>
+					</button>
+				</div>
 				<hr />
 				<button onClick={() => navigate(-1)} class="btn my-4">
 					CLOSE
