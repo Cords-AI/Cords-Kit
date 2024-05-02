@@ -75,7 +75,7 @@ const Resource = () => {
 
 	return (
 		<Show when={resource.data}>
-			<div class="flex gap-4 p-4 flex-col">
+			<div class="flex gap-4 px-4 py-8 flex-col">
 				<h1>{resource.data.name.en}</h1>
 				<div class="flex items-center justify-between">
 					<PartnerLogo partner={"prosper"} />
