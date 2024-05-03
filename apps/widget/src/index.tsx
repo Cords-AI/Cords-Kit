@@ -11,6 +11,7 @@ import App from "./App";
 const Home = lazy(() => import("./routes/Home"));
 const Clipboard = lazy(() => import("./routes/Clipboard"));
 const Resource = lazy(() => import("./routes/Resource"));
+const Search = lazy(() => import("./routes/Search"));
 
 const root = document.getElementById("root");
 
@@ -28,6 +29,7 @@ render(
 			<Router root={App}>
 				<Route path="/resource/:id" component={Resource} />
 				<Route path="/clipboard" component={Clipboard} />
+				<Route path="/search" component={Search} />
 				<Route path="/" component={Home} />
 			</Router>
 		</QueryClientProvider>
