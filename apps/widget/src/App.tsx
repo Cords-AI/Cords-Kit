@@ -1,4 +1,5 @@
-import { A, RouteSectionProps, useSearchParams } from "@solidjs/router";
+import { A, RouteSectionProps, useNavigate, useSearchParams } from "@solidjs/router";
+import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import logo from "./assets/logo.svg";
@@ -7,12 +8,66 @@ import LocationFooter from "./components/LocationFooter";
 import Pending from "./components/Pending";
 import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
+import { setSearch } from "./lib/search";
+
+const [searchMode, setSearchMode] = createSignal(false);
+
+const SearchHeader = () => {
+	const navigate = useNavigate();
+	const [query] = useSearchParams();
+	const form = createForm(() => ({
+		defaultValues: {
+			query: "",
+		},
+		onSubmit: async ({ value }) => {
+			setSearch({ query: value.query, page: 1 });
+			navigate(`/search?${new URLSearchParams(query).toString()}`);
+		},
+	}));
+
+	return (
+		<header class="flex h-16 bg-elevation1 px-6 items-center border-b border-b-hairline z-10">
+			<form
+				class="w-full border rounded h-12 flex items-center"
+				onSubmit={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					form.handleSubmit();
+				}}
+			>
+				<span
+					class="material-symbols-outlined flex items-center justify-center h-full text-primary w-12 cursor-pointer"
+					onClick={() => {
+						setSearchMode(false);
+					}}
+				>
+					arrow_back
+				</span>
+				<form.Field
+					name="query"
+					children={(field) => (
+						<input
+							autocomplete="off"
+							class="outline-none pr-4 h-full"
+							name={field().name}
+							value={field().state.value}
+							onBlur={field().handleBlur}
+							onInput={(e) => field().handleChange(e.target.value)}
+						/>
+					)}
+				/>
+				<button type="submit" class="hidden"></button>
+			</form>
+		</header>
+	);
+};
 
 const App: Component<RouteSectionProps> = (props) => {
 	// signal for widget open/close
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
 	const [query] = useSearchParams();
+
 	setInitialLocation;
 
 	createEffect(() => {
@@ -59,39 +114,47 @@ const App: Component<RouteSectionProps> = (props) => {
 							"box-shadow": "0 4px 16px rgba(0,0,0,.25)",
 						}}
 					>
-						<header class="flex justify-between bg-elevation1 p-4 items-center border-b border-b-hairline z-10">
-							<A href={`/?${new URLSearchParams(query).toString()}`}>
-								<img src={logo} alt="Cords Logo" />
-							</A>
-							<nav class="flex-1 flex justify-end gap-2">
-								<A
-									href={`/clipboard?${new URLSearchParams(query).toString()}`}
-									class="flex relative h-7 w-7 items-center justify-center text-slate"
-								>
-									<Show when={clipboardIDs().length > 0}>
-										<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
-											<p class="text-[8px] text-white">
-												{clipboardIDs().length}
-											</p>
-										</div>
-									</Show>
-									<span class="material-symbols-outlined">assignment</span>
-								</A>
-								<A
-									target="_blank"
-									href="https://cords.ai"
-									class="flex h-7 w-7 items-center justify-center"
-								>
-									<span class="material-symbols-outlined">search</span>
-								</A>
-								<button
-									onClick={toggle}
-									class="flex h-7 w-7 items-center justify-center"
-								>
-									<span class="material-symbols-outlined">close</span>
-								</button>
-							</nav>
-						</header>
+						<Show
+							when={searchMode()}
+							fallback={
+								<header class="flex justify-between h-16 bg-elevation1 px-4 items-center border-b border-b-hairline z-10">
+									<A href={`/?${new URLSearchParams(query).toString()}`}>
+										<img src={logo} alt="Cords Logo" />
+									</A>
+									<nav class="flex-1 flex justify-end gap-2">
+										<A
+											href={`/clipboard?${new URLSearchParams(query).toString()}`}
+											class="flex relative h-7 w-7 items-center justify-center text-slate"
+										>
+											<Show when={clipboardIDs().length > 0}>
+												<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
+													<p class="text-[8px] text-white">
+														{clipboardIDs().length}
+													</p>
+												</div>
+											</Show>
+											<span class="material-symbols-outlined">
+												assignment
+											</span>
+										</A>
+										<button
+											onClick={() => setSearchMode(true)}
+											class="flex h-7 w-7 items-center justify-center"
+										>
+											<span class="material-symbols-outlined">search</span>
+										</button>
+										<button
+											onClick={toggle}
+											class="flex h-7 w-7 items-center justify-center"
+										>
+											<span class="material-symbols-outlined">close</span>
+										</button>
+									</nav>
+								</header>
+							}
+						>
+							<SearchHeader />
+						</Show>
 						<div class="overflow-y-auto flex-1 h-full">
 							<Suspense fallback={<Pending />}>
 								<ErrorBoundary fallback={(error) => <Error error={error} />}>

@@ -45,7 +45,7 @@ export const CordsAPI = ({ apiKey }: { apiKey: string }) => {
 
 		const res = await request(`${url.toString()}?${params}`);
 		const data = await res.json();
-		return data as { data: ResourceType[] };
+		return data as { data: ResourceType[]; meta: { total: number; lat: number; lng: number } };
 	};
 
 	const related = async (id: string) => {
