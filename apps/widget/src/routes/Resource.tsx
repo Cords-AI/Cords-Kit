@@ -78,7 +78,7 @@ const Resource = () => {
 			<div class="flex gap-4 px-4 py-8 flex-col">
 				<h1>{resource.data.name.en}</h1>
 				<div class="flex items-center justify-between">
-					<PartnerLogo partner={"prosper"} />
+					<PartnerLogo partner={resource.data.partner} />
 					<button
 						onClick={() => {
 							if (clipboardIDs().indexOf(resource.data.id) === -1) {
