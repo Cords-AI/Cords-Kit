@@ -12,6 +12,7 @@ const Home = lazy(() => import("./routes/Home"));
 const Clipboard = lazy(() => import("./routes/Clipboard"));
 const Resource = lazy(() => import("./routes/Resource"));
 const Search = lazy(() => import("./routes/Search"));
+const Location = lazy(() => import("./routes/Location"));
 
 const root = document.getElementById("root");
 
@@ -31,6 +32,7 @@ render(
 				<Route path="/clipboard" component={Clipboard} />
 				<Route path="/search" component={Search} />
 				<Route path="/" component={Home} />
+				<Route path="/location" component={Location} />
 			</Router>
 		</QueryClientProvider>
 	),
