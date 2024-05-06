@@ -5,31 +5,31 @@ import { For, Show, Suspense, createSignal } from "solid-js";
 import { location, setLocation, setUserLocation } from "../lib/location";
 
 const geocode = async (query: string) => {
-	const url = new URL("https://maps.googleapis.com/maps/api/geocode/json");
+	const url = new URL(`${import.meta.env.VITE_SITE_URL}/maps/api/geocode/json`);
 	url.searchParams.append("address", query);
 	url.searchParams.append("components", "country:ca");
-	url.searchParams.append("key", "AIzaSyBd8fQknyAuGoA6lsCj0OEFkd7LxIU45Tc");
+	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
 	const res = await fetch(url);
 	const data = await res.json();
 	return data;
 };
 
 const getPlace = async (placeId: string) => {
-	const url = new URL("http://localhost:3000/place/details/json");
+	const url = new URL(`${import.meta.env.VITE_SITE_URL}/place/details/json`);
 	url.searchParams.append("place_id", placeId);
 	url.searchParams.append("fields", "formatted_address,geometry");
-	url.searchParams.append("key", "AIzaSyBd8fQknyAuGoA6lsCj0OEFkd7LxIU45Tc");
+	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
 	const res = await fetch(url);
 	const data = await res.json();
 	return data;
 };
 
 const autocomplete = async (query: string) => {
-	const url = new URL(`http://localhost:3000/place/autocomplete/json`);
+	const url = new URL(`${import.meta.env.VITE_SITE_URL}/place/autocomplete/json`);
 	url.searchParams.append("input", query);
 	url.searchParams.append("types", "geocode");
 	url.searchParams.append("components", "country:ca");
-	url.searchParams.append("key", "AIzaSyBd8fQknyAuGoA6lsCj0OEFkd7LxIU45Tc");
+	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
 	const res = await fetch(url);
 	const data = await res.json();
 	return data;
