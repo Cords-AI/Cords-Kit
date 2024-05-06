@@ -9,7 +9,7 @@ export const [location, setLocation] = makePersisted(
 	}>({
 		lat: 43.6532,
 		lng: -79.3832,
-		name: "Toronto, ON",
+		name: "Toronto, ON, Canada (Default)",
 	}),
 	{
 		storage: cookieStorage,
@@ -21,7 +21,7 @@ export const [location, setLocation] = makePersisted(
 	}
 );
 
-export const setInitialLocation = createEffect(() => {
+export const setUserLocation = (callback?: () => void) => {
 	navigator.geolocation.getCurrentPosition(
 		(position) => {
 			setLocation({
@@ -36,12 +36,18 @@ export const setInitialLocation = createEffect(() => {
 			setLocation({
 				lat: data.lat,
 				lng: data.lng,
-				name: "Your Location",
+				name: "Your Location, Set by device",
 			});
+			callback?.();
 		},
 		{
 			enableHighAccuracy: false,
 			timeout: 10000,
 		}
 	);
+};
+
+export const setInitialLocation = createEffect(() => {
+	if (location().name !== "Toronto, ON, Canada (Default)") return;
+	setUserLocation();
 });
