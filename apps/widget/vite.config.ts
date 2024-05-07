@@ -6,12 +6,5 @@ export default defineConfig({
 	server: {
 		port: 3000,
 		strictPort: true,
-		proxy: {
-			"/maps": {
-				target: "https://maps.googleapis.com/maps/api",
-				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/maps/, ""),
-			},
-		},
 	},
 });
