@@ -5,7 +5,7 @@ import { For, Show, Suspense, createSignal } from "solid-js";
 import { location, setLocation, setUserLocation } from "../lib/location";
 
 const geocode = async (query: string) => {
-	const url = new URL(`${import.meta.env.VITE_SITE_URL}/maps/api/geocode/json`);
+	const url = new URL(`${import.meta.env.VITE_GOOGLE_PLACES_URL}/geocode/json`);
 	url.searchParams.append("address", query);
 	url.searchParams.append("components", "country:ca");
 	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
@@ -15,7 +15,7 @@ const geocode = async (query: string) => {
 };
 
 const getPlace = async (placeId: string) => {
-	const url = new URL(`${import.meta.env.VITE_SITE_URL}/place/details/json`);
+	const url = new URL(`${import.meta.env.VITE_GOOGLE_PLACES_URL}/place/details/json`);
 	url.searchParams.append("place_id", placeId);
 	url.searchParams.append("fields", "formatted_address,geometry");
 	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
@@ -25,7 +25,7 @@ const getPlace = async (placeId: string) => {
 };
 
 const autocomplete = async (query: string) => {
-	const url = new URL(`${import.meta.env.VITE_SITE_URL}/place/autocomplete/json`);
+	const url = new URL(`${import.meta.env.VITE_GOOGLE_PLACES_URL}/place/autocomplete/json`);
 	url.searchParams.append("input", query);
 	url.searchParams.append("types", "geocode");
 	url.searchParams.append("components", "country:ca");
