@@ -1,38 +1,63 @@
+import { Loader } from "@googlemaps/js-api-loader";
 import { debounce } from "@solid-primitives/scheduled";
 import { useNavigate, useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense, createSignal } from "solid-js";
 import { location, setLocation, setUserLocation } from "../lib/location";
 
-const geocode = async (query: string) => {
-	const url = new URL(`${import.meta.env.VITE_GOOGLE_PLACES_URL}/geocode/json`);
-	url.searchParams.append("address", query);
-	url.searchParams.append("components", "country:ca");
-	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
-	const res = await fetch(url);
-	const data = await res.json();
-	return data;
+const loader = new Loader({
+	apiKey: import.meta.env.VITE_GOOGLE_API_KEY,
+	version: "weekly",
+	libraries: ["places"],
+});
+let autocompleteService: google.maps.places.AutocompleteService | null = null;
+let placesService: google.maps.places.PlacesService | null = null;
+
+const getPlace = (placeId: string): Promise<google.maps.places.PlaceResult> => {
+	return new Promise(async (resolve, reject) => {
+		if (!placesService) {
+			const { PlacesService } = await loader.importLibrary("places");
+			placesService = new PlacesService(document.createElement("div"));
+		}
+		placesService.getDetails(
+			{
+				placeId,
+				fields: ["formatted_address", "geometry"],
+			},
+			(place, status) => {
+				if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+					resolve(place);
+				} else {
+					reject(status);
+				}
+			}
+		);
+	});
 };
 
-const getPlace = async (placeId: string) => {
-	const url = new URL(`${import.meta.env.VITE_GOOGLE_PLACES_URL}/place/details/json`);
-	url.searchParams.append("place_id", placeId);
-	url.searchParams.append("fields", "formatted_address,geometry");
-	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
-	const res = await fetch(url);
-	const data = await res.json();
-	return data;
-};
-
-const autocomplete = async (query: string) => {
-	const url = new URL(`${import.meta.env.VITE_GOOGLE_PLACES_URL}/place/autocomplete/json`);
-	url.searchParams.append("input", query);
-	url.searchParams.append("types", "geocode");
-	url.searchParams.append("components", "country:ca");
-	url.searchParams.append("key", import.meta.env.VITE_GOOGLE_API_KEY);
-	const res = await fetch(url);
-	const data = await res.json();
-	return data;
+const autocomplete = async (
+	query: string
+): Promise<google.maps.places.AutocompletePrediction[]> => {
+	return new Promise(async (resolve, reject) => {
+		if (!autocompleteService) {
+			const { AutocompleteService } = await loader.importLibrary("places");
+			autocompleteService = new AutocompleteService();
+		}
+		autocompleteService.getPlacePredictions(
+			{
+				input: query,
+				types: ["geocode"],
+				componentRestrictions: { country: "ca" },
+			},
+			(predictions, status) => {
+				if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+					reject(status);
+				} else {
+					resolve(predictions);
+				}
+			}
+		);
+	});
 };
 
 const LocationSearch = (props: { search: string }) => {
@@ -53,16 +78,16 @@ const LocationSearch = (props: { search: string }) => {
 
 	return (
 		<Show when={data.data}>
-			<For each={data.data.predictions}>
+			<For each={data.data}>
 				{(prediction) => (
 					<div
 						class="bg-white text-white p-4 -mt-2 rounded-lg cursor-pointer border"
 						onClick={async () => {
 							const place = await getPlace(prediction.place_id);
 							setLocation({
-								lat: place.result.geometry.location.lat,
-								lng: place.result.geometry.location.lng,
-								name: place.result.formatted_address,
+								lat: place.geometry.location.lat(),
+								lng: place.geometry.location.lng(),
+								name: place.formatted_address,
 							});
 							navigate(`/?${new URLSearchParams(query).toString()}`);
 						}}
