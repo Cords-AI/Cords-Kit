@@ -7,10 +7,10 @@ export default defineConfig({
 		port: 3000,
 		strictPort: true,
 		proxy: {
-			"/place": {
-				target: "https://maps.googleapis.com/maps/api/place",
+			"/maps": {
+				target: "https://maps.googleapis.com/maps/api",
 				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/place/, ""),
+				rewrite: (path) => path.replace(/^\/maps/, ""),
 			},
 		},
 	},
