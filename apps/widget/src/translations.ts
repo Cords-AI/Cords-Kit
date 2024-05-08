@@ -47,8 +47,8 @@ const en_dict = {
 		phone: "Phone",
 		email: "Email",
 		website: "Website",
-		related: "Related Resources",
-		nearest: "People have also looked at",
+		nearest: "Related Resources",
+		related: "People have also looked at",
 	},
 };
 
@@ -101,8 +101,8 @@ const fr_dict: Dict = {
 		phone: "Téléphone",
 		email: "Courriel",
 		website: "Site web",
-		related: "Ressources connexes",
-		nearest: "Les gens ont aussi regardé",
+		nearest: "Ressources connexes",
+		related: "Les gens ont aussi regardé",
 	},
 };
 
