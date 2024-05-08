@@ -7,12 +7,14 @@ import PartnerLogo from "../components/PartnerLogo";
 import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
-import { getLocalizedField, locale } from "../translations";
+import { getLocalizedField, useTranslation } from "../translations";
 
 const RelatedItem: Component<{
 	service: ResourceType;
 }> = (props) => {
 	const [query] = useSearchParams();
+	const { locale } = useTranslation();
+
 	return (
 		<A
 			href={`/resource/${props.service.id}?${new URLSearchParams(query).toString()}`}
@@ -77,6 +79,7 @@ const Resource = () => {
 		throwOnError: true,
 		suspense: true,
 	}));
+	const { locale } = useTranslation();
 
 	return (
 		<Show when={resource.data}>

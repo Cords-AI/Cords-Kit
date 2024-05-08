@@ -4,7 +4,7 @@ import empty from "../assets/empty.svg";
 import ServiceItem from "../components/ServiceItem";
 import { clipboardIDs } from "../lib/clipboard";
 import { useCords } from "../lib/cords";
-import { t } from "../translations";
+import { useTranslation } from "../translations";
 
 const Clipboard = () => {
 	const cords = useCords();
@@ -14,6 +14,7 @@ const Clipboard = () => {
 		throwOnError: true,
 		suspense: true,
 	}));
+	const { t } = useTranslation();
 
 	return (
 		<Show
