@@ -33,6 +33,23 @@ const en_dict = {
 			description: "Save search results to your clipboard for easy access anytime.",
 		},
 	},
+	resource: {
+		close: "CLOSE",
+		description: "Description",
+		eligability: "Eligability",
+		application: "Application Process",
+		additional: "Additional Information",
+		fees: "Fees",
+		documents: "Documents Required",
+		accessibility: "Accessibility",
+		contact: "Contact",
+		address: "Address",
+		phone: "Phone",
+		email: "Email",
+		website: "Website",
+		related: "Related Resources",
+		nearest: "People have also looked at",
+	},
 };
 
 type Dict = typeof en_dict;
@@ -69,6 +86,23 @@ const fr_dict: Dict = {
 			description:
 				"Enregistrez les résultats de la recherche dans votre presse-papiers pour y accéder facilement à tout moment.",
 		},
+	},
+	resource: {
+		close: "FERMER",
+		description: "Description",
+		eligability: "Admissibilité",
+		application: "PProcessus de candidature",
+		additional: "Informations complémentaires",
+		fees: "Honoraires",
+		documents: "Documents requis",
+		accessibility: "Accessibilité",
+		contact: "Contact",
+		address: "Adresse",
+		phone: "Téléphone",
+		email: "Courriel",
+		website: "Site web",
+		related: "Ressources connexes",
+		nearest: "Les gens ont aussi regardé",
 	},
 };
 
