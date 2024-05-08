@@ -1,4 +1,5 @@
-import { createMemo, createSignal } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
+import { createMemo } from "solid-js";
 
 const en_dict = {
 	home: {
@@ -66,10 +67,23 @@ export const translations = {
 	fr: fr_dict,
 };
 
+export const locales = ["en", "fr"] as const;
 export type Locale = "en" | "fr";
-export const [locale, setLocale] = createSignal<Locale>("en");
 
-export const t = createMemo(() => translations[locale()]);
+export const useTranslation = () => {
+	const [query, setQuery] = useSearchParams<{ lang?: Locale }>();
+	const locale = createMemo(
+		() => (["en", "fr"].includes(query.lang) ? query.lang : "en") as Locale
+	);
+
+	const setLocale = (lang: Locale) => {
+		setQuery({ ...query, lang });
+	};
+
+	const t = createMemo(() => translations[locale()]);
+
+	return { t, locale, setLocale };
+};
 
 export type LocalizationObject<T> = {
 	en?: T | null;

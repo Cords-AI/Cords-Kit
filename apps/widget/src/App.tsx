@@ -9,7 +9,7 @@ import Pending from "./components/Pending";
 import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
 import { setSearch } from "./lib/search";
-import { locale, setLocale } from "./translations";
+import { useTranslation } from "./translations";
 
 const [searchMode, setSearchMode] = createSignal(false);
 
@@ -68,6 +68,7 @@ const App: Component<RouteSectionProps> = (props) => {
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
 	const [query] = useSearchParams();
+	const { locale, setLocale } = useTranslation();
 
 	setInitialLocation;
 

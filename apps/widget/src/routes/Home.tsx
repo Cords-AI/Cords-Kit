@@ -4,13 +4,14 @@ import { Component, For, Show } from "solid-js";
 import ServiceItem from "../components/ServiceItem";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
-import { t } from "../translations";
+import { useTranslation } from "../translations";
 
 const Home: Component = () => {
 	const cords = useCords();
 	const [searchParams] = useSearchParams<{
 		q?: string;
 	}>();
+	const { t } = useTranslation();
 
 	const similar = createQuery(() => ({
 		queryKey: ["similar", searchParams.q, location().lat, location().lng],

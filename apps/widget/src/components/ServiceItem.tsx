@@ -4,13 +4,14 @@ import { createQuery } from "@tanstack/solid-query";
 import { convert } from "html-to-text";
 import { Component, Show } from "solid-js";
 import { useCords } from "../lib/cords";
-import { getLocalizedField, locale } from "../translations";
+import { getLocalizedField, useTranslation } from "../translations";
 
 type Props = {
 	service: ResourceType;
 };
 
 const ServiceItem: Component<Props> = (props) => {
+	const { locale } = useTranslation();
 	const cords = useCords();
 	const [query] = useSearchParams();
 	const resource = createQuery(() => ({

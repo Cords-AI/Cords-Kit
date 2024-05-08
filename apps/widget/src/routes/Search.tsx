@@ -4,12 +4,13 @@ import ServiceItem from "../components/ServiceItem";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
 import { search, setSearch } from "../lib/search";
-import { t } from "../translations";
+import { useTranslation } from "../translations";
 
 const Search = () => {
 	const cords = useCords();
 	const [searchTime, setSearchTime] = createSignal(0);
 	const [maxPage, setMaxPage] = createSignal(0);
+	const { t } = useTranslation();
 
 	const data = createQuery(() => ({
 		queryKey: ["search", search()],
