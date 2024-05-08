@@ -39,7 +39,7 @@ const Clipboard = () => {
 					<h4>{t().clipboard.title}</h4>
 					<p class="text-xs text-steel">{t().clipboard.description}</p>
 				</div>
-				<For each={clipboard.data.data}>
+				<For each={clipboard.data?.data}>
 					{(service) => <ServiceItem service={service} />}
 				</For>
 			</div>

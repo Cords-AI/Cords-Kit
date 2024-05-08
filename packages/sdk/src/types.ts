@@ -47,8 +47,8 @@ export type ResourceType = {
 	partner: string;
 	delivery: "national" | "provincial" | "local" | "regional" | null;
 	body: {
-		en: ResourceBodyType;
-		fr: ResourceBodyType;
+		en: ResourceBodyType | null;
+		fr: ResourceBodyType | null;
 	};
 };
 
