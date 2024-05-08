@@ -4,6 +4,7 @@ import { Component, For, Show } from "solid-js";
 import ServiceItem from "../components/ServiceItem";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
+import { t } from "../translations";
 
 const Home: Component = () => {
 	const cords = useCords();
@@ -43,8 +44,8 @@ const Home: Component = () => {
 			<div class="text-black flex flex-col">
 				<Show when={similar.data?.data.length > 0}>
 					<div class="p-8 bg-elevation1">
-						<h4>Similar</h4>
-						<p class="text-xs text-steel">View similar services to the current page</p>
+						<h4>{t().home.similar.title}</h4>
+						<p class="text-xs text-steel">{t().home.similar.description}</p>
 					</div>
 					<For each={similar.data.data}>
 						{(service) => {
@@ -54,8 +55,8 @@ const Home: Component = () => {
 				</Show>
 				<Show when={related.data?.data.length > 0}>
 					<div class="p-8 mt-2 bg-elevation1">
-						<h4>Related</h4>
-						<p class="text-xs text-steel">Other services you may be interested in</p>
+						<h4>{t().home.related.title}</h4>
+						<p class="text-xs text-steel">{t().home.related.description}</p>
 					</div>
 					<For each={related.data.data}>
 						{(service) => {

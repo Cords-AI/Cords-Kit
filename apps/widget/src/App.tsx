@@ -9,6 +9,7 @@ import Pending from "./components/Pending";
 import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
 import { setSearch } from "./lib/search";
+import { locale, setLocale } from "./translations";
 
 const [searchMode, setSearchMode] = createSignal(false);
 
@@ -122,6 +123,14 @@ const App: Component<RouteSectionProps> = (props) => {
 										<img src={logo} alt="Cords Logo" />
 									</A>
 									<nav class="flex-1 flex justify-end gap-2">
+										<button
+											class="border rounded-full w-7 h-7 text-sm font-medium"
+											onClick={() => {
+												setLocale(locale() === "en" ? "fr" : "en");
+											}}
+										>
+											{locale() === "en" ? "EN" : "FR"}
+										</button>
 										<A
 											href={`/clipboard?${new URLSearchParams(query).toString()}`}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
