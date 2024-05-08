@@ -1,4 +1,4 @@
-import { A, RouteSectionProps, useNavigate, useSearchParams } from "@solidjs/router";
+import { A, RouteSectionProps, useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
@@ -8,6 +8,7 @@ import LocationFooter from "./components/LocationFooter";
 import Pending from "./components/Pending";
 import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
+import { useSearchParams } from "./lib/params";
 import { setSearch } from "./lib/search";
 import { useTranslation } from "./translations";
 

@@ -12,6 +12,11 @@ const en_dict = {
 			description: "Other services you may be interested in",
 		},
 	},
+	location: {
+		change: "Change location",
+		"use-current": "Use current location",
+		search: "Search for a location...",
+	},
 	search: {
 		meta: {
 			page: "Page",
@@ -43,6 +48,11 @@ const fr_dict: Dict = {
 			description: "Autres services susceptibles de vous intéresser",
 		},
 	},
+	location: {
+		change: "Changer de lieu",
+		"use-current": "Utiliser l'emplacement actuel",
+		search: "Rechercher un lieu...",
+	},
 	search: {
 		meta: {
 			page: "Page",
@@ -73,7 +83,7 @@ export type Locale = "en" | "fr";
 export const useTranslation = () => {
 	const [query, setQuery] = useSearchParams<{ lang?: Locale }>();
 	const locale = createMemo(
-		() => (["en", "fr"].includes(query.lang) ? query.lang : "en") as Locale
+		() => (query.lang && ["en", "fr"].includes(query.lang) ? query.lang : "en") as Locale
 	);
 
 	const setLocale = (lang: Locale) => {

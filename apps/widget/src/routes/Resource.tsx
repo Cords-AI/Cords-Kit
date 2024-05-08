@@ -17,14 +17,14 @@ const RelatedItem: Component<{
 
 	return (
 		<A
-			href={`/resource/${props.service.id}?${new URLSearchParams(query).toString()}`}
+			href={`/resource/${props.service.id}?${query}`}
 			class="bg-primary hover:bg-opacity-10 bg-opacity-5 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start"
 		>
 			<p class="font-header text-sm text-primary">
 				{getLocalizedField(props.service.name, locale())}
 			</p>
 			<p class="text-xs line-clamp-2 max-w-full">
-				{convert(getLocalizedField(props.service.description, locale()))}
+				{convert(getLocalizedField(props.service.description, locale())!)}
 			</p>
 		</A>
 	);
@@ -42,9 +42,9 @@ const Related: Component<{
 	}));
 
 	return (
-		<Show when={related.data?.data.length > 0}>
+		<Show when={related.data && related.data.data.length > 0}>
 			<h3>People have also looked at</h3>
-			<For each={related.data.data}>{(service) => <RelatedItem service={service} />}</For>
+			<For each={related.data?.data}>{(service) => <RelatedItem service={service} />}</For>
 		</Show>
 	);
 };
@@ -62,9 +62,9 @@ const Nearest: Component<{
 	}));
 
 	return (
-		<Show when={related.data?.data.length > 0}>
+		<Show when={related.data && related.data.data.length > 0}>
 			<h3>Related Resources</h3>
-			<For each={related.data.data}>{(service) => <RelatedItem service={service} />}</For>
+			<For each={related.data?.data}>{(service) => <RelatedItem service={service} />}</For>
 		</Show>
 	);
 };
@@ -83,134 +83,134 @@ const Resource = () => {
 
 	return (
 		<Show when={resource.data}>
-			<div class="flex gap-4 px-4 py-8 flex-col">
-				<h1>{getLocalizedField(resource.data.name, locale())}</h1>
-				<div class="flex items-center justify-between">
-					<PartnerLogo partner={resource.data.partner} />
-					<button
-						onClick={() => {
-							if (clipboardIDs().indexOf(resource.data.id) === -1) {
-								setClipboardIDs((ids) => [...ids, resource.data.id]);
-							} else {
-								setClipboardIDs((ids) =>
-									ids.filter((id) => id !== resource.data.id)
-								);
-							}
-						}}
-						class="flex relative h-7 w-7 items-center justify-center text-slate"
-					>
-						<Show when={clipboardIDs().indexOf(resource.data.id) !== -1}>
-							<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
-								<span class="material-symbols-outlined material-symbols-outlined-thicker text-[10px]">
-									check
-								</span>
-							</div>
-						</Show>
-						<span class="material-symbols-outlined">assignment</span>
+			{(resource) => (
+				<div class="flex gap-4 px-4 py-8 flex-col">
+					<h1>{getLocalizedField(resource().name, locale())}</h1>
+					<div class="flex items-center justify-between">
+						<PartnerLogo partner={resource().partner} />
+						<button
+							onClick={() => {
+								if (clipboardIDs().indexOf(resource().id) === -1) {
+									setClipboardIDs((ids) => [...ids, resource().id]);
+								} else {
+									setClipboardIDs((ids) =>
+										ids.filter((id) => id !== resource().id)
+									);
+								}
+							}}
+							class="flex relative h-7 w-7 items-center justify-center text-slate"
+						>
+							<Show when={clipboardIDs().indexOf(resource().id) !== -1}>
+								<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
+									<span class="material-symbols-outlined material-symbols-outlined-thicker text-[10px]">
+										check
+									</span>
+								</div>
+							</Show>
+							<span class="material-symbols-outlined">assignment</span>
+						</button>
+					</div>
+					<hr />
+					<button onClick={() => navigate(-1)} class="btn my-4">
+						CLOSE
 					</button>
-				</div>
-				<hr />
-				<button onClick={() => navigate(-1)} class="btn my-4">
-					CLOSE
-				</button>
-				<Show when={getLocalizedField(resource.data.description, locale())}>
-					<h3>Description</h3>
-					<p innerHTML={getLocalizedField(resource.data.description, locale())} />
-					<hr />
-				</Show>
-				<Show when={getLocalizedField(resource.data.body, locale()).eligibility}>
-					<h3>Eligability</h3>
-					<p innerHTML={getLocalizedField(resource.data.body, locale()).eligibility} />
-					<hr />
-				</Show>
-				<Show when={getLocalizedField(resource.data.body, locale()).applicationProcess}>
-					<h3>Application Process</h3>
-					<p
-						innerHTML={
-							getLocalizedField(resource.data.body, locale()).applicationProcess
+					<Show when={getLocalizedField(resource().description, locale())}>
+						<h3>Description</h3>
+						<p innerHTML={getLocalizedField(resource().description, locale()) ?? ""} />
+						<hr />
+					</Show>
+					<Show when={getLocalizedField(resource().body, locale())?.eligibility}>
+						<h3>Eligability</h3>
+						<p innerHTML={getLocalizedField(resource().body, locale())?.eligibility} />
+						<hr />
+					</Show>
+					<Show when={getLocalizedField(resource().body, locale())?.applicationProcess}>
+						<h3>Application Process</h3>
+						<p
+							innerHTML={
+								getLocalizedField(resource().body, locale())?.applicationProcess
+							}
+						/>
+						<hr />
+					</Show>
+					<Show
+						when={
+							getLocalizedField(resource().body, locale())?.fees ||
+							getLocalizedField(resource().body, locale())?.documentsRequired ||
+							getLocalizedField(resource().body, locale())?.accessibility
 						}
-					/>
-					<hr />
-				</Show>
-				<Show
-					when={
-						getLocalizedField(resource.data.body, locale()).fees ||
-						getLocalizedField(resource.data.body, locale()).documentsRequired ||
-						getLocalizedField(resource.data.body, locale()).accessibility
-					}
-				>
-					<h3>Additional Information</h3>
-					<Show when={getLocalizedField(resource.data.body, locale()).fees}>
-						<p class="font-medium -mb-2">Fees</p>
-						<p innerHTML={getLocalizedField(resource.data.body, locale()).fees} />
-					</Show>
-					<Show when={getLocalizedField(resource.data.body, locale()).documentsRequired}>
-						<p class="font-medium -mb-2">Documents Required</p>
-						<p
-							innerHTML={
-								getLocalizedField(resource.data.body, locale()).documentsRequired
-							}
-						/>
-					</Show>
-					<Show when={getLocalizedField(resource.data.body, locale()).accessibility}>
-						<p class="font-medium -mb-2">Accessibility</p>
-						<p
-							innerHTML={
-								getLocalizedField(resource.data.body, locale()).accessibility
-							}
-						/>
-					</Show>
-					<hr />
-				</Show>
-				<div class="p-4 flex flex-col gap-2 border rounded-3xl bg-elevation1">
-					<p class="text-xs text-steel font-medium -mb-2">Contact</p>
-					<h4 class="text-lg">{getLocalizedField(resource.data.name, locale())}</h4>
-					<hr />
-					<p class="font-medium text-xs text-charcoal">Address</p>
-					<a
-						href={`https://www.google.com/maps/search/?api=1&query=${resource.data.address.lat},${resource.data.address.lng}`}
-						target="_blank"
-						class="text-sm text-primary"
 					>
-						{formatServiceAddress(resource.data.address)}
-					</a>
-					<p class="font-medium text-xs text-charcoal">Phone</p>
-					{resource.data.phoneNumbers.map((phone) => (
-						<p class="text-sm">
-							{phone.name ? phone.name + ": " : ""}
-							{phone.phone}
-						</p>
-					))}
-					<p class="font-medium text-xs text-charcoal">Email</p>
-					<p class="text-sm">
-						<a href={`mailto:${getLocalizedField(resource.data.email, locale())}`}>
-							{getLocalizedField(resource.data.email, locale())}
+						<h3>Additional Information</h3>
+						<Show when={getLocalizedField(resource().body, locale())?.fees}>
+							<p class="font-medium -mb-2">Fees</p>
+							<p innerHTML={getLocalizedField(resource().body, locale())?.fees} />
+						</Show>
+						<Show
+							when={getLocalizedField(resource().body, locale())?.documentsRequired}
+						>
+							<p class="font-medium -mb-2">Documents Required</p>
+							<p
+								innerHTML={
+									getLocalizedField(resource().body, locale())?.documentsRequired
+								}
+							/>
+						</Show>
+						<Show when={getLocalizedField(resource().body, locale())?.accessibility}>
+							<p class="font-medium -mb-2">Accessibility</p>
+							<p
+								innerHTML={
+									getLocalizedField(resource().body, locale())?.accessibility
+								}
+							/>
+						</Show>
+						<hr />
+					</Show>
+					<div class="p-4 flex flex-col gap-2 border rounded-3xl bg-elevation1">
+						<p class="text-xs text-steel font-medium -mb-2">Contact</p>
+						<h4 class="text-lg">{getLocalizedField(resource().name, locale())}</h4>
+						<hr />
+						<p class="font-medium text-xs text-charcoal">Address</p>
+						<a
+							href={`https://www.google.com/maps/search/?api=1&query=${resource().address.lat},${resource().address.lng}`}
+							target="_blank"
+							class="text-sm text-primary"
+						>
+							{formatServiceAddress(resource().address)}
 						</a>
-					</p>
-					<p class="font-medium text-xs text-charcoal">Website</p>
-					<a
-						class="text-sm truncate text-primary"
-						href={
-							getLocalizedField(resource.data.website, locale()).startsWith("http")
-								? getLocalizedField(resource.data.website, locale())
-								: `https://${getLocalizedField(resource.data.website, locale())}`
-						}
-						target="_blank"
-					>
-						{getLocalizedField(resource.data.website, locale())}
-					</a>
+						<p class="font-medium text-xs text-charcoal">Phone</p>
+						{resource().phoneNumbers.map((phone) => (
+							<p class="text-sm">
+								{phone.name ? phone.name + ": " : ""}
+								{phone.phone}
+							</p>
+						))}
+						<p class="font-medium text-xs text-charcoal">Email</p>
+						<p class="text-sm">
+							<a href={`mailto:${getLocalizedField(resource().email, locale())}`}>
+								{getLocalizedField(resource().email, locale())}
+							</a>
+						</p>
+						<p class="font-medium text-xs text-charcoal">Website</p>
+						<a
+							class="text-sm truncate text-primary"
+							href={
+								getLocalizedField(resource().website, locale())?.startsWith("http")
+									? getLocalizedField(resource().website, locale()) ?? ""
+									: `https://${getLocalizedField(resource().website, locale())}`
+							}
+							target="_blank"
+						>
+							{getLocalizedField(resource().website, locale())}
+						</a>
+					</div>
+					<Suspense>
+						<Nearest id={resource().id} />
+					</Suspense>
+					<Suspense>
+						<Related id={resource().id} />
+					</Suspense>
 				</div>
-				<Suspense>
-					<Show when={resource.data.id}>
-						<Nearest id={resource.data.id} />
-					</Show>
-				</Suspense>
-				<Suspense>
-					<Show when={resource.data.id}>
-						<Related id={resource.data.id} />
-					</Show>
-				</Suspense>
-			</div>
+			)}
 		</Show>
 	);
 };
