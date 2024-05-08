@@ -7,6 +7,7 @@ import PartnerLogo from "../components/PartnerLogo";
 import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
+import { getLocalizedField, locale } from "../translations";
 
 const RelatedItem: Component<{
 	service: ResourceType;
@@ -17,8 +18,12 @@ const RelatedItem: Component<{
 			href={`/resource/${props.service.id}?${new URLSearchParams(query).toString()}`}
 			class="bg-primary hover:bg-opacity-10 bg-opacity-5 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start"
 		>
-			<p class="font-header text-sm text-primary">{props.service.name.en}</p>
-			<p class="text-xs line-clamp-2 max-w-full">{convert(props.service.description.en)}</p>
+			<p class="font-header text-sm text-primary">
+				{getLocalizedField(props.service.name, locale())}
+			</p>
+			<p class="text-xs line-clamp-2 max-w-full">
+				{convert(getLocalizedField(props.service.description, locale()))}
+			</p>
 		</A>
 	);
 };
@@ -76,7 +81,7 @@ const Resource = () => {
 	return (
 		<Show when={resource.data}>
 			<div class="flex gap-4 px-4 py-8 flex-col">
-				<h1>{resource.data.name.en}</h1>
+				<h1>{getLocalizedField(resource.data.name, locale())}</h1>
 				<div class="flex items-center justify-between">
 					<PartnerLogo partner={resource.data.partner} />
 					<button
@@ -105,46 +110,58 @@ const Resource = () => {
 				<button onClick={() => navigate(-1)} class="btn my-4">
 					CLOSE
 				</button>
-				<Show when={resource.data.description.en}>
+				<Show when={getLocalizedField(resource.data.description, locale())}>
 					<h3>Description</h3>
-					<p innerHTML={resource.data.description.en} />
+					<p innerHTML={getLocalizedField(resource.data.description, locale())} />
 					<hr />
 				</Show>
-				<Show when={resource.data.body.en.eligibility}>
+				<Show when={getLocalizedField(resource.data.body, locale()).eligibility}>
 					<h3>Eligability</h3>
-					<p innerHTML={resource.data.body.en.eligibility} />
+					<p innerHTML={getLocalizedField(resource.data.body, locale()).eligibility} />
 					<hr />
 				</Show>
-				<Show when={resource.data.body.en.applicationProcess}>
+				<Show when={getLocalizedField(resource.data.body, locale()).applicationProcess}>
 					<h3>Application Process</h3>
-					<p innerHTML={resource.data.body.en.applicationProcess} />
+					<p
+						innerHTML={
+							getLocalizedField(resource.data.body, locale()).applicationProcess
+						}
+					/>
 					<hr />
 				</Show>
 				<Show
 					when={
-						resource.data.body.en.fees ||
-						resource.data.body.en.documentsRequired ||
-						resource.data.body.en.accessibility
+						getLocalizedField(resource.data.body, locale()).fees ||
+						getLocalizedField(resource.data.body, locale()).documentsRequired ||
+						getLocalizedField(resource.data.body, locale()).accessibility
 					}
 				>
 					<h3>Additional Information</h3>
-					<Show when={resource.data.body.en.fees}>
+					<Show when={getLocalizedField(resource.data.body, locale()).fees}>
 						<p class="font-medium -mb-2">Fees</p>
-						<p innerHTML={resource.data.body.en.fees} />
+						<p innerHTML={getLocalizedField(resource.data.body, locale()).fees} />
 					</Show>
-					<Show when={resource.data.body.en.documentsRequired}>
+					<Show when={getLocalizedField(resource.data.body, locale()).documentsRequired}>
 						<p class="font-medium -mb-2">Documents Required</p>
-						<p innerHTML={resource.data.body.en.documentsRequired} />
+						<p
+							innerHTML={
+								getLocalizedField(resource.data.body, locale()).documentsRequired
+							}
+						/>
 					</Show>
-					<Show when={resource.data.body.en.accessibility}>
+					<Show when={getLocalizedField(resource.data.body, locale()).accessibility}>
 						<p class="font-medium -mb-2">Accessibility</p>
-						<p innerHTML={resource.data.body.en.accessibility} />
+						<p
+							innerHTML={
+								getLocalizedField(resource.data.body, locale()).accessibility
+							}
+						/>
 					</Show>
 					<hr />
 				</Show>
 				<div class="p-4 flex flex-col gap-2 border rounded-3xl bg-elevation1">
 					<p class="text-xs text-steel font-medium -mb-2">Contact</p>
-					<h4 class="text-lg">{resource.data.name.en}</h4>
+					<h4 class="text-lg">{getLocalizedField(resource.data.name, locale())}</h4>
 					<hr />
 					<p class="font-medium text-xs text-charcoal">Address</p>
 					<a
@@ -163,19 +180,21 @@ const Resource = () => {
 					))}
 					<p class="font-medium text-xs text-charcoal">Email</p>
 					<p class="text-sm">
-						<a href={`mailto:${resource.data.email.en}`}>{resource.data.email.en}</a>
+						<a href={`mailto:${getLocalizedField(resource.data.email, locale())}`}>
+							{getLocalizedField(resource.data.email, locale())}
+						</a>
 					</p>
 					<p class="font-medium text-xs text-charcoal">Website</p>
 					<a
 						class="text-sm truncate text-primary"
 						href={
-							resource.data.website.en.startsWith("http")
-								? resource.data.website.en
-								: `https://${resource.data.website.en}`
+							getLocalizedField(resource.data.website, locale()).startsWith("http")
+								? getLocalizedField(resource.data.website, locale())
+								: `https://${getLocalizedField(resource.data.website, locale())}`
 						}
 						target="_blank"
 					>
-						{resource.data.website.en}
+						{getLocalizedField(resource.data.website, locale())}
 					</a>
 				</div>
 				<Suspense>

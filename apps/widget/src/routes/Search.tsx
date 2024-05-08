@@ -4,6 +4,7 @@ import ServiceItem from "../components/ServiceItem";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
 import { search, setSearch } from "../lib/search";
+import { t } from "../translations";
 
 const Search = () => {
 	const cords = useCords();
@@ -38,8 +39,9 @@ const Search = () => {
 				<div class="p-8 bg-elevation1">
 					<h4>{search().query}</h4>
 					<p class="text-xs text-steel">
-						Page {search().page} of {data.data.meta.total} results in (
-						{searchTime().toFixed(2)} seconds)
+						{t().search.meta.page} {search().page} {t().search.meta.of}{" "}
+						{data.data.meta.total} {t().search.meta.results} ({searchTime().toFixed(2)}{" "}
+						{t().search.meta.seconds})
 					</p>
 				</div>
 				<div>
