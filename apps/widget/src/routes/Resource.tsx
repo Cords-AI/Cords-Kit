@@ -34,6 +34,7 @@ const Related: Component<{
 	id: string;
 }> = (props) => {
 	const cords = useCords();
+	const { t } = useTranslation();
 	const related = createQuery(() => ({
 		queryKey: ["related", props.id],
 		queryFn: () => cords.related(props.id),
@@ -43,7 +44,7 @@ const Related: Component<{
 
 	return (
 		<Show when={related.data && related.data.data.length > 0}>
-			<h3>People have also looked at</h3>
+			<h3>{t().resource.related}</h3>
 			<For each={related.data?.data}>{(service) => <RelatedItem service={service} />}</For>
 		</Show>
 	);
@@ -53,6 +54,7 @@ const Nearest: Component<{
 	id: string;
 }> = (props) => {
 	const cords = useCords();
+	const { t } = useTranslation();
 	const related = createQuery(() => ({
 		queryKey: ["nearest-neighbour", props.id],
 		queryFn: () =>
@@ -63,7 +65,7 @@ const Nearest: Component<{
 
 	return (
 		<Show when={related.data && related.data.data.length > 0}>
-			<h3>Related Resources</h3>
+			<h3>{t().resource.nearest}</h3>
 			<For each={related.data?.data}>{(service) => <RelatedItem service={service} />}</For>
 		</Show>
 	);
@@ -79,7 +81,7 @@ const Resource = () => {
 		throwOnError: true,
 		suspense: true,
 	}));
-	const { locale } = useTranslation();
+	const { t, locale } = useTranslation();
 
 	return (
 		<Show when={resource.data}>
@@ -112,20 +114,20 @@ const Resource = () => {
 					</div>
 					<hr />
 					<button onClick={() => navigate(-1)} class="btn my-4">
-						CLOSE
+						{t().resource.close}
 					</button>
 					<Show when={getLocalizedField(resource().description, locale())}>
-						<h3>Description</h3>
+						<h3>{t().resource.description}</h3>
 						<p innerHTML={getLocalizedField(resource().description, locale()) ?? ""} />
 						<hr />
 					</Show>
 					<Show when={getLocalizedField(resource().body, locale())?.eligibility}>
-						<h3>Eligability</h3>
+						<h3>{t().resource.eligability}</h3>
 						<p innerHTML={getLocalizedField(resource().body, locale())?.eligibility} />
 						<hr />
 					</Show>
 					<Show when={getLocalizedField(resource().body, locale())?.applicationProcess}>
-						<h3>Application Process</h3>
+						<h3>{t().resource.application}</h3>
 						<p
 							innerHTML={
 								getLocalizedField(resource().body, locale())?.applicationProcess
@@ -140,15 +142,15 @@ const Resource = () => {
 							getLocalizedField(resource().body, locale())?.accessibility
 						}
 					>
-						<h3>Additional Information</h3>
+						<h3>{t().resource.additional}</h3>
 						<Show when={getLocalizedField(resource().body, locale())?.fees}>
-							<p class="font-medium -mb-2">Fees</p>
+							<p class="font-medium -mb-2">{t().resource.fees}</p>
 							<p innerHTML={getLocalizedField(resource().body, locale())?.fees} />
 						</Show>
 						<Show
 							when={getLocalizedField(resource().body, locale())?.documentsRequired}
 						>
-							<p class="font-medium -mb-2">Documents Required</p>
+							<p class="font-medium -mb-2">{t().resource.documents}</p>
 							<p
 								innerHTML={
 									getLocalizedField(resource().body, locale())?.documentsRequired
@@ -156,7 +158,7 @@ const Resource = () => {
 							/>
 						</Show>
 						<Show when={getLocalizedField(resource().body, locale())?.accessibility}>
-							<p class="font-medium -mb-2">Accessibility</p>
+							<p class="font-medium -mb-2">{t().resource.accessibility}</p>
 							<p
 								innerHTML={
 									getLocalizedField(resource().body, locale())?.accessibility
@@ -166,10 +168,10 @@ const Resource = () => {
 						<hr />
 					</Show>
 					<div class="p-4 flex flex-col gap-2 border rounded-3xl bg-elevation1">
-						<p class="text-xs text-steel font-medium -mb-2">Contact</p>
+						<p class="text-xs text-steel font-medium -mb-2">{t().resource.contact}</p>
 						<h4 class="text-lg">{getLocalizedField(resource().name, locale())}</h4>
 						<hr />
-						<p class="font-medium text-xs text-charcoal">Address</p>
+						<p class="font-medium text-xs text-charcoal">{t().resource.address}</p>
 						<a
 							href={`https://www.google.com/maps/search/?api=1&query=${resource().address.lat},${resource().address.lng}`}
 							target="_blank"
@@ -177,20 +179,20 @@ const Resource = () => {
 						>
 							{formatServiceAddress(resource().address)}
 						</a>
-						<p class="font-medium text-xs text-charcoal">Phone</p>
+						<p class="font-medium text-xs text-charcoal">{t().resource.phone}</p>
 						{resource().phoneNumbers.map((phone) => (
 							<p class="text-sm">
 								{phone.name ? phone.name + ": " : ""}
 								{phone.phone}
 							</p>
 						))}
-						<p class="font-medium text-xs text-charcoal">Email</p>
+						<p class="font-medium text-xs text-charcoal">{t().resource.email}</p>
 						<p class="text-sm">
 							<a href={`mailto:${getLocalizedField(resource().email, locale())}`}>
 								{getLocalizedField(resource().email, locale())}
 							</a>
 						</p>
-						<p class="font-medium text-xs text-charcoal">Website</p>
+						<p class="font-medium text-xs text-charcoal">{t().resource.website}</p>
 						<a
 							class="text-sm truncate text-primary"
 							href={
