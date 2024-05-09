@@ -1,0 +1,25 @@
+node_modules/
+.expo/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# macOS
+.DS_Store
+
+# Turborepo
+.turbo
+
+.env
+build/
+
+lfsa000a21a_e.geojson
+
+android/
+ios/
