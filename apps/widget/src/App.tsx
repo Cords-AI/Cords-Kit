@@ -2,7 +2,6 @@ import { A, RouteSectionProps, useLocation, useNavigate } from "@solidjs/router"
 import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
-import logo from "./assets/logo.svg";
 import Error from "./components/Error";
 import LocationFooter from "./components/LocationFooter";
 import Pending from "./components/Pending";
@@ -132,18 +131,21 @@ const App: Component<RouteSectionProps> = (props) => {
 							when={searchMode()}
 							fallback={
 								<header class="flex justify-between h-16 bg-elevation1 px-4 items-center border-b border-b-hairline z-10">
-									<A href={`/?${new URLSearchParams(query).toString()}`}>
-										<img src={logo} alt="Cords Logo" />
-									</A>
+									<button
+										class="border rounded-full w-8 h-8 text-sm font-medium"
+										onClick={() => {
+											setLocale(locale() === "en" ? "fr" : "en");
+										}}
+									>
+										{locale() === "en" ? "EN" : "FR"}
+									</button>
 									<nav class="flex-1 flex justify-end gap-2">
-										<button
-											class="border rounded-full w-7 h-7 text-sm font-medium"
-											onClick={() => {
-												setLocale(locale() === "en" ? "fr" : "en");
-											}}
+										<A
+											href={`/?${new URLSearchParams(query).toString()}`}
+											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
-											{locale() === "en" ? "EN" : "FR"}
-										</button>
+											<span class="material-symbols-outlined">home</span>
+										</A>
 										<A
 											href={`/clipboard?${new URLSearchParams(query).toString()}`}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
@@ -177,7 +179,10 @@ const App: Component<RouteSectionProps> = (props) => {
 						>
 							<SearchHeader />
 						</Show>
-						<div ref={scrollRef} class="overflow-y-auto flex-1 h-full">
+						<div
+							ref={scrollRef}
+							class="overflow-y-auto overscroll-contain flex-1 h-full"
+						>
 							<Suspense fallback={<Pending />}>
 								<ErrorBoundary fallback={(error) => <Error error={error} />}>
 									{props.children}
