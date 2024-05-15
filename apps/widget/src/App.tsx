@@ -1,4 +1,4 @@
-import { A, RouteSectionProps, useNavigate } from "@solidjs/router";
+import { A, RouteSectionProps, useLocation, useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
@@ -70,6 +70,8 @@ const App: Component<RouteSectionProps> = (props) => {
 	const toggle = () => setOpen(!open());
 	const [query] = useSearchParams();
 	const { locale, setLocale } = useTranslation();
+	const location = useLocation();
+	let scrollRef: HTMLDivElement | undefined;
 
 	setInitialLocation;
 
@@ -82,6 +84,15 @@ const App: Component<RouteSectionProps> = (props) => {
 			},
 			"*"
 		);
+	});
+
+	createEffect(() => {
+		console.log(location.pathname);
+
+		if (!scrollRef) return;
+		scrollRef.scrollTo({
+			top: 0,
+		});
 	});
 
 	return (
@@ -166,7 +177,7 @@ const App: Component<RouteSectionProps> = (props) => {
 						>
 							<SearchHeader />
 						</Show>
-						<div class="overflow-y-auto flex-1 h-full">
+						<div ref={scrollRef} class="overflow-y-auto flex-1 h-full">
 							<Suspense fallback={<Pending />}>
 								<ErrorBoundary fallback={(error) => <Error error={error} />}>
 									{props.children}

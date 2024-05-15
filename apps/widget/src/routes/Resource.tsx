@@ -1,5 +1,5 @@
 import { ResourceType, formatServiceAddress } from "@cords/sdk";
-import { A, useNavigate, useParams, useSearchParams } from "@solidjs/router";
+import { A, useNavigate, useParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { convert } from "html-to-text";
 import { Component, For, Show, Suspense } from "solid-js";
@@ -7,6 +7,7 @@ import PartnerLogo from "../components/PartnerLogo";
 import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
+import { useSearchParams } from "../lib/params";
 import { getLocalizedField, useTranslation } from "../translations";
 
 const RelatedItem: Component<{
@@ -17,7 +18,7 @@ const RelatedItem: Component<{
 
 	return (
 		<A
-			href={`/resource/${props.service.id}?${query}`}
+			href={`/resource/${props.service.id}?${new URLSearchParams(query).toString()}`}
 			class="bg-primary hover:bg-opacity-10 bg-opacity-5 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start"
 		>
 			<p class="font-header text-sm text-primary">
@@ -206,10 +207,14 @@ const Resource = () => {
 						</a>
 					</div>
 					<Suspense>
-						<Nearest id={resource().id} />
+						<Show when={resource().id}>
+							<Nearest id={resource().id} />
+						</Show>
 					</Suspense>
 					<Suspense>
-						<Related id={resource().id} />
+						<Show when={resource().id}>
+							<Related id={resource().id} />
+						</Show>
 					</Suspense>
 				</div>
 			)}
