@@ -1,4 +1,4 @@
-import { ResourceType } from "@cords/sdk";
+import { SearchResourceType } from "@cords/sdk";
 import { A } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { convert } from "html-to-text";
@@ -8,7 +8,7 @@ import { useSearchParams } from "../lib/params";
 import { getLocalizedField, useTranslation } from "../translations";
 
 type Props = {
-	service: ResourceType;
+	service: SearchResourceType;
 };
 
 const ServiceItem: Component<Props> = (props) => {

@@ -52,6 +52,11 @@ export type ResourceType = {
 	};
 };
 
+export type SearchResourceType = Omit<
+	ResourceType,
+	"website" | "email" | "phoneNumbers" | "addresses" | "address"
+>;
+
 export type SearchOptions = {
 	lat: number;
 	lng: number;
