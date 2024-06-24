@@ -26,6 +26,7 @@ const Search = () => {
 			setMaxPage(Math.ceil(res.meta.total / 10));
 			return res;
 		},
+		gcTime: 0,
 		enabled: !!search().query,
 		throwOnError: true,
 		suspense: true,

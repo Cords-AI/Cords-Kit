@@ -68,11 +68,7 @@ const LocationSearch = (props: { search: string }) => {
 
 	const data = createQuery(() => ({
 		queryKey: ["location", props.search],
-		queryFn: async () => {
-			const res = await autocomplete(props.search);
-			console.log(res);
-			return res;
-		},
+		queryFn: () => autocomplete(props.search),
 		enabled: props.search !== "",
 		throwOnError: true,
 		suspense: true,
@@ -84,15 +80,15 @@ const LocationSearch = (props: { search: string }) => {
 				{(prediction) => (
 					<div
 						class="bg-white text-white p-4 -mt-2 rounded-lg cursor-pointer border"
-						onClick={async () => {
-							const place = await getPlace(prediction.place_id);
-
-							setLocation({
-								lat: place.geometry?.location?.lat()!,
-								lng: place.geometry?.location?.lng()!,
-								name: place.formatted_address!,
+						onClick={() => {
+							getPlace(prediction.place_id).then((place) => {
+								setLocation({
+									lat: place.geometry?.location?.lat()!,
+									lng: place.geometry?.location?.lng()!,
+									name: place.formatted_address!,
+								});
+								navigate(`/?${new URLSearchParams(query).toString()}`);
 							});
-							navigate(`/?${new URLSearchParams(query).toString()}`);
 						}}
 					>
 						<p>{prediction.description.split(",")[0]}</p>
