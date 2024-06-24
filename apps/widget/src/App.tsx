@@ -137,7 +137,7 @@ const App: Component<RouteSectionProps> = (props) => {
 											setLocale(locale() === "en" ? "fr" : "en");
 										}}
 									>
-										{locale() === "en" ? "EN" : "FR"}
+										{locale() === "fr" ? "EN" : "FR"}
 									</button>
 									<nav class="flex-1 flex justify-end gap-2">
 										<A

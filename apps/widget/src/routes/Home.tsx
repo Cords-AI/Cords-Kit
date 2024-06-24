@@ -14,6 +14,8 @@ const RelatedSection = (props: { id: string }) => {
 		queryKey: ["related", props.id],
 		queryFn: () => cords.related(props.id),
 		throwOnError: true,
+		gcTime: 0,
+		staleTime: 0,
 	}));
 
 	return (
@@ -68,6 +70,8 @@ const Home: Component = () => {
 				};
 			}
 		},
+		gcTime: 0,
+		staleTime: 0,
 		retry: 1,
 		throwOnError: true,
 		suspense: true,

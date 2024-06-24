@@ -20,9 +20,9 @@ const en_dict = {
 	search: {
 		meta: {
 			page: "Page",
-			of: "de",
-			results: "résultats",
-			seconds: "secondes",
+			of: "of",
+			results: "results",
+			seconds: "seconds",
 		},
 	},
 	clipboard: {
@@ -49,6 +49,7 @@ const en_dict = {
 		website: "Website",
 		nearest: "Related Resources",
 		related: "People have also looked at",
+		"result-from": "Result from",
 	},
 };
 
@@ -73,9 +74,9 @@ const fr_dict: Dict = {
 	search: {
 		meta: {
 			page: "Page",
-			of: "of",
-			results: "results",
-			seconds: "seconds",
+			of: "de",
+			results: "résultats",
+			seconds: "secondes",
 		},
 	},
 	clipboard: {
@@ -103,6 +104,7 @@ const fr_dict: Dict = {
 		website: "Site web",
 		nearest: "Ressources connexes",
 		related: "Les gens ont aussi regardé",
+		"result-from": "Résultat de",
 	},
 };
 
