@@ -78,7 +78,7 @@ function enqueue_cords_widget_script()
 		$post_content = strip_tags(get_the_content());
 		$encoded_post_content = urlencode($post_content);
 		$api_key = get_option('cords_api_key');
-		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.vercel.app";
+		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.pages.dev";
 		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key;
 ?>
 		<script>
