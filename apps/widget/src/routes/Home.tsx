@@ -1,4 +1,4 @@
-import { ResourceType } from "@cords/sdk";
+import { SearchResourceType } from "@cords/sdk";
 import { createQuery } from "@tanstack/solid-query";
 import { Component, For, Show } from "solid-js";
 import ServiceItem from "../components/ServiceItem";
@@ -19,7 +19,7 @@ const RelatedSection = (props: { id: string }) => {
 	}));
 
 	return (
-		<>
+		<Show when={related.data && related.data.data.length > 0}>
 			<div class="p-8 mt-2 bg-elevation1">
 				<h4>{t().home.related.title}</h4>
 				<p class="text-xs text-steel">{t().home.related.description}</p>
@@ -29,7 +29,7 @@ const RelatedSection = (props: { id: string }) => {
 					return <ServiceItem service={service} />;
 				}}
 			</For>
-		</>
+		</Show>
 	);
 };
 
@@ -61,7 +61,7 @@ const Home: Component = () => {
 						lng: 0,
 					},
 				} as {
-					data: ResourceType[];
+					data: SearchResourceType[];
 					meta: {
 						total: number;
 						lat: number;

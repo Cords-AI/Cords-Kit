@@ -9,8 +9,6 @@ export * from "./types";
 
 export const ResourceOptions = {};
 
-const baseUrl = "https://api.cords.ai";
-
 export const CordsAPI = ({
 	apiKey,
 	version = "production",
@@ -124,6 +122,7 @@ export const CordsAPI = ({
 			throw new Error(data.detail);
 		}
 		const data = await res.json();
+		console.log(data);
 		return data as { data: ResourceType[] };
 	};
 
