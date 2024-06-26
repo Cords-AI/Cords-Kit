@@ -17,6 +17,7 @@ web-build/
 .turbo
 
 .env
+build/
 
 lfsa000a21a_e.geojson
 

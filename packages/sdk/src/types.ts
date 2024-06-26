@@ -47,10 +47,15 @@ export type ResourceType = {
 	partner: string;
 	delivery: "national" | "provincial" | "local" | "regional" | null;
 	body: {
-		en: ResourceBodyType;
-		fr: ResourceBodyType;
+		en: ResourceBodyType | null;
+		fr: ResourceBodyType | null;
 	};
 };
+
+export type SearchResourceType = Omit<
+	ResourceType,
+	"website" | "email" | "phoneNumbers" | "addresses" | "address"
+>;
 
 export type SearchOptions = {
 	lat: number;

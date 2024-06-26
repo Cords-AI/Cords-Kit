@@ -1,7 +1,10 @@
 import { ResourceType } from "@cords/sdk";
 import volunteer from "../assets/volunteer.jpg";
+import { useTranslation } from "../translations";
 
 const PartnerLogo = ({ partner }: { partner: ResourceType["partner"] }) => {
+	const { t } = useTranslation();
+
 	return (
 		<div class="flex gap-2 items-center">
 			<div class="bg-elevation1 h-7 w-7 flex border justify-center items-center rounded-full">
@@ -102,7 +105,7 @@ const PartnerLogo = ({ partner }: { partner: ResourceType["partner"] }) => {
 				)}
 			</div>
 			<p class="text-xs">
-				Result from {partner.slice(0, 1).toUpperCase() + partner.slice(1)}
+				{t().resource["result-from"]} {partner.slice(0, 1).toUpperCase() + partner.slice(1)}
 			</p>
 		</div>
 	);

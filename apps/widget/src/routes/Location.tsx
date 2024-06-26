@@ -1,9 +1,11 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { debounce } from "@solid-primitives/scheduled";
-import { useNavigate, useSearchParams } from "@solidjs/router";
+import { useNavigate } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense, createSignal } from "solid-js";
 import { location, setLocation, setUserLocation } from "../lib/location";
+import { useSearchParams } from "../lib/params";
+import { useTranslation } from "../translations";
 
 const loader = new Loader({
 	apiKey: import.meta.env.VITE_GOOGLE_API_KEY,
@@ -66,11 +68,7 @@ const LocationSearch = (props: { search: string }) => {
 
 	const data = createQuery(() => ({
 		queryKey: ["location", props.search],
-		queryFn: async () => {
-			const res = await autocomplete(props.search);
-			console.log(res);
-			return res;
-		},
+		queryFn: () => autocomplete(props.search),
 		enabled: props.search !== "",
 		throwOnError: true,
 		suspense: true,
@@ -82,14 +80,15 @@ const LocationSearch = (props: { search: string }) => {
 				{(prediction) => (
 					<div
 						class="bg-white text-white p-4 -mt-2 rounded-lg cursor-pointer border"
-						onClick={async () => {
-							const place = await getPlace(prediction.place_id);
-							setLocation({
-								lat: place.geometry.location.lat(),
-								lng: place.geometry.location.lng(),
-								name: place.formatted_address,
+						onClick={() => {
+							getPlace(prediction.place_id).then((place) => {
+								setLocation({
+									lat: place.geometry?.location?.lat()!,
+									lng: place.geometry?.location?.lng()!,
+									name: place.formatted_address!,
+								});
+								navigate(`/?${new URLSearchParams(query).toString()}`);
 							});
-							navigate(`/?${new URLSearchParams(query).toString()}`);
 						}}
 					>
 						<p>{prediction.description.split(",")[0]}</p>
@@ -107,6 +106,7 @@ const Location = () => {
 	const navigate = useNavigate();
 	const [query] = useSearchParams();
 	const [search, setSearch] = createSignal("");
+	const { t } = useTranslation();
 
 	const updateSearch = debounce((query: string) => setSearch(query), 500);
 
@@ -124,7 +124,7 @@ const Location = () => {
 				}}
 			>
 				<span class="material-symbols-outlined text-lg">gps_fixed</span>
-				Use current location
+				{t().location["use-current"]}
 			</button>
 			<form
 				class="w-full border rounded h-12 flex items-center"
@@ -136,7 +136,7 @@ const Location = () => {
 				<input
 					autocomplete="off"
 					class="outline-none px-4 h-full w-full text-sm rounded"
-					placeholder="Search for a location..."
+					placeholder={t().location.search}
 					name="query"
 					value={search()}
 					onInput={(e) => {
