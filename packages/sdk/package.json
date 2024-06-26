@@ -3,7 +3,7 @@
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"private": false,
 	"publishConfig": {
 		"access": "public"
@@ -20,5 +20,6 @@
 	},
 	"dependencies": {
 		"tsup": "^8.0.2"
-	}
+	},
+	"license": "MIT"
 }

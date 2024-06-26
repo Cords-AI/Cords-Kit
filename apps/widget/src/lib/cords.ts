@@ -6,5 +6,5 @@ export const useCords = () => {
 		api_key?: string;
 	}>();
 
-	return CordsAPI({ apiKey: searchParams.api_key });
+	return CordsAPI({ apiKey: searchParams.api_key ?? "", version: "dev" });
 };
