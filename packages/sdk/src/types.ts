@@ -50,6 +50,11 @@ export type ResourceType = {
 		en: ResourceBodyType | null;
 		fr: ResourceBodyType | null;
 	};
+	result: {
+		id: string;
+		distance: number | null;
+		vectorDistance: number;
+	} | null;
 };
 
 export type SearchResourceType = Omit<
