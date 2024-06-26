@@ -6,6 +6,7 @@ import { Component, Show } from "solid-js";
 import { useCords } from "../lib/cords";
 import { useSearchParams } from "../lib/params";
 import { getLocalizedField, useTranslation } from "../translations";
+import { partnerMapping } from "./PartnerLogo";
 
 type Props = {
 	service: SearchResourceType;
@@ -27,7 +28,7 @@ const ServiceItem: Component<Props> = (props) => {
 			{(resource) => (
 				<A
 					href={`/resource/${resource().id}?${new URLSearchParams(query).toString()}`}
-					class="bg-elevation1 px-8 py-4 flex flex-col gap-1.5 items-start max-w-full border-hairline border-t"
+					class="bg-elevation1 px-8 py-4 flex flex-col gap-2 items-start max-w-full border-hairline border-t"
 				>
 					<p class="font-header text-primary">
 						{getLocalizedField(resource().name, locale())}
@@ -35,6 +36,18 @@ const ServiceItem: Component<Props> = (props) => {
 					<p class="text-sm line-clamp-2 max-w-full">
 						{convert(getLocalizedField(resource().description, locale())!)}
 					</p>
+					<div class="flex gap-1 items-center">
+						<div class="border rounded h-6 flex justify-center items-center px-2 border-typography-heading-color text-[10px] font-bold">
+							{partnerMapping[resource().partner].label}
+						</div>
+						<Show when={resource().delivery}>
+							{(delivery) => (
+								<div class="border rounded h-6 flex justify-center items-center px-2 border-typography-heading-color text-[10px] font-bold">
+									{delivery()[0].toUpperCase() + delivery().slice(1)}
+								</div>
+							)}
+						</Show>
+					</div>
 				</A>
 			)}
 		</Show>
