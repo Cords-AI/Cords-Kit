@@ -50,6 +50,7 @@ const en_dict = {
 		nearest: "Related Resources",
 		related: "People have also looked at",
 		"result-from": "Result from",
+		distance: "Distance",
 	},
 };
 
@@ -105,6 +106,7 @@ const fr_dict: Dict = {
 		nearest: "Ressources connexes",
 		related: "Les gens ont aussi regardé",
 		"result-from": "Résultat de",
+		distance: "Distance",
 	},
 };
 
