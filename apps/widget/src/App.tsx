@@ -1,10 +1,9 @@
 import { A, RouteSectionProps, useLocation, useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
-import { Component, ErrorBoundary, Show, Suspense, createEffect, createSignal } from "solid-js";
+import { Component, ErrorBoundary, Show, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import Error from "./components/Error";
 import LocationFooter from "./components/LocationFooter";
-import Pending from "./components/Pending";
 import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
 import { useSearchParams } from "./lib/params";
@@ -183,11 +182,9 @@ const App: Component<RouteSectionProps> = (props) => {
 							ref={scrollRef}
 							class="overflow-y-auto overscroll-contain flex-1 h-full"
 						>
-							<Suspense fallback={<Pending />}>
-								<ErrorBoundary fallback={(error) => <Error error={error} />}>
-									{props.children}
-								</ErrorBoundary>
-							</Suspense>
+							<ErrorBoundary fallback={(error) => <Error error={error} />}>
+								{props.children}
+							</ErrorBoundary>
 						</div>
 						<LocationFooter />
 					</div>
