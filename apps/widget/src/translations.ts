@@ -2,6 +2,7 @@ import { useSearchParams } from "@solidjs/router";
 import { createMemo } from "solid-js";
 
 const en_dict = {
+	"powered-by": "Powered by",
 	home: {
 		similar: {
 			title: "Similar",
@@ -57,6 +58,7 @@ const en_dict = {
 type Dict = typeof en_dict;
 
 const fr_dict: Dict = {
+	"powered-by": "Propulsé par",
 	home: {
 		similar: {
 			title: "Similaire",
