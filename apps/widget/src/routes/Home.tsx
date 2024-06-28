@@ -1,6 +1,7 @@
 import { SearchResourceType } from "@cords/sdk";
 import { createQuery } from "@tanstack/solid-query";
-import { Component, For, Show } from "solid-js";
+import { Component, For, Match, Show, Switch } from "solid-js";
+import Pending from "../components/Pending";
 import ServiceItem from "../components/ServiceItem";
 import { useCords } from "../lib/cords";
 import { location } from "../lib/location";
@@ -74,28 +75,32 @@ const Home: Component = () => {
 		staleTime: 0,
 		retry: 1,
 		throwOnError: true,
-		suspense: true,
 	}));
 
 	return (
-		<>
-			<div class="text-black flex flex-col">
-				<Show when={similar.data && similar.data.data.length > 0}>
-					<div class="p-8 bg-elevation1">
-						<h4>{t().home.similar.title}</h4>
-						<p class="text-xs text-steel">{t().home.similar.description}</p>
-					</div>
-					<For each={similar.data?.data}>
-						{(service) => {
-							return <ServiceItem service={service} />;
-						}}
-					</For>
-				</Show>
-				<Show when={similar.data && similar.data?.data[0]?.id}>
-					<RelatedSection id={similar.data?.data[0].id!} />
-				</Show>
-			</div>
-		</>
+		<Switch>
+			<Match when={similar.isPending}>
+				<Pending />
+			</Match>
+			<Match when={similar.isSuccess}>
+				<div class="text-black flex flex-col">
+					<Show when={similar.data && similar.data.data.length > 0}>
+						<div class="p-8 bg-elevation1">
+							<h4>{t().home.similar.title}</h4>
+							<p class="text-xs text-steel">{t().home.similar.description}</p>
+						</div>
+						<For each={similar.data?.data}>
+							{(service) => {
+								return <ServiceItem service={service} />;
+							}}
+						</For>
+					</Show>
+					<Show when={similar.data && similar.data?.data[0]?.id}>
+						<RelatedSection id={similar.data?.data[0].id!} />
+					</Show>
+				</div>
+			</Match>
+		</Switch>
 	);
 };
 
