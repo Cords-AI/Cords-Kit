@@ -93,11 +93,11 @@ function enqueue_cords_widget_script()
 			document.addEventListener('DOMContentLoaded', function() {
 				let iframe = document.createElement('iframe');
 				iframe.src = '<?php echo $url; ?>';
-				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;';
+				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px; overscroll-behavior: contain';
 
 				let widgetContainer = document.createElement('div');
 				widgetContainer.id = 'cords-widget';
-				widgetContainer.style.cssText = 'border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;';
+				widgetContainer.style.cssText = 'border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: auto; opacity: 1; max-width: 100%; right: 0px; max-height: 100%; overscroll-behavior: contain';
 
 				widgetContainer.appendChild(iframe);
 				document.body.appendChild(widgetContainer);

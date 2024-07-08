@@ -3,7 +3,7 @@ import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, Show, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import Error from "./components/Error";
-import LocationFooter from "./components/LocationFooter";
+import Footer from "./components/Footer";
 import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
 import { useSearchParams } from "./lib/params";
@@ -186,7 +186,7 @@ const App: Component<RouteSectionProps> = (props) => {
 								{props.children}
 							</ErrorBoundary>
 						</div>
-						<LocationFooter />
+						<Footer />
 					</div>
 				</Show>
 			</Transition>
