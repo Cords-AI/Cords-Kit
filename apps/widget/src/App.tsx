@@ -47,6 +47,7 @@ const SearchHeader = () => {
 					name="query"
 					children={(field) => (
 						<input
+							type="text"
 							autocomplete="off"
 							class="outline-none pr-4 h-full"
 							name={field().name}

@@ -152,8 +152,9 @@ const Location = () => {
 						}}
 					>
 						<input
+							type="text"
 							autocomplete="off"
-							class="outline-none px-4 h-full w-full text-sm rounded"
+							class="outline-none px-4 h-full w-full text-sm rounded placeholder:text-sm"
 							placeholder={t().location.search}
 							name="query"
 							value={search()}
