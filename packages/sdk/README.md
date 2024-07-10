@@ -27,17 +27,18 @@ const cords = CordsAPI({ apiKey: "your_api_key_here" });
 To perform a search, use the `search` method. You can pass a query string and optional search options:
 
 ```ts
-const results = await cords.search("query", {
-	page: 1,
+const searchResults = await cords.search("query", {
 	lat: 40.7128,
 	lng: -74.006,
-	distance: 10,
-	pageSize: 20,
-	filter: {
-		211: true,
+	page: 1,
+	pageSize: 10,
+	distance: 100,
+	partner: {
+		"211": true,
 		mentor: true,
-		prosper: true,
-		magnet: true,
+	},
+	delivery: {
+		local: true,
 	},
 });
 ```
@@ -73,5 +74,5 @@ The SDK also includes a utility function to format service addresses:
 ```ts
 import { formatServiceAddress } from "@cords/sdk";
 
-const formattedAddress = formatServiceAddress(resource.data.address)
+const formattedAddress = formatServiceAddress(resource.data.address);
 ```

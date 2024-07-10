@@ -37,7 +37,6 @@ export const CordsAPI = ({
 	};
 
 	const search = async (q: string, options: SearchOptions) => {
-		console.log("search", q, options);
 		const url = new URL("/search", baseUrl);
 		const params = new URLSearchParams({
 			q,
@@ -51,9 +50,9 @@ export const CordsAPI = ({
 		if (options.pageSize) params.append("pageSize", options.pageSize.toString());
 		if (options.distance) params.append("distance", options.distance.toString());
 
-		// Add filter parameters
-		if (options.filter) {
-			for (const [key, value] of Object.entries(options.filter)) {
+		// Add partner parameters
+		if (options.partner) {
+			for (const [key, value] of Object.entries(options.partner)) {
 				params.append(`filter[${key}]`, value ? "true" : "false");
 			}
 		}
@@ -132,7 +131,6 @@ export const CordsAPI = ({
 			throw new Error(data.detail);
 		}
 		const data = await res.json();
-		console.log(data);
 		return data as { data: ResourceType[] };
 	};
 

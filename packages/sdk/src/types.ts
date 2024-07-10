@@ -68,7 +68,7 @@ export type SearchOptions = {
 	page?: number;
 	distance?: number;
 	pageSize?: number;
-	filter?: {
+	partner?: {
 		"211"?: boolean;
 		mentor?: boolean;
 		prosper?: boolean;
