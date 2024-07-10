@@ -78,7 +78,7 @@ function enqueue_cords_widget_script()
 		$post_content = strip_tags(get_the_content());
 		$encoded_post_content = urlencode($post_content);
 		$api_key = get_option('cords_api_key');
-		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.pages.dev";
+		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.vercel.app";
 		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key;
 ?>
 		<script>
@@ -93,11 +93,11 @@ function enqueue_cords_widget_script()
 			document.addEventListener('DOMContentLoaded', function() {
 				let iframe = document.createElement('iframe');
 				iframe.src = '<?php echo $url; ?>';
-				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px; overscroll-behavior: contain';
+				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;';
 
 				let widgetContainer = document.createElement('div');
 				widgetContainer.id = 'cords-widget';
-				widgetContainer.style.cssText = 'border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: auto; opacity: 1; max-width: 100%; right: 0px; max-height: 100%; overscroll-behavior: contain';
+				widgetContainer.style.cssText = 'border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;';
 
 				widgetContainer.appendChild(iframe);
 				document.body.appendChild(widgetContainer);

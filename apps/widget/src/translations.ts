@@ -25,6 +25,14 @@ const en_dict = {
 			results: "results",
 			seconds: "seconds",
 		},
+		filters: {
+			delivery: {
+				local: "Local",
+				regional: "Regional",
+				provincial: "Provincial",
+				national: "National",
+			},
+		},
 	},
 	clipboard: {
 		title: "Clipboard",
@@ -80,6 +88,14 @@ const fr_dict: Dict = {
 			of: "de",
 			results: "résultats",
 			seconds: "secondes",
+		},
+		filters: {
+			delivery: {
+				local: "Local",
+				regional: "Régional",
+				provincial: "Provinciale",
+				national: "National",
+			},
 		},
 	},
 	clipboard: {

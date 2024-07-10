@@ -36,22 +36,32 @@ export const CordsAPI = ({
 		return res;
 	};
 
-	const search = async (q: string, options?: SearchOptions) => {
+	const search = async (q: string, options: SearchOptions) => {
+		console.log("search", q, options);
 		const url = new URL("/search", baseUrl);
 		const params = new URLSearchParams({
 			q,
 		});
 
+		params.append("lat", options.lat.toString());
+		params.append("lng", options.lng.toString());
+
 		// Add top-level parameters
-		if (options?.page !== undefined) params.append("page", options.page.toString());
-		if (options?.lat !== undefined) params.append("lat", options.lat.toString());
-		if (options?.lng !== undefined) params.append("lng", options.lng.toString());
-		if (options?.distance !== undefined) params.append("distance", options.distance.toString());
+		if (options.page) params.append("page", options.page.toString());
+		if (options.pageSize) params.append("pageSize", options.pageSize.toString());
+		if (options.distance) params.append("distance", options.distance.toString());
 
 		// Add filter parameters
-		if (options?.filter !== undefined) {
+		if (options.filter) {
 			for (const [key, value] of Object.entries(options.filter)) {
-				if (value) params.append(`filter[${key}]`, "true");
+				params.append(`filter[${key}]`, value ? "true" : "false");
+			}
+		}
+
+		// Add delivery parameters
+		if (options.delivery) {
+			for (const [key, value] of Object.entries(options.delivery)) {
+				params.append(`filter[delivery][${key}]`, value ? "true" : "false");
 			}
 		}
 

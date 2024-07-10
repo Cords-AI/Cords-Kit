@@ -20,7 +20,7 @@ const SearchHeader = () => {
 			query: "",
 		},
 		onSubmit: async ({ value }) => {
-			setSearch({ query: value.query, page: 1 });
+			setSearch((search) => ({ q: value.query, options: { ...search.options, page: 1 } }));
 			navigate(`/search?${new URLSearchParams(query).toString()}`);
 		},
 	}));
