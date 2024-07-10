@@ -75,13 +75,25 @@ function enqueue_cords_widget_script()
 	$show_widget = get_post_meta($post_id, 'cords_widget', true);
 
 	if ($show_widget) {
-		$post_content = strip_tags(get_the_content());
-		$encoded_post_content = urlencode($post_content);
 		$api_key = get_option('cords_api_key');
 		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.pages.dev";
-		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key;
 ?>
 		<script>
+			const extractVisibleText = (htmlString) => {
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(htmlString, "text/html");
+
+				// Find all <p> and <h1>, <h2>, ..., <h6> elements
+				const elements = doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, dd, dt, li, td, th, span, a');
+
+				// Concatenate the text content of each element
+				let extractedText = '';
+				elements.forEach(element => {
+					extractedText += element.textContent + '\n'; // Add a newline for readability
+				});
+
+				return extractedText.trim().slice(0, 1900); // Limit to 1900 characters
+			}
 			// Resize widget to fit content
 			window.addEventListener("message", function(event) {
 				if (event.data.type !== "cords-resize") return;
@@ -92,7 +104,9 @@ function enqueue_cords_widget_script()
 			// Create widget
 			document.addEventListener('DOMContentLoaded', function() {
 				let iframe = document.createElement('iframe');
-				iframe.src = '<?php echo $url; ?>';
+				const postContent = encodeURIComponent(extractVisibleText(document.body.innerHTML));
+				// Assuming $origin and $api_key are already defined in PHP and passed correctly into JavaScript
+				iframe.src = '<?php echo $origin; ?>' + "?q=" + postContent + "&api_key=" + '<?php echo $api_key; ?>';
 				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px; overscroll-behavior: contain';
 
 				let widgetContainer = document.createElement('div');
