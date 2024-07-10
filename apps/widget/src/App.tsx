@@ -49,7 +49,7 @@ const SearchHeader = () => {
 						<input
 							type="text"
 							autocomplete="off"
-							class="outline-none pr-4 h-full"
+							class="outline-none pr-4 h-full w-full"
 							name={field().name}
 							value={field().state.value}
 							onBlur={field().handleBlur}
