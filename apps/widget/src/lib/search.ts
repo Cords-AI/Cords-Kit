@@ -9,7 +9,7 @@ export const [search, setSearch] = createSignal<{
 	options: {
 		page: 0,
 		pageSize: 10,
-		filter: {
+		partner: {
 			"211": true,
 			mentor: true,
 			prosper: true,

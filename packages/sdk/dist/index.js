@@ -86,7 +86,6 @@ var CordsAPI = ({
     return res;
   });
   const search = (q, options) => __async(void 0, null, function* () {
-    console.log("search", q, options);
     const url = new URL("/search", baseUrl);
     const params = new URLSearchParams({
       q
@@ -99,8 +98,8 @@ var CordsAPI = ({
       params.append("pageSize", options.pageSize.toString());
     if (options.distance)
       params.append("distance", options.distance.toString());
-    if (options.filter) {
-      for (const [key, value] of Object.entries(options.filter)) {
+    if (options.partner) {
+      for (const [key, value] of Object.entries(options.partner)) {
         params.append(`filter[${key}]`, value ? "true" : "false");
       }
     }
@@ -157,7 +156,6 @@ var CordsAPI = ({
       throw new Error(data2.detail);
     }
     const data = yield res.json();
-    console.log(data);
     return data;
   });
   return {
