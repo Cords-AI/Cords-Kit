@@ -52,3 +52,9 @@ body {
 .btn {
 	@apply text-sm text-white bg-primary w-min px-3 shadow h-8 flex items-center justify-center rounded;
 }
+
+input[type="text"],
+input[type="number"],
+textarea {
+	font-size: 16px;
+}
