@@ -53,7 +53,8 @@ const App = () => {
 				<thead>
 					<tr>
 						<th>Title</th>
-						{/* <th>CORDS Enabled</th> */}
+						<th>Content</th>
+						<th>CORDS Enabled</th>
 						<th>CORDS Widget</th>
 					</tr>
 				</thead>
@@ -64,7 +65,10 @@ const App = () => {
 								<td>
 									{page.title.rendered.length ? page.title.rendered : "No Title"}
 								</td>
-								{/* <td>
+								<td>
+									<p>{page.content.rendered.slice(0, 20)}</p>
+								</td>
+								<td>
 									<select
 										name="enabled"
 										value={page.meta.cords_enabled ? "true" : "false"}
@@ -83,7 +87,7 @@ const App = () => {
 										<option value="true">True</option>
 										<option value="false">False</option>
 									</select>
-								</td> */}
+								</td>
 								<td>
 									<select
 										name="enabled"

@@ -74,6 +74,12 @@ export type SearchOptions = {
 		prosper?: boolean;
 		magnet?: boolean;
 	};
+	delivery?: {
+		local?: boolean;
+		regional?: boolean;
+		provincial?: boolean;
+		national?: boolean;
+	};
 };
 
 export type CordsError = {

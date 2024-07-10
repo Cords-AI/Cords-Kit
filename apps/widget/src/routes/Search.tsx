@@ -17,22 +17,21 @@ const Search = () => {
 		queryKey: ["search", search()],
 		queryFn: async () => {
 			const start = performance.now();
-			const res = await cords.search(search().query, {
+			const res = await cords.search(search().q, {
 				lat: location().lat,
 				lng: location().lng,
-				pageSize: 10,
-				page: search().page,
+				...search().options,
 			});
 			setSearchTime((performance.now() - start) / 1000);
 			setMaxPage(Math.ceil(res.meta.total / 10));
 			return res;
 		},
 		gcTime: 0,
-		enabled: !!search().query,
+		enabled: !!search().q,
 		throwOnError: true,
 	}));
 
-	const start = () => Math.max(0, search().page - 3);
+	const start = () => Math.max(0, search().options.page - 3);
 	const end = () => start() + 5;
 
 	return (
@@ -46,12 +45,42 @@ const Search = () => {
 						{(data) => (
 							<>
 								<div class="p-8 bg-elevation1">
-									<h4>{search().query}</h4>
+									<h4>{search().q}</h4>
 									<p class="text-xs text-steel">
-										{t().search.meta.page} {search().page} {t().search.meta.of}{" "}
-										{data().meta.total} {t().search.meta.results} (
-										{searchTime().toFixed(2)} {t().search.meta.seconds})
+										{t().search.meta.page} {search().options.page}{" "}
+										{t().search.meta.of} {data().meta.total}{" "}
+										{t().search.meta.results} ({searchTime().toFixed(2)}{" "}
+										{t().search.meta.seconds})
 									</p>
+									<div class="pt-4 flex gap-4 flex-wrap">
+										{Object.entries(search().options.delivery).map(
+											([key, value]) => (
+												<label class="inline-flex items-center cursor-pointer">
+													<input
+														type="checkbox"
+														checked={value}
+														onChange={(e) =>
+															setSearch((search) => ({
+																...search,
+																options: {
+																	...search.options,
+																	delivery: {
+																		...search.options.delivery,
+																		[key]: e.target.checked,
+																	},
+																},
+															}))
+														}
+														class="sr-only peer"
+													/>
+													<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
+													<span class="ms-2 text-xs text-steel">
+														{key.charAt(0).toUpperCase() + key.slice(1)}
+													</span>
+												</label>
+											)
+										)}
+									</div>
 								</div>
 								<div>
 									<For each={data().data}>
@@ -60,9 +89,15 @@ const Search = () => {
 								</div>
 								<div class="flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t">
 									<button
-										disabled={search().page === 1}
+										disabled={search().options.page === 1}
 										onClick={() =>
-											setSearch({ ...search(), page: search().page - 1 })
+											setSearch((search) => ({
+												...search,
+												options: {
+													...search.options,
+													page: search.options.page - 1,
+												},
+											}))
 										}
 										class="text-primary p-2 rounded-lg"
 									>
@@ -74,10 +109,13 @@ const Search = () => {
 										{(i) => (
 											<button
 												onClick={() =>
-													setSearch({ ...search(), page: i + 1 })
+													setSearch((search) => ({
+														...search,
+														options: { ...search.options, page: i + 1 },
+													}))
 												}
 												class={`w-7 h-8 rounded text-sm ${
-													i + 1 === search().page
+													i + 1 === search().options.page
 														? "bg-primary text-white"
 														: "text-primary"
 												}`}
@@ -87,9 +125,15 @@ const Search = () => {
 										)}
 									</For>
 									<button
-										disabled={search().page === maxPage()}
+										disabled={search().options.page === maxPage()}
 										onClick={() =>
-											setSearch({ ...search(), page: search().page + 1 })
+											setSearch((search) => ({
+												...search,
+												options: {
+													...search.options,
+													page: search.options.page + 1,
+												},
+											}))
 										}
 										class="text-primary p-2 rounded-lg"
 									>

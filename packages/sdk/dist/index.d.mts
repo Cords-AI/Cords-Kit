@@ -66,6 +66,12 @@ type SearchOptions = {
         prosper?: boolean;
         magnet?: boolean;
     };
+    delivery?: {
+        local?: boolean;
+        regional?: boolean;
+        provincial?: boolean;
+        national?: boolean;
+    };
 };
 type CordsError = {
     detail: string;
@@ -79,7 +85,7 @@ declare const CordsAPI: ({ apiKey, version, }: {
     apiKey: string;
     version?: "production" | "dev";
 }) => {
-    search: (q: string, options?: SearchOptions) => Promise<{
+    search: (q: string, options: SearchOptions) => Promise<{
         data: SearchResourceType[];
         meta: {
             total: number;
