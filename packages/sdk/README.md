@@ -32,7 +32,7 @@ const searchResults = await cords.search("query", {
 	lng: -74.006,
 	page: 1,
 	pageSize: 10,
-	distance: 100,
+	distance: 10,
 	partner: {
 		"211": true,
 		mentor: true,

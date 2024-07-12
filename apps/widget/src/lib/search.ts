@@ -3,12 +3,13 @@ import { createSignal } from "solid-js";
 
 export const [search, setSearch] = createSignal<{
 	q: string;
-	options: Required<Omit<SearchOptions, "lat" | "lng" | "distance">>;
+	options: Required<Omit<SearchOptions, "lat" | "lng">>;
 }>({
 	q: "",
 	options: {
 		page: 0,
 		pageSize: 10,
+		distance: 10,
 		partner: {
 			"211": true,
 			mentor: true,
