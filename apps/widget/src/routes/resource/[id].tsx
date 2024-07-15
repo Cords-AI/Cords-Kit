@@ -1,11 +1,10 @@
 import { ResourceType, formatServiceAddress } from "@cords/sdk";
 import { A, useNavigate, useParams } from "@solidjs/router";
-import { createQuery } from "@tanstack/solid-query";
+import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import { convert } from "html-to-text";
 import { Component, For, Match, Show, Switch } from "solid-js";
 import PartnerLogo from "~/components/PartnerLogo";
 import Pending from "~/components/Pending";
-import { clipboardIDs, setClipboardIDs } from "~/lib/clipboard";
 import { useCords } from "~/lib/cords";
 import { useSearchParams } from "~/lib/params";
 import { getSession } from "~/lib/session";
@@ -78,12 +77,32 @@ const Resource = () => {
 	const cords = useCords();
 	const params = useParams();
 	const navigate = useNavigate();
+	const [query] = useSearchParams();
 	const resource = createQuery(() => ({
 		queryKey: ["resource", params.id],
 		queryFn: () => cords.resource(params.id),
 		throwOnError: true,
 	}));
 	const { t, locale } = useTranslation();
+
+	const session = getSession(query.cordsId!);
+
+	const queryClient = useQueryClient();
+
+	const toggleClipboard = createMutation(() => ({
+		mutationKey: ["clipboard"],
+		mutationFn: async (id: string) => {
+			await fetch(`/api/clipboard/${id}`, {
+				method: "PUT",
+				headers: {
+					"cords-id": query.cordsId!,
+				},
+			});
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["session"] });
+		},
+	}));
 
 	return (
 		<Switch>
@@ -99,17 +118,15 @@ const Resource = () => {
 								<PartnerLogo partner={resource().partner} />
 								<button
 									onClick={() => {
-										if (clipboardIDs().indexOf(resource().id) === -1) {
-											setClipboardIDs((ids) => [...ids, resource().id]);
-										} else {
-											setClipboardIDs((ids) =>
-												ids.filter((id) => id !== resource().id)
-											);
-										}
+										toggleClipboard.mutate(resource().id);
 									}}
 									class="flex relative h-7 w-7 items-center justify-center text-slate"
 								>
-									<Show when={clipboardIDs().indexOf(resource().id) !== -1}>
+									<Show
+										when={session.data?.clipboardServices.some(
+											(service) => service.serviceId === resource().id
+										)}
+									>
 										<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
 											<span class="material-symbols-outlined material-symbols-outlined-thicker text-[10px]">
 												check
