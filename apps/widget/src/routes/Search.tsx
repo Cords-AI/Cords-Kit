@@ -1,11 +1,11 @@
 import { createQuery } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
-import Pending from "../components/Pending";
-import ServiceItem from "../components/ServiceItem";
-import { useCords } from "../lib/cords";
-import { location } from "../lib/location";
-import { search, setSearch } from "../lib/search";
-import { useTranslation } from "../translations";
+import Pending from "~/components/Pending";
+import ServiceItem from "~/components/ServiceItem";
+import { useCords } from "~/lib/cords";
+import { location } from "~/lib/location";
+import { search, setSearch } from "~/lib/search";
+import { useTranslation } from "~/translations";
 
 const Search = () => {
 	const cords = useCords();

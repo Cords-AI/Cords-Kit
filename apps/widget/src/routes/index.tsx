@@ -1,12 +1,12 @@
 import { SearchResourceType } from "@cords/sdk";
 import { createQuery } from "@tanstack/solid-query";
 import { Component, For, Match, Show, Switch } from "solid-js";
-import Pending from "../components/Pending";
-import ServiceItem from "../components/ServiceItem";
-import { useCords } from "../lib/cords";
-import { location } from "../lib/location";
-import { useSearchParams } from "../lib/params";
-import { useTranslation } from "../translations";
+import Pending from "~/components/Pending";
+import ServiceItem from "~/components/ServiceItem";
+import { useCords } from "~/lib/cords";
+import { location } from "~/lib/location";
+import { useSearchParams } from "~/lib/params";
+import { useTranslation } from "~/translations";
 
 const RelatedSection = (props: { id: string }) => {
 	const { t } = useTranslation();
