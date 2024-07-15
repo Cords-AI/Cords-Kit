@@ -4,10 +4,10 @@ import { Component, ErrorBoundary, JSX, Show, createEffect, createSignal } from 
 import { Transition } from "solid-transition-group";
 import Error from "./components/Error";
 import Footer from "./components/Footer";
-import { clipboardIDs } from "./lib/clipboard";
 import { setInitialLocation } from "./lib/location";
 import { useSearchParams } from "./lib/params";
 import { setSearch } from "./lib/search";
+import { clipboardIDs } from "./routes/clipboard";
 import { useTranslation } from "./translations";
 
 const [searchMode, setSearchMode] = createSignal(false);
