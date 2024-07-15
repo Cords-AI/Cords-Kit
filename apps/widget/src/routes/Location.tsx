@@ -3,10 +3,10 @@ import { debounce } from "@solid-primitives/scheduled";
 import { useNavigate } from "@solidjs/router";
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
-import Pending from "../components/Pending";
-import { location, setLocation, setUserLocation } from "../lib/location";
-import { useSearchParams } from "../lib/params";
-import { useTranslation } from "../translations";
+import Pending from "~/components/Pending";
+import { location, setLocation, setUserLocation } from "~/lib/location";
+import { useSearchParams } from "~/lib/params";
+import { useTranslation } from "~/translations";
 
 const loader = new Loader({
 	apiKey: import.meta.env.VITE_GOOGLE_API_KEY,

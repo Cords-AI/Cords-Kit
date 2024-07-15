@@ -35,6 +35,31 @@ function cords_register_values()
 	add_option("cords_api_key", "");
 }
 
+// INDEXING //
+add_action('template_redirect', 'cords_check_cookie_and_redirect');
+function cords_check_cookie_and_redirect()
+{
+	// Check if the 'cords-id' query parameter is set
+	if (isset($_GET['cords-id'])) {
+		$cordsId = sanitize_text_field($_GET['cords-id']);
+
+		// Set the 'cords-id' cookie for 30 days
+		setcookie('cords-id', $cordsId, time() + (86400 * 30), "/");
+
+		// Prepare the URL to redirect to (same URL but without the 'cords-id' query parameter)
+		$redirect_url = remove_query_arg('cords-id');
+
+		// Redirect to clear the 'cords-id' query parameter from the URL
+		wp_redirect($redirect_url);
+		exit();
+	}
+	if (!isset($_COOKIE['cords-id'])) {
+		$redirect_url = is_singular() ? get_permalink() : home_url();
+		wp_redirect('http://localhost:3000/login?redirect=' . urlencode($redirect_url));
+		exit();
+	}
+}
+
 // ADMIN MENU //
 add_action('admin_menu', 'cords_init_menu');
 function cords_init_menu()

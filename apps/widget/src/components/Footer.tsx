@@ -1,8 +1,8 @@
 import { A } from "@solidjs/router";
-import logo from "../assets/logo.svg";
-import { location } from "../lib/location";
-import { useSearchParams } from "../lib/params";
-import { useTranslation } from "../translations";
+import logo from "~/assets/logo.svg";
+import { location } from "~/lib/location";
+import { useSearchParams } from "~/lib/params";
+import { useTranslation } from "~/translations";
 
 const Footer = () => {
 	const { t } = useTranslation();

@@ -3,13 +3,13 @@ import { A, useNavigate, useParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { convert } from "html-to-text";
 import { Component, For, Match, Show, Switch } from "solid-js";
-import PartnerLogo from "../components/PartnerLogo";
-import Pending from "../components/Pending";
-import { clipboardIDs, setClipboardIDs } from "../lib/clipboard";
-import { useCords } from "../lib/cords";
-import { location } from "../lib/location";
-import { useSearchParams } from "../lib/params";
-import { getLocalizedField, useTranslation } from "../translations";
+import PartnerLogo from "~/components/PartnerLogo";
+import Pending from "~/components/Pending";
+import { clipboardIDs, setClipboardIDs } from "~/lib/clipboard";
+import { useCords } from "~/lib/cords";
+import { location } from "~/lib/location";
+import { useSearchParams } from "~/lib/params";
+import { getLocalizedField, useTranslation } from "~/translations";
 
 const RelatedItem: Component<{
 	service: ResourceType;
