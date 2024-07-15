@@ -11,7 +11,12 @@ export const getSession = (cordsId: string) =>
 				},
 			});
 			const data = await res.json();
-			return data as Session;
+			return data as Session & {
+				clipboardServices: {
+					sessionId: string;
+					serviceId: string;
+				}[];
+			};
 		},
 		enabled: !!cordsId,
 	}));

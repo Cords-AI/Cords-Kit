@@ -4,10 +4,10 @@ import { Component, ErrorBoundary, JSX, Show, createEffect, createSignal } from 
 import { Transition } from "solid-transition-group";
 import Error from "~/components/Error";
 import Footer from "~/components/Footer";
-import { clipboardIDs } from "~/lib/clipboard";
 import { useSearchParams } from "~/lib/params";
 import { setSearch } from "~/lib/search";
 import { useTranslation } from "~/translations";
+import { getSession } from "./lib/session";
 
 const [searchMode, setSearchMode] = createSignal(false);
 
@@ -70,6 +70,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 	const { locale, setLocale } = useTranslation();
 	const location = useLocation();
 	let scrollRef: HTMLDivElement | undefined;
+	const session = getSession(query.cordsId!);
 
 	createEffect(() => {
 		window.parent.postMessage(
@@ -147,10 +148,15 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 											href={`/clipboard?${new URLSearchParams(query).toString()}`}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
-											<Show when={clipboardIDs().length > 0}>
+											<Show
+												when={
+													session.data?.clipboardServices &&
+													session.data.clipboardServices.length > 0
+												}
+											>
 												<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
 													<p class="text-[8px] text-white">
-														{clipboardIDs().length}
+														{session.data?.clipboardServices.length}
 													</p>
 												</div>
 											</Show>
