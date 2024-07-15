@@ -5,7 +5,6 @@ import { Transition } from "solid-transition-group";
 import Error from "~/components/Error";
 import Footer from "~/components/Footer";
 import { clipboardIDs } from "~/lib/clipboard";
-import { setInitialLocation } from "~/lib/location";
 import { useSearchParams } from "~/lib/params";
 import { setSearch } from "~/lib/search";
 import { useTranslation } from "~/translations";
@@ -71,8 +70,6 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 	const { locale, setLocale } = useTranslation();
 	const location = useLocation();
 	let scrollRef: HTMLDivElement | undefined;
-
-	setInitialLocation;
 
 	createEffect(() => {
 		window.parent.postMessage(

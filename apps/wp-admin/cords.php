@@ -40,14 +40,14 @@ add_action('template_redirect', 'cords_check_cookie_and_redirect');
 function cords_check_cookie_and_redirect()
 {
 	// Check if the 'cords-id' query parameter is set
-	if (isset($_GET['cords-id'])) {
-		$cordsId = sanitize_text_field($_GET['cords-id']);
+	if (isset($_GET['cordsId'])) {
+		$cordsId = sanitize_text_field($_GET['cordsId']);
 
 		// Set the 'cords-id' cookie for 30 days
 		setcookie('cords-id', $cordsId, time() + (86400 * 30), "/");
 
-		// Prepare the URL to redirect to (same URL but without the 'cords-id' query parameter)
-		$redirect_url = remove_query_arg('cords-id');
+		// Prepare the URL to redirect to (same URL but without the 'cordsId' query parameter)
+		$redirect_url = remove_query_arg('cordsId');
 
 		// Redirect to clear the 'cords-id' query parameter from the URL
 		wp_redirect($redirect_url);
@@ -105,7 +105,7 @@ function enqueue_cords_widget_script()
 		$encoded_post_content = urlencode($post_content);
 		$api_key = get_option('cords_api_key');
 		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-kit.pages.dev";
-		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key . "&cords-id=" . $_COOKIE['cords-id'];
+		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key . "&cordsId=" . $_COOKIE['cords-id'];
 ?>
 		<script>
 			// Resize widget to fit content

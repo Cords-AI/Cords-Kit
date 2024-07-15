@@ -4,8 +4,8 @@ import { Component, For, Match, Show, Switch } from "solid-js";
 import Pending from "~/components/Pending";
 import ServiceItem from "~/components/ServiceItem";
 import { useCords } from "~/lib/cords";
-import { location } from "~/lib/location";
 import { useSearchParams } from "~/lib/params";
+import { getSession } from "~/lib/session";
 import { useTranslation } from "~/translations";
 
 const RelatedSection = (props: { id: string }) => {
@@ -38,14 +38,15 @@ const Home: Component = () => {
 	const cords = useCords();
 	const [searchParams] = useSearchParams();
 	const { t } = useTranslation();
+	const session = getSession(searchParams.cordsId!);
 
 	const similar = createQuery(() => ({
-		queryKey: ["similar", searchParams.q, location().lat, location().lng],
+		queryKey: ["similar", searchParams.q, session.data?.lat, session.data?.lng],
 		queryFn: () => {
 			try {
 				return cords.search(searchParams.q ?? "", {
-					lat: location().lat,
-					lng: location().lng,
+					lat: session.data?.lat!,
+					lng: session.data?.lng!,
 					distance: 10,
 				});
 			} catch (e) {
@@ -71,6 +72,7 @@ const Home: Component = () => {
 		staleTime: 0,
 		retry: 1,
 		throwOnError: true,
+		enabled: !!session.data,
 	}));
 
 	return (

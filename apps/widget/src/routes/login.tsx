@@ -23,5 +23,5 @@ export const GET = async (e: APIEvent) => {
 		});
 		setCookie("cords-id", cordsId);
 	}
-	sendRedirect(searchParams.get("redirect") + "?cords-id=" + cordsId);
+	sendRedirect(searchParams.get("redirect") + "?cordsId=" + cordsId);
 };
