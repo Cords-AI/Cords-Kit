@@ -2,13 +2,13 @@ import { A, useLocation, useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, JSX, Show, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
-import Error from "./components/Error";
-import Footer from "./components/Footer";
-import { setInitialLocation } from "./lib/location";
-import { useSearchParams } from "./lib/params";
-import { setSearch } from "./lib/search";
-import { clipboardIDs } from "./routes/clipboard";
-import { useTranslation } from "./translations";
+import Error from "~/components/Error";
+import Footer from "~/components/Footer";
+import { clipboardIDs } from "~/lib/clipboard";
+import { setInitialLocation } from "~/lib/location";
+import { useSearchParams } from "~/lib/params";
+import { setSearch } from "~/lib/search";
+import { useTranslation } from "~/translations";
 
 const [searchMode, setSearchMode] = createSignal(false);
 

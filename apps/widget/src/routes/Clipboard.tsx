@@ -1,12 +1,11 @@
 import { createQuery } from "@tanstack/solid-query";
-import { createSignal, For, Match, Show, Switch } from "solid-js";
+import { For, Match, Show, Switch } from "solid-js";
 import empty from "~/assets/empty.svg";
 import Pending from "~/components/Pending";
 import ServiceItem from "~/components/ServiceItem";
+import { clipboardIDs } from "~/lib/clipboard";
 import { useCords } from "~/lib/cords";
 import { useTranslation } from "~/translations";
-
-export const [clipboardIDs, setClipboardIDs] = createSignal<string[]>([]);
 
 const Clipboard = () => {
 	const cords = useCords();

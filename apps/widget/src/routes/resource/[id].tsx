@@ -5,11 +5,11 @@ import { convert } from "html-to-text";
 import { Component, For, Match, Show, Switch } from "solid-js";
 import PartnerLogo from "~/components/PartnerLogo";
 import Pending from "~/components/Pending";
+import { clipboardIDs, setClipboardIDs } from "~/lib/clipboard";
 import { useCords } from "~/lib/cords";
 import { location } from "~/lib/location";
 import { useSearchParams } from "~/lib/params";
 import { getLocalizedField, useTranslation } from "~/translations";
-import { clipboardIDs, setClipboardIDs } from "../clipboard";
 
 const RelatedItem: Component<{
 	service: ResourceType;
