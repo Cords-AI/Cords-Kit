@@ -3,8 +3,8 @@ import { MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
+import { Layout } from "~/Layout";
 import "./app.css";
-import { Layout } from "./Layout";
 
 const queryClient = new QueryClient();
 
