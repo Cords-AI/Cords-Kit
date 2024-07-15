@@ -5,4 +5,5 @@ export const useSearchParams = () =>
 		q?: string;
 		api_key?: string;
 		lang?: string;
+		"cords-id"?: string;
 	}>();
