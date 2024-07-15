@@ -54,8 +54,9 @@ function cords_check_cookie_and_redirect()
 		exit();
 	}
 	if (!isset($_COOKIE['cords-id'])) {
+		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-kit.pages.dev";
 		$redirect_url = is_singular() ? get_permalink() : home_url();
-		wp_redirect('http://localhost:3000/login?redirect=' . urlencode($redirect_url));
+		wp_redirect($origin . '/login?redirect=' . urlencode($redirect_url));
 		exit();
 	}
 }
@@ -103,8 +104,8 @@ function enqueue_cords_widget_script()
 		$post_content = strip_tags(get_the_content());
 		$encoded_post_content = urlencode($post_content);
 		$api_key = get_option('cords_api_key');
-		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.pages.dev";
-		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key;
+		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-kit.pages.dev";
+		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key . "&cords-id=" . $_COOKIE['cords-id'];
 ?>
 		<script>
 			// Resize widget to fit content
