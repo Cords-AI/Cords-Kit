@@ -1,25 +1,14 @@
-import { cookieStorage, makePersisted } from "@solid-primitives/storage";
 import { createEffect, createSignal } from "solid-js";
 
-export const [location, setLocation] = makePersisted(
-	createSignal<{
-		lat: number;
-		lng: number;
-		name: string;
-	}>({
-		lat: 43.6532,
-		lng: -79.3832,
-		name: "Toronto, ON, Canada (Default)",
-	}),
-	{
-		storage: cookieStorage,
-		storageOptions: {
-			sameSite: "None",
-			secure: true,
-		},
-		name: "cords-location",
-	}
-);
+export const [location, setLocation] = createSignal<{
+	lat: number;
+	lng: number;
+	name: string;
+}>({
+	lat: 43.6532,
+	lng: -79.3832,
+	name: "Toronto, ON, Canada (Default)",
+});
 
 export const setUserLocation = (callback?: () => void) => {
 	navigator.geolocation.getCurrentPosition(
