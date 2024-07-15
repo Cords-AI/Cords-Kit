@@ -7,8 +7,8 @@ import PartnerLogo from "~/components/PartnerLogo";
 import Pending from "~/components/Pending";
 import { clipboardIDs, setClipboardIDs } from "~/lib/clipboard";
 import { useCords } from "~/lib/cords";
-import { location } from "~/lib/location";
 import { useSearchParams } from "~/lib/params";
+import { getSession } from "~/lib/session";
 import { getLocalizedField, useTranslation } from "~/translations";
 
 const RelatedItem: Component<{
@@ -56,11 +56,14 @@ const Nearest: Component<{
 }> = (props) => {
 	const cords = useCords();
 	const { t } = useTranslation();
+	const [query] = useSearchParams();
+	const session = getSession(query.cordsId!);
 	const related = createQuery(() => ({
 		queryKey: ["nearest-neighbour", props.id],
 		queryFn: () =>
-			cords.nearestNeighbour(props.id, { lat: location().lat, lng: location().lng }),
+			cords.nearestNeighbour(props.id, { lat: session.data!.lat, lng: session.data!.lng }),
 		throwOnError: true,
+		enabled: !!session.data,
 	}));
 
 	return (
