@@ -1,25 +1,29 @@
+import { useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { For, Match, Show, Switch, createSignal } from "solid-js";
-import Pending from "../components/Pending";
-import ServiceItem from "../components/ServiceItem";
-import { useCords } from "../lib/cords";
-import { location } from "../lib/location";
-import { search, setSearch } from "../lib/search";
-import { useTranslation } from "../translations";
+import Pending from "~/components/Pending";
+import ServiceItem from "~/components/ServiceItem";
+import { useCords } from "~/lib/cords";
+import { search, setSearch } from "~/lib/search";
+import { getSession } from "~/lib/session";
+import { useTranslation } from "~/translations";
 
 const Search = () => {
 	const cords = useCords();
 	const [searchTime, setSearchTime] = createSignal(0);
 	const [maxPage, setMaxPage] = createSignal(0);
 	const { t } = useTranslation();
+	const [query] = useSearchParams();
+
+	const session = getSession(query.cordsId!);
 
 	const data = createQuery(() => ({
 		queryKey: ["search", search()],
 		queryFn: async () => {
 			const start = performance.now();
 			const res = await cords.search(search().q, {
-				lat: location().lat,
-				lng: location().lng,
+				lat: session.data?.lat!,
+				lng: session.data?.lng!,
 				...search().options,
 			});
 			setSearchTime((performance.now() - start) / 1000);
@@ -27,7 +31,7 @@ const Search = () => {
 			return res;
 		},
 		gcTime: 0,
-		enabled: !!search().q,
+		enabled: !!search().q && !!session.data,
 		throwOnError: true,
 	}));
 

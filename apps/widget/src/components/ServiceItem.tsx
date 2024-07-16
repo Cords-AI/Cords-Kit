@@ -2,8 +2,8 @@ import { SearchResourceType } from "@cords/sdk";
 import { A } from "@solidjs/router";
 import { convert } from "html-to-text";
 import { Component, Show } from "solid-js";
-import { useSearchParams } from "../lib/params";
-import { getLocalizedField, useTranslation } from "../translations";
+import { useSearchParams } from "~/lib/params";
+import { getLocalizedField, useTranslation } from "~/translations";
 import { partnerMapping } from "./PartnerLogo";
 
 type Props = {

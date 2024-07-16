@@ -1,12 +1,25 @@
 import { A } from "@solidjs/router";
-import logo from "../assets/logo.svg";
-import { location } from "../lib/location";
-import { useSearchParams } from "../lib/params";
-import { useTranslation } from "../translations";
+import { createEffect } from "solid-js";
+import logo from "~/assets/logo.svg";
+import { useSearchParams } from "~/lib/params";
+import { getSession, useSessionMutation } from "~/lib/session";
+import { useTranslation } from "~/translations";
 
 const Footer = () => {
 	const { t } = useTranslation();
 	const [query] = useSearchParams();
+
+	const session = getSession(query.cordsId!);
+
+	const mutateSession = useSessionMutation();
+
+	createEffect(() => {
+		if (session.data?.address !== "Toronto, ON, Canada (Default)") return;
+		mutateSession.mutate({
+			...session.data,
+			address: "Your Location",
+		});
+	});
 
 	return (
 		<footer class="bg-elevation1 px-4 py-2 gap-0.5 flex flex-col justify-between border-t">
@@ -14,7 +27,7 @@ const Footer = () => {
 				<div class="flex items-center">
 					<div class="bg-orange-300 w-2 h-2 mr-2 rounded-full" />
 					<span class="font-medium">
-						{location() ? location().name : "Loading location..."}
+						{session.data ? session.data.address : "Loading location..."}
 					</span>
 				</div>
 				<span>•</span>

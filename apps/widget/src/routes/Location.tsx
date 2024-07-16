@@ -1,12 +1,10 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { debounce } from "@solid-primitives/scheduled";
-import { useNavigate } from "@solidjs/router";
 import { createMutation, createQuery } from "@tanstack/solid-query";
-import { For, Match, Show, Switch, createSignal } from "solid-js";
-import Pending from "../components/Pending";
-import { location, setLocation, setUserLocation } from "../lib/location";
-import { useSearchParams } from "../lib/params";
-import { useTranslation } from "../translations";
+import { For, Show, createSignal } from "solid-js";
+import { useSearchParams } from "~/lib/params";
+import { getSession, useSessionMutation } from "~/lib/session";
+import { useTranslation } from "~/translations";
 
 const loader = new Loader({
 	apiKey: import.meta.env.VITE_GOOGLE_API_KEY,
@@ -63,40 +61,14 @@ const autocomplete = async (
 	});
 };
 
-const LocationSearch = (props: { search: string; setPlace: (placeId: string) => void }) => {
-	const data = createQuery(() => ({
-		queryKey: ["location", props.search],
-		queryFn: () => autocomplete(props.search),
-		enabled: props.search !== "",
-		throwOnError: true,
-	}));
-
-	return (
-		<Show when={data.data}>
-			<For each={data.data}>
-				{(prediction) => (
-					<div
-						class="bg-white text-white p-4 -mt-2 rounded-lg cursor-pointer border"
-						onClick={() => props.setPlace(prediction.place_id)}
-					>
-						<p>{prediction.description.split(",")[0]}</p>
-						<p class="text-xs text-steel">
-							{prediction.description.split(",").slice(1).join(",")}
-						</p>
-					</div>
-				)}
-			</For>
-		</Show>
-	);
-};
-
 const Location = () => {
-	const navigate = useNavigate();
 	const [query] = useSearchParams();
 	const [search, setSearch] = createSignal("");
 	const { t } = useTranslation();
 
 	const updateSearch = debounce((query: string) => setSearch(query), 500);
+
+	const session = getSession(query.cordsId!);
 
 	const data = createQuery(() => ({
 		queryKey: ["location", search()],
@@ -105,84 +77,100 @@ const Location = () => {
 		throwOnError: true,
 	}));
 
+	const sessionMutation = useSessionMutation();
+
 	const setPlace = createMutation(() => ({
 		mutationKey: ["place"],
 		mutationFn: async (placeId: string) => {
 			const place = await getPlace(placeId);
-			setLocation({
+			sessionMutation.mutate({
+				id: query.cordsId!,
 				lat: place.geometry?.location?.lat()!,
 				lng: place.geometry?.location?.lng()!,
-				name: place.formatted_address!,
+				address: place.formatted_address!,
 			});
-			navigate(`/?${new URLSearchParams(query).toString()}`);
 		},
 		throwOnError: true,
 	}));
 
 	return (
-		<Switch>
-			<Match when={setPlace.isPending}>
-				<Pending />
-			</Match>
-			<Match when={setPlace.isIdle}>
-				<div class="p-4 flex flex-col gap-4">
-					<div>
-						<p class="font-medium">{location().name.split(",")[0]}</p>
-						<p class="text-xs text-steel">
-							{location().name.split(",").slice(1).join(",")}
-						</p>
-					</div>
-					<hr />
-					<button
-						class="w-full bg-primary text-white h-12 text-sm flex items-center gap-2 justify-center rounded"
-						onClick={() => {
-							setUserLocation(() =>
-								navigate(`/?${new URLSearchParams(query).toString()}`)
-							);
-						}}
-					>
-						<span class="material-symbols-outlined text-lg">gps_fixed</span>
-						{t().location["use-current"]}
-					</button>
-					<form
-						class="w-full border rounded h-12 flex items-center"
-						onSubmit={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-						}}
-					>
-						<input
-							type="text"
-							autocomplete="off"
-							class="outline-none px-4 h-full w-full text-sm rounded placeholder:text-sm"
-							placeholder={t().location.search}
-							name="query"
-							value={search()}
-							onInput={(e) => {
-								updateSearch(e.currentTarget.value);
-							}}
-						/>
+		<div class="p-4 flex flex-col gap-4">
+			<div>
+				<p class="font-medium">{session.data?.address.split(",")[0]}</p>
+				<p class="text-xs text-steel">
+					{session.data?.address.split(",").slice(1).join(",")}
+				</p>
+			</div>
+			<hr />
+			<button
+				class="w-full bg-primary text-white h-12 text-sm flex items-center gap-2 justify-center rounded"
+				onClick={async () => {
+					navigator.geolocation.getCurrentPosition(
+						(position) => {
+							sessionMutation.mutate({
+								id: query.cordsId!,
+								lat: position.coords.latitude,
+								lng: position.coords.longitude,
+								address: "Your Location",
+							});
+						},
+						async () => {
+							const res = await fetch("https://api.cords.dev/info");
+							const data = await res.json();
+							sessionMutation.mutate({
+								id: query.cordsId!,
+								lat: data.lat,
+								lng: data.lng,
+								address: "Your Location, Set by device",
+							});
+						},
+						{
+							enableHighAccuracy: false,
+							timeout: 10000,
+						}
+					);
+				}}
+			>
+				<span class="material-symbols-outlined text-lg">gps_fixed</span>
+				{t().location["use-current"]}
+			</button>
+			<form
+				class="w-full border rounded h-12 flex items-center"
+				onSubmit={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+				}}
+			>
+				<input
+					type="text"
+					autocomplete="off"
+					class="outline-none px-4 h-full w-full text-sm rounded placeholder:text-sm"
+					placeholder={t().location.search}
+					name="query"
+					value={search()}
+					onInput={(e) => {
+						updateSearch(e.currentTarget.value);
+					}}
+				/>
 
-						<button type="submit" class="hidden"></button>
-					</form>
-					<Show when={data.data}>
-						<For each={data.data}>
-							{(prediction) => (
-								<div
-									class="bg-white text-white p-4 -mt-2 rounded-lg cursor-pointer border"
-									onClick={() => setPlace.mutate(prediction.place_id)}
-								>
-									<p>{prediction.description.split(",")[0]}</p>
-									<p class="text-xs text-steel">
-										{prediction.description.split(",").slice(1).join(",")}
-									</p>
-								</div>
-							)}
-						</For>
-					</Show>
-				</div>
-			</Match>
-		</Switch>
+				<button type="submit" class="hidden"></button>
+			</form>
+			<Show when={data.data}>
+				<For each={data.data}>
+					{(prediction) => (
+						<div
+							class="bg-white text-white p-4 -mt-2 rounded-lg cursor-pointer border"
+							onClick={() => setPlace.mutate(prediction.place_id)}
+						>
+							<p>{prediction.description.split(",")[0]}</p>
+							<p class="text-xs text-steel">
+								{prediction.description.split(",").slice(1).join(",")}
+							</p>
+						</div>
+					)}
+				</For>
+			</Show>
+		</div>
 	);
 };
 

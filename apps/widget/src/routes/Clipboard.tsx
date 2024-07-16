@@ -1,18 +1,24 @@
+import { useSearchParams } from "@solidjs/router";
 import { createQuery } from "@tanstack/solid-query";
 import { For, Match, Show, Switch } from "solid-js";
-import empty from "../assets/empty.svg";
-import Pending from "../components/Pending";
-import ServiceItem from "../components/ServiceItem";
-import { clipboardIDs } from "../lib/clipboard";
-import { useCords } from "../lib/cords";
-import { useTranslation } from "../translations";
+import empty from "~/assets/empty.svg";
+import Pending from "~/components/Pending";
+import ServiceItem from "~/components/ServiceItem";
+import { useCords } from "~/lib/cords";
+import { getSession } from "~/lib/session";
+import { useTranslation } from "~/translations";
 
 const Clipboard = () => {
 	const cords = useCords();
+	const [query] = useSearchParams();
+	const session = getSession(query.cordsId!);
+
 	const clipboard = createQuery(() => ({
-		queryKey: ["clipboard", clipboardIDs()],
-		queryFn: () => cords.resourceList(clipboardIDs()),
+		queryKey: ["clipboard", session],
+		queryFn: () =>
+			cords.resourceList(session.data?.clipboardServices.map((s) => s.serviceId) ?? []),
 		throwOnError: true,
+		enabled: !!session.data,
 	}));
 	const { t } = useTranslation();
 
