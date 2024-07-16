@@ -55,10 +55,8 @@ var CordsAPI = ({
       if (res.status === 403)
         throw new Error("Bad API key. Ensure you have a valid API key.");
       const data = yield res.json();
-      if (data.detail)
-        throw new Error(data.detail);
-      else
-        throw new Error("An error occurred");
+      if (data.detail) throw new Error(data.detail);
+      else throw new Error("An error occurred");
     }
     return res;
   });
@@ -69,12 +67,9 @@ var CordsAPI = ({
     });
     params.append("lat", options.lat.toString());
     params.append("lng", options.lng.toString());
-    if (options.page)
-      params.append("page", options.page.toString());
-    if (options.pageSize)
-      params.append("pageSize", options.pageSize.toString());
-    if (options.distance)
-      params.append("distance", options.distance.toString());
+    if (options.page) params.append("page", options.page.toString());
+    if (options.pageSize) params.append("pageSize", options.pageSize.toString());
+    if (options.distance) params.append("distance", options.distance.toString());
     if (options.partner) {
       for (const [key, value] of Object.entries(options.partner)) {
         params.append(`filter[${key}]`, value ? "true" : "false");
@@ -152,8 +147,7 @@ var formatServiceAddress = (address) => {
   const newAddress = street1 + street2 + city + province + postalCode;
   if (newAddress.endsWith(", ")) {
     return newAddress.slice(0, -2);
-  } else
-    return newAddress;
+  } else return newAddress;
 };
 export {
   CordsAPI,
