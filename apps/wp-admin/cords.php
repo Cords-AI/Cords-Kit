@@ -105,6 +105,32 @@ function enqueue_cords_widget_script()
 		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.pages.dev";
 ?>
 		<script>
+			function extractPageText(htmlContent) {
+				// Create a new DOM element
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(htmlContent, 'text/html');
+
+				// Selectors for tags to remove
+				const selectorsToRemove = ['nav', 'a', 'header', 'footer', "script", "form", "button", "a"];
+
+				// Function to recursively remove elements matching any selector
+				function removeElements(element) {
+					Array.from(element.querySelectorAll('*')).forEach(child => {
+						if (selectorsToRemove.some(selector => child.matches(selector))) {
+							child.remove();
+						} else {
+							removeElements(child);
+						}
+					});
+				}
+
+				// Remove elements from the document
+				removeElements(doc.body);
+
+				// Extract and return the cleaned-up text content
+				return doc.body.textContent || "";
+			}
+
 			// Resize widget to fit content
 			window.addEventListener("message", function(event) {
 				if (event.data.type !== "cords-resize") return;
@@ -115,7 +141,7 @@ function enqueue_cords_widget_script()
 			// Create widget
 			document.addEventListener('DOMContentLoaded', function() {
 				let iframe = document.createElement('iframe');
-				const postContent = encodeURIComponent(document.body.innerText.slice(0, 1000));
+				const postContent = encodeURIComponent(extractPageText(document.body.innerHTML));
 				// Assuming $origin and $api_key are already defined in PHP and passed correctly into JavaScript
 				iframe.src = '<?php echo $origin; ?>' + "?q=" + postContent + "&api_key=" + '<?php echo $api_key; ?>' + "&cordsId=" + '<?php echo $_COOKIE['cords-id']; ?>';
 				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px; overscroll-behavior: contain';
