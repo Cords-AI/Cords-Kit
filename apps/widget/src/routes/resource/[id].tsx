@@ -92,7 +92,7 @@ const Resource = () => {
 	const toggleClipboard = createMutation(() => ({
 		mutationKey: ["clipboard"],
 		mutationFn: async (id: string) => {
-			await fetch(`/api/clipboard/${id}`, {
+			await fetch(`${import.meta.env.VITE_SITE_URL}/api/clipboard/${id}`, {
 				method: "PUT",
 				headers: {
 					"cords-id": query.cordsId!,
@@ -264,7 +264,8 @@ const Resource = () => {
 										getLocalizedField(resource().website, locale())?.startsWith(
 											"http"
 										)
-											? getLocalizedField(resource().website, locale()) ?? ""
+											? (getLocalizedField(resource().website, locale()) ??
+												"")
 											: `https://${getLocalizedField(resource().website, locale())}`
 									}
 									target="_blank"

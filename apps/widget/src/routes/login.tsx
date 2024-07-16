@@ -11,7 +11,7 @@ export const GET = async (e: APIEvent) => {
 		return { status: 400, body: "Missing redirect parameter" };
 	}
 
-	let cordsId = getCookie("cords-id");
+	let cordsId = getCookie(e.nativeEvent, "cords-id");
 	if (!cordsId) {
 		cordsId = Math.random().toString(36).substring(7);
 		const db = getDB();
@@ -21,7 +21,7 @@ export const GET = async (e: APIEvent) => {
 			lng: -79.3832,
 			address: "Toronto, ON, Canada (Default)",
 		});
-		setCookie("cords-id", cordsId);
+		setCookie(e.nativeEvent, "cords-id", cordsId);
 	}
-	sendRedirect(searchParams.get("redirect") + "?cordsId=" + cordsId);
+	sendRedirect(e.nativeEvent, searchParams.get("redirect") + "?cordsId=" + cordsId);
 };

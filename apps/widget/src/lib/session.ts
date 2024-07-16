@@ -5,7 +5,7 @@ export const getSession = (cordsId: string) =>
 	createQuery(() => ({
 		queryKey: ["session", cordsId],
 		queryFn: async () => {
-			const res = await fetch(`/api/session`, {
+			const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {
 				headers: {
 					"cords-id": cordsId!,
 				},
@@ -26,7 +26,7 @@ export const useSessionMutation = () => {
 	return createMutation(() => ({
 		mutationKey: ["session"],
 		mutationFn: async (session: Session) => {
-			const res = await fetch(`/api/session`, {
+			const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
