@@ -101,11 +101,8 @@ function enqueue_cords_widget_script()
 	$show_widget = get_post_meta($post_id, 'cords_widget', true);
 
 	if ($show_widget) {
-		$post_content = strip_tags(get_the_content());
-		$encoded_post_content = urlencode($post_content);
 		$api_key = get_option('cords_api_key');
 		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-kit.pages.dev";
-		$url = $origin . "?q=" . $encoded_post_content . "&api_key=" . $api_key . "&cordsId=" . $_COOKIE['cords-id'];
 ?>
 		<script>
 			// Resize widget to fit content
@@ -118,12 +115,14 @@ function enqueue_cords_widget_script()
 			// Create widget
 			document.addEventListener('DOMContentLoaded', function() {
 				let iframe = document.createElement('iframe');
-				iframe.src = '<?php echo $url; ?>';
-				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px;';
+				const postContent = encodeURIComponent(document.body.innerText.slice(0, 1000));
+				// Assuming $origin and $api_key are already defined in PHP and passed correctly into JavaScript
+				iframe.src = '<?php echo $origin; ?>' + "?q=" + postContent + "&api_key=" + '<?php echo $api_key; ?>' + "&cordsId=" + '<?php echo $_COOKIE['cords-id']; ?>';
+				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px; overscroll-behavior: contain';
 
 				let widgetContainer = document.createElement('div');
 				widgetContainer.id = 'cords-widget';
-				widgetContainer.style.cssText = 'border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: hidden; opacity: 1; max-width: 100%; right: 0px; max-height: 100%;';
+				widgetContainer.style.cssText = 'border: 0px; background-color: transparent; pointer-events: none; z-index: 2147483639; position: fixed; bottom: 0px; width: 60px; height: 60px; overflow: auto; opacity: 1; max-width: 100%; right: 0px; max-height: 100%; overscroll-behavior: contain';
 
 				widgetContainer.appendChild(iframe);
 				document.body.appendChild(widgetContainer);
