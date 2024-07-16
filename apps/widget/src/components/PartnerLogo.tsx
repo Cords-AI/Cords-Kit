@@ -1,7 +1,7 @@
 import { ResourceType } from "@cords/sdk";
 import { JSX } from "solid-js";
-import volunteer from "../assets/volunteer.jpg";
-import { useTranslation } from "../translations";
+import volunteer from "~/assets/volunteer.jpg";
+import { useTranslation } from "~/translations";
 
 export const partnerMapping: {
 	[key in ResourceType["partner"]]: {
