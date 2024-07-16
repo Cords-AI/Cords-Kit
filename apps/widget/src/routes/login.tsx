@@ -1,4 +1,5 @@
 import type { APIEvent } from "@solidjs/start/server";
+import { v4 as uuidv4 } from "uuid";
 import { getCookie, sendRedirect, setCookie } from "vinxi/http";
 import { getDB } from "~/server/db";
 import { sessions } from "~/server/schema";
@@ -13,7 +14,7 @@ export const GET = async (e: APIEvent) => {
 
 	let cordsId = getCookie(e.nativeEvent, "cords-id");
 	if (!cordsId) {
-		cordsId = Math.random().toString(36).substring(7);
+		cordsId = uuidv4();
 		const db = getDB();
 		await db.insert(sessions).values({
 			id: cordsId,
