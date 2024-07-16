@@ -18,6 +18,20 @@ export default defineConfig({
 				],
 			};
 		}
+		if (options.router === "client") {
+			return {
+				plugins: [
+					config("custom", {
+						define: {
+							"import.meta.env.VITE_GOOGLE_API_KEY": JSON.stringify(
+								process.env.VITE_GOOGLE_API_KEY
+							),
+							"process.env.VITE_SITE_URL": JSON.stringify(process.env.VITE_SITE_URL),
+						},
+					}),
+				],
+			};
+		}
 		return { plugins: [] };
 	},
 });

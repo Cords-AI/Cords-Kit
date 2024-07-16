@@ -1,29 +1,15 @@
 import { A } from "@solidjs/router";
-import { createQuery } from "@tanstack/solid-query";
 import { createEffect } from "solid-js";
 import logo from "~/assets/logo.svg";
 import { useSearchParams } from "~/lib/params";
-import { useSessionMutation } from "~/lib/session";
+import { getSession, useSessionMutation } from "~/lib/session";
 import { useTranslation } from "~/translations";
-import { Session } from "~/types";
 
 const Footer = () => {
 	const { t } = useTranslation();
 	const [query] = useSearchParams();
 
-	const session = createQuery(() => ({
-		queryKey: ["session", query.cordsId],
-		queryFn: async () => {
-			const res = await fetch(`/api/session`, {
-				headers: {
-					"cords-id": query.cordsId!,
-				},
-			});
-			const data = await res.json();
-			return data as Session;
-		},
-		enabled: !!query.cordsId,
-	}));
+	const session = getSession(query.cordsId!);
 
 	const mutateSession = useSessionMutation();
 
