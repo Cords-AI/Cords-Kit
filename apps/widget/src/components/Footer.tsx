@@ -15,12 +15,12 @@ const Footer = () => {
 
 	createEffect(() => {
 		console.log(session.data);
-		if (session.data && session.data.address === "Toronto, ON, Canada (Default)") {
-			mutateSession.mutate({
-				...session.data,
-				address: "Your Location, Set Automatically",
-			});
-		}
+		// if (session.data && session.data.address === "Toronto, ON, Canada (Default)") {
+		// 	mutateSession.mutate({
+		// 		...session.data,
+		// 		address: "Your Location, Set Automatically",
+		// 	});
+		// }
 	});
 
 	return (
