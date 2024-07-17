@@ -112,7 +112,7 @@ const Location = () => {
 								id: query.cordsId!,
 								lat: position.coords.latitude,
 								lng: position.coords.longitude,
-								address: "Your Location",
+								address: "Your Location, Set by device",
 							});
 						},
 						async () => {
