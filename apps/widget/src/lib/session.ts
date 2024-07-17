@@ -20,9 +20,7 @@ export const getSession = (cordsId: string) =>
 		},
 		enabled: !!cordsId,
 		gcTime: 0,
-		refetchOnMount: false,
-		refetchOnReconnect: false,
-		refetchOnWindowFocus: false,
+		staleTime: 0,
 	}));
 
 export const useSessionMutation = () => {
