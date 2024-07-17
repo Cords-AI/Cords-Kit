@@ -14,10 +14,10 @@ const Footer = () => {
 	const mutateSession = useSessionMutation();
 
 	createEffect(() => {
-		if (session.data?.address === "Toronto, ON, Canada (Default)") {
+		if (session.data && session.data.address === "Toronto, ON, Canada (Default)") {
 			mutateSession.mutate({
 				...session.data,
-				address: "Your Location, Set by device",
+				address: "Your Location, Set Automatically",
 			});
 		}
 	});
