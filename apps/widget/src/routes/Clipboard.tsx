@@ -11,7 +11,7 @@ import { useTranslation } from "~/translations";
 const Clipboard = () => {
 	const cords = useCords();
 	const [query] = useSearchParams();
-	const session = getSession(query.cordsId!);
+	const session = getSession(query.cordsId);
 
 	const clipboard = createQuery(() => ({
 		queryKey: ["clipboard", session],

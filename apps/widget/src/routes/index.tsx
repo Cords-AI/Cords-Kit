@@ -38,7 +38,7 @@ const Home: Component = () => {
 	const cords = useCords();
 	const [searchParams] = useSearchParams();
 	const { t } = useTranslation();
-	const session = getSession(searchParams.cordsId!);
+	const session = getSession(searchParams.cordsId);
 
 	const similar = createQuery(() => ({
 		queryKey: ["similar", searchParams.q, session.data?.lat, session.data?.lng],

@@ -56,7 +56,7 @@ const Nearest: Component<{
 	const cords = useCords();
 	const { t } = useTranslation();
 	const [query] = useSearchParams();
-	const session = getSession(query.cordsId!);
+	const session = getSession(query.cordsId);
 	const related = createQuery(() => ({
 		queryKey: ["nearest-neighbour", props.id],
 		queryFn: () =>
@@ -85,7 +85,7 @@ const Resource = () => {
 	}));
 	const { t, locale } = useTranslation();
 
-	const session = getSession(query.cordsId!);
+	const session = getSession(query.cordsId);
 
 	const queryClient = useQueryClient();
 

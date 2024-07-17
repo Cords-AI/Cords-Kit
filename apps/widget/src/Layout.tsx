@@ -211,7 +211,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 	const { locale, setLocale } = useTranslation();
 	const location = useLocation();
 	let scrollRef: HTMLDivElement | undefined;
-	const session = getSession(query.cordsId!);
+	const session = getSession(query.cordsId);
 
 	createEffect(() => {
 		window.parent.postMessage(

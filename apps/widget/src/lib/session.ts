@@ -1,9 +1,9 @@
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
 import { Session } from "~/types";
 
-export const getSession = (cordsId: string) =>
+export const getSession = (cordsId?: string) =>
 	createQuery(() => ({
-		queryKey: ["session", cordsId],
+		queryKey: ["session"],
 		queryFn: async () => {
 			const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {
 				headers: {
@@ -26,7 +26,6 @@ export const getSession = (cordsId: string) =>
 export const useSessionMutation = () => {
 	const queryClient = useQueryClient();
 	return createMutation(() => ({
-		mutationKey: ["session"],
 		mutationFn: async (session: Session) => {
 			const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {
 				method: "PUT",
@@ -39,8 +38,8 @@ export const useSessionMutation = () => {
 			const data = await res.json();
 			return data as Session;
 		},
-		onSuccess: ({ id }) => {
-			queryClient.invalidateQueries({ queryKey: ["session", id] });
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["session"] });
 		},
 	}));
 };
