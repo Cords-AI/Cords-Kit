@@ -68,7 +68,7 @@ const Location = () => {
 
 	const updateSearch = debounce((query: string) => setSearch(query), 500);
 
-	const session = getSession(query.cordsId!);
+	const session = getSession(query.cordsId);
 
 	const data = createQuery(() => ({
 		queryKey: ["location", search()],

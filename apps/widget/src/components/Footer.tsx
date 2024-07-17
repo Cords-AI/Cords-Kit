@@ -1,27 +1,14 @@
 import { A } from "@solidjs/router";
-import { createEffect } from "solid-js";
 import logo from "~/assets/logo.svg";
 import { useSearchParams } from "~/lib/params";
-import { getSession, useSessionMutation } from "~/lib/session";
+import { getSession } from "~/lib/session";
 import { useTranslation } from "~/translations";
 
 const Footer = () => {
 	const { t } = useTranslation();
 	const [query] = useSearchParams();
 
-	const session = getSession(query.cordsId!);
-
-	const mutateSession = useSessionMutation();
-
-	createEffect(() => {
-		console.log(session.data);
-		// if (session.data && session.data.address === "Toronto, ON, Canada (Default)") {
-		// 	mutateSession.mutate({
-		// 		...session.data,
-		// 		address: "Your Location, Set Automatically",
-		// 	});
-		// }
-	});
+	const session = getSession(query.cordsId);
 
 	return (
 		<footer class="bg-elevation1 px-4 py-2 gap-0.5 flex flex-col justify-between border-t">

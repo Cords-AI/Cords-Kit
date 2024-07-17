@@ -15,7 +15,7 @@ const Search = () => {
 	const { t } = useTranslation();
 	const [query] = useSearchParams();
 
-	const session = getSession(query.cordsId!);
+	const session = getSession(query.cordsId);
 
 	const data = createQuery(() => ({
 		queryKey: ["search", search()],
