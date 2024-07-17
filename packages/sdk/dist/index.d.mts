@@ -65,6 +65,7 @@ type SearchOptions = {
         mentor?: boolean;
         prosper?: boolean;
         magnet?: boolean;
+        volunteer?: boolean;
     };
     delivery?: {
         local?: boolean;

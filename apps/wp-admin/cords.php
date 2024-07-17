@@ -141,7 +141,7 @@ function enqueue_cords_widget_script()
 			// Create widget
 			document.addEventListener('DOMContentLoaded', function() {
 				let iframe = document.createElement('iframe');
-				const postContent = encodeURIComponent(extractPageText(document.body.innerHTML));
+				const postContent = extractPageText(document.body.innerHTML);
 				// Assuming $origin and $api_key are already defined in PHP and passed correctly into JavaScript
 				iframe.src = '<?php echo $origin; ?>' + "?q=" + postContent + "&api_key=" + '<?php echo $api_key; ?>' + "&cordsId=" + '<?php echo $_COOKIE['cords-id']; ?>';
 				iframe.style.cssText = 'pointer-events: all; background: none; border: 0px; float: none; position: absolute; inset: 0px; width: 100%; height: 100%; margin: 0px; padding: 0px; min-height: 0px; overscroll-behavior: contain';

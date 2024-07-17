@@ -89,6 +89,7 @@ const Location = () => {
 				lng: place.geometry?.location?.lng()!,
 				address: place.formatted_address!,
 			});
+			setSearch("");
 		},
 		throwOnError: true,
 	}));

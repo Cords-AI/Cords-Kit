@@ -1,3 +1,4 @@
+import { autofocus } from "@solid-primitives/autofocus";
 import { A, useLocation, useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, JSX, Show, createEffect, createSignal } from "solid-js";
@@ -5,58 +6,135 @@ import { Transition } from "solid-transition-group";
 import Error from "~/components/Error";
 import Footer from "~/components/Footer";
 import { useSearchParams } from "~/lib/params";
-import { setSearch } from "~/lib/search";
+import { search, setSearch } from "~/lib/search";
 import { useTranslation } from "~/translations";
 import { getSession } from "./lib/session";
+import { cn } from "./lib/utils";
+autofocus;
 
 const [searchMode, setSearchMode] = createSignal(false);
+
+const icons = {
+	"211": "chrome_reader_mode",
+	magnet: "business_center",
+	mentor: "supervisor_account",
+	prosper: "assistant",
+	volunteer: "volunteer_activism",
+};
 
 const SearchHeader = () => {
 	const navigate = useNavigate();
 	const [query] = useSearchParams();
+	const [open, setOpen] = createSignal(false);
+	const { t } = useTranslation();
 	const form = createForm(() => ({
 		defaultValues: {
 			query: "",
 		},
 		onSubmit: async ({ value }) => {
+			setOpen(false);
 			setSearch((search) => ({ q: value.query, options: { ...search.options, page: 1 } }));
 			navigate(`/search?${new URLSearchParams(query).toString()}`);
 		},
 	}));
 
 	return (
-		<header class="flex h-16 bg-elevation1 px-6 items-center border-b border-b-hairline z-10">
+		<header class="flex h-16 bg-elevation1 px-6 gap-1 items-center border-b border-b-hairline z-10">
 			<form
-				class="w-full border rounded h-12 flex items-center"
 				onSubmit={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
 					form.handleSubmit();
 				}}
+				class="relative flex-1 flex"
 			>
-				<span
-					class="material-symbols-outlined flex items-center justify-center h-full text-primary w-12 cursor-pointer"
-					onClick={() => {
-						setSearchMode(false);
-					}}
+				<div
+					class={
+						"border h-12 flex items-center flex-1" +
+						(open() ? " rounded-t" : " rounded")
+					}
 				>
-					arrow_back
-				</span>
-				<form.Field
-					name="query"
-					children={(field) => (
-						<input
-							type="text"
-							autocomplete="off"
-							class="outline-none pr-4 h-full w-full"
-							name={field().name}
-							value={field().state.value}
-							onBlur={field().handleBlur}
-							onInput={(e) => field().handleChange(e.target.value)}
-						/>
-					)}
-				/>
-				<button type="submit" class="hidden"></button>
+					<span
+						class="material-symbols-outlined flex items-center justify-center h-full text-primary w-14 cursor-pointer"
+						onClick={() => {
+							setSearchMode(false);
+						}}
+					>
+						arrow_back
+					</span>
+					<form.Field
+						name="query"
+						children={(field) => (
+							<input
+								type="text"
+								autocomplete="off"
+								use:autofocus
+								autofocus
+								class="outline-none pr-4 h-full w-full"
+								name={field().name}
+								value={field().state.value}
+								onBlur={field().handleBlur}
+								onInput={(e) => field().handleChange(e.target.value)}
+							/>
+						)}
+					/>
+					<button type="submit" class="hidden"></button>
+					<span
+						onClick={() => setOpen(!open())}
+						class="material-symbols-outlined flex items-center justify-center h-full text-[20px] text-primary w-16 cursor-pointer"
+					>
+						tune
+					</span>
+				</div>
+				<Show when={open()}>
+					<div class="absolute top-[47px] right-0 gap-2 flex flex-col bg-elevation1 border border-b-hairline p-4 rounded-b w-full">
+						<p>Type</p>
+						<div class="flex gap-2 flex-wrap">
+							{Object.entries(t().search.filters.type).map(([key, value]) => (
+								<label
+									class={cn(
+										"inline-flex gap-2 items-center cursor-pointer px-3 h-10 rounded border",
+										// @ts-ignore
+										search().options.partner[key]
+											? "border-primary"
+											: "border-hairline",
+										// @ts-ignore
+										search().options.partner[key] && "bg-primary bg-opacity-10"
+									)}
+								>
+									<input
+										type="checkbox"
+										/* @ts-ignore */
+										checked={search().options.partner[key]}
+										onChange={(e) => {
+											console.log(key);
+											setSearch((search) => ({
+												...search,
+												options: {
+													...search.options,
+													partner: {
+														...search.options.partner,
+														[key]: e.target.checked,
+													},
+												},
+											}));
+										}}
+										class="sr-only"
+									/>
+									<span
+										onClick={() => setOpen(!open())}
+										class="material-symbols-outlined text-[20px]"
+									>
+										{/* @ts-ignore */}
+										{icons[key]}
+									</span>
+									<p class="text-sm">{value}</p>
+								</label>
+							))}
+						</div>
+						<input type="submit" value="Search" class="btn mt-4 self-end" />
+					</div>
+				</Show>
 			</form>
 		</header>
 	);

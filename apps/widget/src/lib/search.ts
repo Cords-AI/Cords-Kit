@@ -15,6 +15,7 @@ export const [search, setSearch] = createSignal<{
 			mentor: true,
 			prosper: true,
 			magnet: true,
+			volunteer: true,
 		},
 		delivery: {
 			local: true,
