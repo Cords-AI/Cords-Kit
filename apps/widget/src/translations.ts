@@ -19,6 +19,8 @@ const en_dict = {
 		search: "Search for a location...",
 	},
 	search: {
+		submit: "Search",
+		reset: "Clear all",
 		meta: {
 			page: "Page",
 			of: "of",
@@ -32,6 +34,7 @@ const en_dict = {
 				provincial: "Provincial",
 				national: "National",
 			},
+			typeTitle: "Type",
 			type: {
 				"211": "Resources",
 				magnet: "Employment",
@@ -39,6 +42,7 @@ const en_dict = {
 				prosper: "Benefits",
 				volunteer: "Volunteering",
 			},
+			distanceTitle: "Search Radius",
 		},
 	},
 	clipboard: {
@@ -68,6 +72,10 @@ const en_dict = {
 		"result-from": "Result from",
 		distance: "Distance",
 	},
+	footer: {
+		terms: "Terms of Use",
+		privacy: "Privacy Policy",
+	},
 };
 
 type Dict = typeof en_dict;
@@ -90,6 +98,8 @@ const fr_dict: Dict = {
 		search: "Rechercher un lieu...",
 	},
 	search: {
+		submit: "Rechercher",
+		reset: "Effacer tout",
 		meta: {
 			page: "Page",
 			of: "de",
@@ -103,6 +113,7 @@ const fr_dict: Dict = {
 				provincial: "Provinciale",
 				national: "National",
 			},
+			typeTitle: "Type",
 			type: {
 				"211": "Ressources",
 				magnet: "Emploi",
@@ -110,6 +121,7 @@ const fr_dict: Dict = {
 				prosper: "Avantages",
 				volunteer: "Volunteering",
 			},
+			distanceTitle: "Rayon de recherche",
 		},
 	},
 	clipboard: {
@@ -139,6 +151,10 @@ const fr_dict: Dict = {
 		related: "Les gens ont aussi regardé",
 		"result-from": "Résultat de",
 		distance: "Distance",
+	},
+	footer: {
+		terms: "Conditions d’utilisation",
+		privacy: "Politique de confidentialité",
 	},
 };
 

@@ -53,6 +53,10 @@ body {
 	@apply text-sm text-white bg-primary w-min px-3 shadow h-8 flex items-center justify-center rounded cursor-pointer;
 }
 
+.neutral-btn {
+	@apply text-sm text-slate whitespace-nowrap bg-elevation3 w-min px-3 shadow h-8 flex items-center justify-center rounded cursor-pointer;
+}
+
 input[type="text"],
 input[type="number"],
 textarea {

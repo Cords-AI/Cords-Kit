@@ -45,14 +45,14 @@ const Footer = () => {
 						target="_blank"
 						class="text-[10px] h-full flex items-center"
 					>
-						Privacy Policy
+						{t().footer.privacy}
 					</a>
 					<a
 						href={`https://cords.ai/${query.lang ? query.lang : "en"}/terms-of-use`}
 						target="_blank"
 						class="text-[10px] h-full flex items-center"
 					>
-						Terms of Use
+						{t().footer.terms}
 					</a>
 				</div>
 				<a
