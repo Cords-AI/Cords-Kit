@@ -32,6 +32,13 @@ const en_dict = {
 				provincial: "Provincial",
 				national: "National",
 			},
+			type: {
+				"211": "Resources",
+				magnet: "Employment",
+				mentor: "Mentoring Opportunities",
+				prosper: "Benefits",
+				volunteer: "Volunteering",
+			},
 		},
 	},
 	clipboard: {
@@ -95,6 +102,13 @@ const fr_dict: Dict = {
 				regional: "Régional",
 				provincial: "Provinciale",
 				national: "National",
+			},
+			type: {
+				"211": "Ressources",
+				magnet: "Emploi",
+				mentor: "Opportunités de mentorat",
+				prosper: "Avantages",
+				volunteer: "Volunteering",
 			},
 		},
 	},
