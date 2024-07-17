@@ -22,7 +22,11 @@ export const GET = async (e: APIEvent) => {
 			lng: -79.3832,
 			address: "Toronto, ON, Canada (Default)",
 		});
-		setCookie(e.nativeEvent, "cords-id", cordsId);
+		setCookie(e.nativeEvent, "cords-id", cordsId, {
+			secure: true,
+			sameSite: "lax",
+			httpOnly: true,
+		});
 	}
 	sendRedirect(e.nativeEvent, searchParams.get("redirect") + "?cordsId=" + cordsId);
 };

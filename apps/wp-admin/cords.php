@@ -44,7 +44,7 @@ function cords_check_cookie_and_redirect()
 		$cordsId = sanitize_text_field($_GET['cordsId']);
 
 		// Set the 'cords-id' cookie for 30 days
-		setcookie('cords-id', $cordsId, time() + (86400 * 30), "/");
+		setcookie('cords-id', $cordsId, time() + (86400 * 30), "/", false, wp_get_environment_type() === "local" ? false : true, true);
 
 		// Prepare the URL to redirect to (same URL but without the 'cordsId' query parameter)
 		$redirect_url = remove_query_arg('cordsId');
