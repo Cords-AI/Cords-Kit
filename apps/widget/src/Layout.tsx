@@ -6,7 +6,7 @@ import { Transition } from "solid-transition-group";
 import Error from "~/components/Error";
 import Footer from "~/components/Footer";
 import { useSearchParams } from "~/lib/params";
-import { search, setSearch } from "~/lib/search";
+import { setSearch } from "~/lib/search";
 import { useTranslation } from "~/translations";
 import { getSession } from "./lib/session";
 import { cn } from "./lib/utils";
@@ -30,13 +30,41 @@ const SearchHeader = () => {
 	const form = createForm(() => ({
 		defaultValues: {
 			query: "",
+			distance: 10,
+			too: true,
+			magnet: true,
+			mentor: true,
+			prosper: true,
+			volunteer: true,
 		},
 		onSubmit: async ({ value }) => {
 			setOpen(false);
-			setSearch((search) => ({ q: value.query, options: { ...search.options, page: 1 } }));
+			setSearch((search) => ({
+				q: value.query,
+				options: {
+					...search.options,
+					page: 1,
+					distance: value.distance,
+					partner: {
+						too: value.too,
+						magnet: value.magnet,
+						mentor: value.mentor,
+						prosper: value.prosper,
+						volunteer: value.volunteer,
+					},
+				},
+			}));
 			navigate(`/search?${new URLSearchParams(query).toString()}`);
 		},
+		validators: {
+			onChange: ({ value }) => {
+				if (value.query.length < 1) return "Please enter at least 1 character";
+			},
+		},
 	}));
+
+	const isValid = form.useStore((state) => state.canSubmit);
+	const isPristine = form.useStore((state) => state.isPristine);
 
 	return (
 		<header class="flex h-16 bg-elevation1 px-6 gap-1 items-center border-b border-b-hairline z-10">
@@ -88,51 +116,86 @@ const SearchHeader = () => {
 				</div>
 				<Show when={open()}>
 					<div class="absolute top-[47px] right-0 gap-2 flex flex-col bg-elevation1 border border-b-hairline p-4 rounded-b w-full">
-						<p>Type</p>
+						<p>{t().search.filters.typeTitle}</p>
 						<div class="flex gap-2 flex-wrap">
 							{Object.entries(t().search.filters.type).map(([key, value]) => (
-								<label
-									class={cn(
-										"inline-flex gap-2 items-center cursor-pointer px-3 h-10 rounded border",
-										// @ts-ignore
-										search().options.partner[key]
-											? "border-primary"
-											: "border-hairline",
-										// @ts-ignore
-										search().options.partner[key] && "bg-primary bg-opacity-10"
+								<form.Field
+									// @ts-ignore
+									name={key === "211" ? "too" : key}
+									children={(field) => (
+										<label
+											class={cn(
+												"inline-flex gap-2 items-center cursor-pointer px-3 h-10 rounded border",
+												field().state.value
+													? "border-primary bg-primary bg-opacity-10"
+													: "border-hairline"
+											)}
+										>
+											<input
+												type="checkbox"
+												name={field().name}
+												// @ts-ignore
+												checked={field().state.value}
+												onBlur={field().handleBlur}
+												onChange={(e) =>
+													field().handleChange(e.target.checked)
+												}
+												class="sr-only"
+											/>
+											<span
+												onClick={() => setOpen(!open())}
+												class="material-symbols-outlined text-[20px]"
+											>
+												{/* @ts-ignore */}
+												{icons[key]}
+											</span>
+											<p class="text-sm">{value}</p>
+										</label>
 									)}
-								>
-									<input
-										type="checkbox"
-										/* @ts-ignore */
-										checked={search().options.partner[key]}
-										onChange={(e) => {
-											console.log(key);
-											setSearch((search) => ({
-												...search,
-												options: {
-													...search.options,
-													partner: {
-														...search.options.partner,
-														[key]: e.target.checked,
-													},
-												},
-											}));
-										}}
-										class="sr-only"
-									/>
-									<span
-										onClick={() => setOpen(!open())}
-										class="material-symbols-outlined text-[20px]"
-									>
-										{/* @ts-ignore */}
-										{icons[key]}
-									</span>
-									<p class="text-sm">{value}</p>
-								</label>
+								/>
 							))}
 						</div>
-						<input type="submit" value="Search" class="btn mt-4 self-end" />
+						<p class="mt-2">{t().search.filters.distanceTitle}</p>
+						<form.Field
+							name="distance"
+							children={(field) => (
+								<div class="border rounded w-full px-4 pt-2">
+									<p class="text-xs">kilometers</p>
+									<input
+										type="number"
+										name={field().name}
+										value={field().state.value}
+										onBlur={field().handleBlur}
+										onInput={(e) =>
+											field().handleChange(Number(e.target.value))
+										}
+										min="1"
+										class="outline-none h-8 w-full"
+									/>
+								</div>
+							)}
+						/>
+						<div class="flex justify-between mt-4">
+							<Show when={!isPristine()}>
+								<button
+									class={"neutral-btn"}
+									onClick={() => {
+										form.reset();
+										form.validate("change");
+									}}
+								>
+									{t().search.reset}
+								</button>
+							</Show>
+							<div class="flex flex-1 justify-end">
+								<input
+									type="submit"
+									value={t().search.submit}
+									class="btn disabled:opacity-50"
+									disabled={!isValid()}
+								/>
+							</div>
+						</div>
 					</div>
 				</Show>
 			</form>
