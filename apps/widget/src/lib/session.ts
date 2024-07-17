@@ -19,6 +19,10 @@ export const getSession = (cordsId: string) =>
 			};
 		},
 		enabled: !!cordsId,
+		gcTime: 0,
+		refetchOnMount: false,
+		refetchOnReconnect: false,
+		refetchOnWindowFocus: false,
 	}));
 
 export const useSessionMutation = () => {
@@ -37,8 +41,8 @@ export const useSessionMutation = () => {
 			const data = await res.json();
 			return data as Session;
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["session"] });
+		onSuccess: ({ id }) => {
+			queryClient.invalidateQueries({ queryKey: ["session", id] });
 		},
 	}));
 };
