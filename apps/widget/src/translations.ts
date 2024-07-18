@@ -12,6 +12,7 @@ const en_dict = {
 			title: "Related",
 			description: "Other services you may be interested in",
 		},
+		"view-more": "View More",
 	},
 	location: {
 		change: "Change location",
@@ -91,6 +92,7 @@ const fr_dict: Dict = {
 			title: "En rapport",
 			description: "Autres services susceptibles de vous intéresser",
 		},
+		"view-more": "Voir plus",
 	},
 	location: {
 		change: "Changer de lieu",

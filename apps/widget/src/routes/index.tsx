@@ -1,5 +1,4 @@
-import { SearchResourceType } from "@cords/sdk";
-import { createQuery } from "@tanstack/solid-query";
+import { createInfiniteQuery, createQuery } from "@tanstack/solid-query";
 import { Component, For, Match, Show, Switch } from "solid-js";
 import Pending from "~/components/Pending";
 import ServiceItem from "~/components/ServiceItem";
@@ -40,40 +39,32 @@ const Home: Component = () => {
 	const { t } = useTranslation();
 	const session = getSession(searchParams.cordsId);
 
-	const similar = createQuery(() => ({
+	const similar = createInfiniteQuery(() => ({
 		queryKey: ["similar", searchParams.q, session.data?.lat, session.data?.lng],
-		queryFn: () => {
-			try {
-				return cords.search(searchParams.q ?? "", {
-					lat: session.data?.lat!,
-					lng: session.data?.lng!,
-					distance: 10,
-				});
-			} catch (e) {
-				console.log("Error fetching similar services", e);
-				return {
-					data: [],
-					meta: {
-						total: 0,
-						lat: 0,
-						lng: 0,
-					},
-				} as {
-					data: SearchResourceType[];
-					meta: {
-						total: number;
-						lat: number;
-						lng: number;
-					};
-				};
-			}
+		queryFn: async ({ pageParam }) => {
+			const data = await cords.search(searchParams.q ?? "", {
+				lat: session.data?.lat!,
+				lng: session.data?.lng!,
+				distance: 10,
+				page: pageParam,
+			});
+			return {
+				...data,
+				meta: {
+					...data.meta,
+					nextPage: data.data.length === 10 ? pageParam + 1 : undefined,
+				},
+			};
 		},
+		initialPageParam: 1,
+		getNextPageParam: (lastPage) => lastPage.meta.nextPage,
 		gcTime: 0,
 		staleTime: 0,
 		retry: 1,
 		throwOnError: true,
 		enabled: !!session.data,
 	}));
+	const resources = () => similar.data?.pages.flatMap((page) => page.data);
 
 	return (
 		<Switch>
@@ -82,19 +73,36 @@ const Home: Component = () => {
 			</Match>
 			<Match when={similar.isSuccess}>
 				<div class="text-black flex flex-col">
-					<Show when={similar.data && similar.data.data.length > 0}>
+					<Show when={resources() && resources()!.length > 0}>
 						<div class="p-8 bg-elevation1">
 							<h4>{t().home.similar.title}</h4>
 							<p class="text-xs text-steel">{t().home.similar.description}</p>
 						</div>
-						<For each={similar.data?.data}>
+						<For each={resources()}>
 							{(service) => {
 								return <ServiceItem service={service} />;
 							}}
 						</For>
+						<Show when={similar.hasNextPage}>
+							<button
+								onClick={() => {
+									similar.fetchNextPage();
+								}}
+								class="px-8 h-12 flex justify-center items-center bg-elevation1 border-t"
+							>
+								<Show
+									when={!similar.isFetchingNextPage}
+									fallback={<Pending width={20} height={20} />}
+								>
+									<p class="text-xs text-steel font-medium">
+										{t().home["view-more"]}
+									</p>
+								</Show>
+							</button>
+						</Show>
 					</Show>
-					<Show when={similar.data && similar.data?.data[0]?.id}>
-						<RelatedSection id={similar.data?.data[0].id!} />
+					<Show when={resources() && resources()!.length > 0 && resources()![0]?.id}>
+						{(id) => <RelatedSection id={id()} />}
 					</Show>
 				</div>
 			</Match>
