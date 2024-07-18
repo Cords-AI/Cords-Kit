@@ -46,7 +46,7 @@ const SearchHeader = () => {
 					page: 1,
 					distance: value.distance,
 					partner: {
-						too: value.too,
+						"211": value.too,
 						magnet: value.magnet,
 						mentor: value.mentor,
 						prosper: value.prosper,
