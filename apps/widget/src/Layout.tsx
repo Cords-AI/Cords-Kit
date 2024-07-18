@@ -181,7 +181,7 @@ const SearchHeader = () => {
 									class={"neutral-btn"}
 									onClick={() => {
 										form.reset();
-										form.validate("change");
+										form.validateAllFields("change");
 									}}
 								>
 									{t().search.reset}
