@@ -12,7 +12,7 @@ npm install @cords/react
 
 ## Usage
 
-To use the `CordsWidget` component in your React application, you can follow the example provided in the [React example package](/examples/react/src/App.tsx). Here's a brief overview of how to integrate it:
+To use the `CordsWidget` component in your React application, you can follow the example provided in the [React example package](https://github.com/Cords-AI/Cords-Kit/blob/master/examples/react/src/App.tsx). Here's a brief overview of how to integrate it:
 
 1. Import the `CordsWidget` component from `@cords/react`.
 2. Use the component in your application, providing the necessary prop `apiKey`
