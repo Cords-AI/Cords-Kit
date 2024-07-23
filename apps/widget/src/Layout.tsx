@@ -1,5 +1,5 @@
 import { autofocus } from "@solid-primitives/autofocus";
-import { A, useLocation, useNavigate } from "@solidjs/router";
+import { A, useLocation } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import { Component, ErrorBoundary, JSX, Show, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
@@ -9,7 +9,6 @@ import { useSearchParams } from "~/lib/params";
 import { setSearch } from "~/lib/search";
 import { useTranslation } from "~/translations";
 import { getSession } from "./lib/session";
-import { cn } from "./lib/utils";
 autofocus;
 
 const [searchMode, setSearchMode] = createSignal(false);
@@ -22,39 +21,20 @@ const icons = {
 	volunteer: "volunteer_activism",
 };
 
-const SearchHeader = () => {
-	const navigate = useNavigate();
-	const [query] = useSearchParams();
-	const [open, setOpen] = createSignal(false);
-	const { t } = useTranslation();
+const SearchHeader = ({ close }: { close: () => void }) => {
 	const form = createForm(() => ({
 		defaultValues: {
 			query: "",
-			distance: 10,
-			too: true,
-			magnet: true,
-			mentor: true,
-			prosper: true,
-			volunteer: true,
 		},
 		onSubmit: async ({ value }) => {
-			setOpen(false);
 			setSearch((search) => ({
 				q: value.query,
 				options: {
 					...search.options,
 					page: 1,
-					distance: value.distance,
-					partner: {
-						"211": value.too,
-						magnet: value.magnet,
-						mentor: value.mentor,
-						prosper: value.prosper,
-						volunteer: value.volunteer,
-					},
 				},
 			}));
-			navigate(`/search?${new URLSearchParams(query).toString()}`);
+			close();
 		},
 		validators: {
 			onChange: ({ value }) => {
@@ -62,9 +42,6 @@ const SearchHeader = () => {
 			},
 		},
 	}));
-
-	const isValid = form.useStore((state) => state.canSubmit);
-	const isPristine = form.useStore((state) => state.isPristine);
 
 	return (
 		<header class="flex h-16 bg-elevation1 px-6 gap-1 items-center border-b border-b-hairline z-10">
@@ -76,12 +53,7 @@ const SearchHeader = () => {
 				}}
 				class="relative flex-1 flex"
 			>
-				<div
-					class={
-						"border h-12 flex items-center flex-1" +
-						(open() ? " rounded-t" : " rounded")
-					}
-				>
+				<div class="border h-12 flex items-center rounded flex-1">
 					<span
 						class="material-symbols-outlined flex items-center justify-center h-full text-primary w-14 cursor-pointer"
 						onClick={() => {
@@ -98,7 +70,7 @@ const SearchHeader = () => {
 								autocomplete="off"
 								use:autofocus
 								autofocus
-								class="outline-none pr-4 h-full w-full"
+								class="outline-none pr-4 h-full w-full rounded-r"
 								name={field().name}
 								value={field().state.value}
 								onBlur={field().handleBlur}
@@ -107,97 +79,7 @@ const SearchHeader = () => {
 						)}
 					/>
 					<button type="submit" class="hidden"></button>
-					<span
-						onClick={() => setOpen(!open())}
-						class="material-symbols-outlined flex items-center justify-center h-full text-[20px] text-primary w-16 cursor-pointer"
-					>
-						tune
-					</span>
 				</div>
-				<Show when={open()}>
-					<div class="absolute top-[47px] right-0 gap-2 flex flex-col bg-elevation1 border border-b-hairline p-4 rounded-b w-full">
-						<p>{t().search.filters.typeTitle}</p>
-						<div class="flex gap-2 flex-wrap">
-							{Object.entries(t().search.filters.type).map(([key, value]) => (
-								<form.Field
-									// @ts-ignore
-									name={key === "211" ? "too" : key}
-									children={(field) => (
-										<label
-											class={cn(
-												"inline-flex gap-2 items-center cursor-pointer px-3 h-10 rounded border",
-												field().state.value
-													? "border-primary bg-primary bg-opacity-10"
-													: "border-hairline"
-											)}
-										>
-											<input
-												type="checkbox"
-												name={field().name}
-												// @ts-ignore
-												checked={field().state.value}
-												onBlur={field().handleBlur}
-												onChange={(e) =>
-													field().handleChange(e.target.checked)
-												}
-												class="sr-only"
-											/>
-											<span
-												onClick={() => setOpen(!open())}
-												class="material-symbols-outlined text-[20px]"
-											>
-												{/* @ts-ignore */}
-												{icons[key]}
-											</span>
-											<p class="text-sm">{value}</p>
-										</label>
-									)}
-								/>
-							))}
-						</div>
-						<p class="mt-2">{t().search.filters.distanceTitle}</p>
-						<form.Field
-							name="distance"
-							children={(field) => (
-								<div class="border rounded w-full px-4 pt-2">
-									<p class="text-xs">kilometers</p>
-									<input
-										type="number"
-										name={field().name}
-										value={field().state.value}
-										onBlur={field().handleBlur}
-										onInput={(e) =>
-											field().handleChange(Number(e.target.value))
-										}
-										min="1"
-										class="outline-none h-8 w-full"
-									/>
-								</div>
-							)}
-						/>
-						<div class="flex justify-between mt-4">
-							<Show when={!isPristine()}>
-								<button
-									class={"neutral-btn"}
-									onClick={() => {
-										form.reset();
-										form.validateAllFields("change");
-									}}
-								>
-									{t().search.reset}
-								</button>
-							</Show>
-							<div class="flex flex-1 justify-end">
-								<input
-									type="submit"
-									value={t().search.submit}
-									class="btn disabled:opacity-50"
-									disabled={!isValid()}
-								/>
-							</div>
-						</div>
-					</div>
-				</Show>
 			</form>
 		</header>
 	);
@@ -281,6 +163,17 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 									<nav class="flex-1 flex justify-end gap-2">
 										<A
 											href={`/?${new URLSearchParams(query).toString()}`}
+											onClick={() => {
+												setSearch((s) => {
+													return {
+														q: "",
+														options: {
+															...s.options,
+															page: 1,
+														},
+													};
+												});
+											}}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
 											<span class="material-symbols-outlined">home</span>
@@ -321,7 +214,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 								</header>
 							}
 						>
-							<SearchHeader />
+							<SearchHeader close={() => setSearchMode(false)} />
 						</Show>
 						<div
 							ref={scrollRef}

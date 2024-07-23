@@ -18,7 +18,7 @@ const ServiceItem: Component<Props> = (props) => {
 	return (
 		<A
 			href={`/resource/${props.service.id}?${new URLSearchParams(query).toString()}`}
-			class="bg-elevation1 px-8 py-4 flex flex-col gap-2 items-start max-w-full border-hairline border-t"
+			class="bg-elevation1 p-6 flex flex-col gap-2 items-start max-w-full border-hairline border-t"
 		>
 			<p class="font-header text-primary">
 				{getLocalizedField(props.service.name, locale())}
