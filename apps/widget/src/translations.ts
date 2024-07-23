@@ -27,6 +27,7 @@ const en_dict = {
 			of: "of",
 			results: "results",
 			seconds: "seconds",
+			within: "within",
 		},
 		filters: {
 			delivery: {
@@ -107,6 +108,7 @@ const fr_dict: Dict = {
 			of: "de",
 			results: "résultats",
 			seconds: "secondes",
+			within: "dans un rayon de",
 		},
 		filters: {
 			delivery: {

@@ -54,7 +54,8 @@ const Search = () => {
 										{t().search.meta.page} {search().options.page}{" "}
 										{t().search.meta.of} {data().meta.total}{" "}
 										{t().search.meta.results} ({searchTime().toFixed(2)}{" "}
-										{t().search.meta.seconds})
+										{t().search.meta.seconds}) {t().search.meta.within}{" "}
+										{search().options.distance} km
 									</p>
 									<div class="pt-4 flex gap-4 flex-wrap">
 										{Object.entries(search().options.delivery).map(
