@@ -1,12 +1,13 @@
 import { createForm } from "@tanstack/solid-form";
 import { createQuery } from "@tanstack/solid-query";
-import { Component, createSignal, For, Match, Show, Switch } from "solid-js";
+import { Component, createSignal, For, Match, onMount, Show, Switch } from "solid-js";
 import { Transition } from "solid-transition-group";
 import Pending from "~/components/Pending";
 import ServiceItem from "~/components/ServiceItem";
 import { useCords } from "~/lib/cords";
+import { loader } from "~/lib/google";
 import { useSearchParams } from "~/lib/params";
-import { search, setSearch } from "~/lib/search";
+import { mapOpen, search, setMapOpen, setSearch } from "~/lib/search";
 import { getSession } from "~/lib/session";
 import { cn } from "~/lib/utils";
 import { useTranslation } from "~/translations";
@@ -181,6 +182,41 @@ const Filters = () => {
 	);
 };
 
+const Map = ({ lat, lng }: { lat: number; lng: number }) => {
+	let mapContainer: any;
+
+	onMount(async () => {
+		try {
+			const { Map } = (await loader.importLibrary("maps")) as google.maps.MapsLibrary;
+			if (mapContainer) {
+				new Map(mapContainer, {
+					center: { lat, lng },
+					zoom: 8,
+					disableDefaultUI: true,
+				});
+			}
+		} catch (error) {
+			console.error("Failed to load Google Maps:", error);
+			// Handle the error, e.g., show an error message to the user
+		}
+	});
+
+	return (
+		<div class="h-full w-full relative">
+			<button
+				onClick={() => setMapOpen(false)}
+				class={cn("absolute top-4 left-4 neutral-btn z-50")}
+				style={{
+					"background-color": "white",
+				}}
+			>
+				<span class="material-symbols-outlined text-[22px] text-primary">arrow_back</span>
+			</button>
+			<div ref={mapContainer} class="h-full w-full"></div>
+		</div>
+	);
+};
+
 const Home: Component = () => {
 	const cords = useCords();
 	const [searchTime, setSearchTime] = createSignal(0);
@@ -216,6 +252,9 @@ const Home: Component = () => {
 			<Match when={data.isPending}>
 				<Pending />
 			</Match>
+			<Match when={mapOpen()}>
+				<Map lat={session.data?.lat!} lng={session.data?.lng!} />
+			</Match>
 			<Match when={data.isSuccess}>
 				<div class="relative">
 					<Show when={data.data}>
@@ -246,7 +285,7 @@ const Home: Component = () => {
 													<input
 														type="checkbox"
 														checked={value}
-														onChange={(e) =>
+														onChange={(e) => {
 															setSearch((search) => ({
 																...search,
 																options: {
@@ -256,8 +295,8 @@ const Home: Component = () => {
 																		[key]: e.target.checked,
 																	},
 																},
-															}))
-														}
+															}));
+														}}
 														class="sr-only peer"
 													/>
 													<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
@@ -270,10 +309,16 @@ const Home: Component = () => {
 										)}
 									</div>
 								</div>
-								<div>
+								<div class="relative">
 									<For each={data().data}>
 										{(service) => <ServiceItem service={service} />}
 									</For>
+									<button
+										onClick={() => setMapOpen(!mapOpen())}
+										class="fixed bottom-[100px] right-10 btn"
+									>
+										<span class="material-symbols-outlined">map</span>
+									</button>
 								</div>
 								<div class="flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t">
 									<button

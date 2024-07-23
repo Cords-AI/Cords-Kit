@@ -6,7 +6,7 @@ import { Transition } from "solid-transition-group";
 import Error from "~/components/Error";
 import Footer from "~/components/Footer";
 import { useSearchParams } from "~/lib/params";
-import { setSearch } from "~/lib/search";
+import { setMapOpen, setSearch } from "~/lib/search";
 import { useTranslation } from "~/translations";
 import { getSession } from "./lib/session";
 autofocus;
@@ -34,6 +34,7 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 					page: 1,
 				},
 			}));
+			setMapOpen(false);
 			close();
 		},
 		validators: {
@@ -173,6 +174,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 														},
 													};
 												});
+												setMapOpen(false);
 											}}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>

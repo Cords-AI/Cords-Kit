@@ -25,3 +25,5 @@ export const [search, setSearch] = createSignal<{
 		},
 	},
 });
+
+export const [mapOpen, setMapOpen] = createSignal(false);

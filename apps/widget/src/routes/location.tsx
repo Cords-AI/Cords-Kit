@@ -1,16 +1,11 @@
-import { Loader } from "@googlemaps/js-api-loader";
 import { debounce } from "@solid-primitives/scheduled";
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import { createSignal, For, Show } from "solid-js";
+import { loader } from "~/lib/google";
 import { useSearchParams } from "~/lib/params";
 import { getSession, localizedLocation, useSessionMutation } from "~/lib/session";
 import { useTranslation } from "~/translations";
 
-const loader = new Loader({
-	apiKey: import.meta.env.VITE_GOOGLE_API_KEY,
-	version: "weekly",
-	libraries: ["places"],
-});
 let autocompleteService: google.maps.places.AutocompleteService | null = null;
 let placesService: google.maps.places.PlacesService | null = null;
 
