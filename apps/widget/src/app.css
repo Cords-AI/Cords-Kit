@@ -4,7 +4,6 @@
 
 body {
 	font-family: "Inter Variable";
-	@apply text-slate;
 }
 
 .material-symbols-outlined {
@@ -24,9 +23,6 @@ body {
 }
 
 @layer base {
-	body {
-		@apply bg-transparent text-slate;
-	}
 	h1,
 	.h1 {
 		@apply scroll-m-20 text-3xl font-header tracking-tight lg:text-5xl text-charcoal;

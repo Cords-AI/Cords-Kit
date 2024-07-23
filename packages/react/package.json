@@ -1,0 +1,26 @@
+{
+	"name": "@cords/react",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"version": "0.0.0",
+	"private": false,
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "tsup src/index.tsx --format cjs,esm --dts",
+		"dev": "bun run build -- --watch"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {
+		"react": "^18.3.1",
+		"tsup": "^8.0.2"
+	},
+	"license": "MIT"
+}

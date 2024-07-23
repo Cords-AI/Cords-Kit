@@ -1,25 +1,26 @@
 {
-  "name": "cords-wp-plugin",
-  "version": "1.0.0",
-  "description": "Cords WP Plugin",
-  "scripts": {
-    "build": "dotenv -- turbo build",
-    "dev": "dotenv -- turbo dev",
-    "lint": "turbo lint",
-    "clean": "turbo clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "dependencies": {
-    "dotenv": "^16.4.5",
-    "prettier": "^3.1.1",
-    "turbo": "^2.0.6"
-  },
-  "devDependencies": {
-    "dotenv-cli": "^7.4.2"
-  },
-  "packageManager": "bun@1.1.1"
+	"name": "cords-wp-plugin",
+	"version": "1.0.0",
+	"description": "Cords WP Plugin",
+	"scripts": {
+		"build": "dotenv -- turbo build",
+		"dev": "dotenv -- turbo dev",
+		"lint": "turbo lint",
+		"clean": "turbo clean && rm -rf node_modules",
+		"format": "prettier --write \"**/*.{ts,tsx,md}\""
+	},
+	"workspaces": [
+		"apps/*",
+		"packages/*",
+		"examples/*"
+	],
+	"dependencies": {
+		"dotenv": "^16.4.5",
+		"prettier": "^3.1.1",
+		"turbo": "^2.0.6"
+	},
+	"devDependencies": {
+		"dotenv-cli": "^7.4.2"
+	},
+	"packageManager": "bun@1.1.1"
 }
