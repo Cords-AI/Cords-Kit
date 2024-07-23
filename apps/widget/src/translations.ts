@@ -6,7 +6,6 @@ const en_dict = {
 	home: {
 		similar: {
 			title: "Similar to the current page",
-			description: "View similar services to the current page",
 		},
 		related: {
 			title: "Related",
@@ -45,6 +44,7 @@ const en_dict = {
 				volunteer: "Volunteering",
 			},
 			distanceTitle: "Search Radius",
+			apply: "Apply",
 		},
 	},
 	clipboard: {
@@ -86,8 +86,7 @@ const fr_dict: Dict = {
 	"powered-by": "Propulsé par",
 	home: {
 		similar: {
-			title: "Similaire",
-			description: "Voir les services similaires à la page actuelle",
+			title: "Similaire à la page actuelle",
 		},
 		related: {
 			title: "En rapport",
@@ -126,6 +125,7 @@ const fr_dict: Dict = {
 				volunteer: "Volunteering",
 			},
 			distanceTitle: "Rayon de recherche",
+			apply: "Appliquer",
 		},
 	},
 	clipboard: {
@@ -161,6 +161,12 @@ const fr_dict: Dict = {
 		privacy: "Politique de confidentialité",
 	},
 };
+
+export const locationTranslations = new Map<string, LocalizationObject<string>>();
+locationTranslations.set("Your Location, Set by device", {
+	en: "Your Location, Set by device",
+	fr: "Votre emplacement, défini par l'appareil",
+});
 
 export const translations = {
 	en: en_dict,

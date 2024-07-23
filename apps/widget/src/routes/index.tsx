@@ -159,7 +159,7 @@ const Filters = () => {
 							<div class="flex flex-1 justify-end">
 								<input
 									type="submit"
-									value={"Apply"}
+									value={t().search.filters.apply}
 									class="btn disabled:opacity-50"
 									disabled={isPristine()}
 								/>
@@ -220,7 +220,7 @@ const Home: Component = () => {
 													? search().q
 													: t().home.similar.title}
 											</h4>
-											<p class="text-[11px] text-steel">
+											<p class="text-xs text-steel">
 												{t().search.meta.page} {search().options.page}{" "}
 												{t().search.meta.of} {data().meta.total}{" "}
 												{t().search.meta.results} ({searchTime().toFixed(2)}{" "}

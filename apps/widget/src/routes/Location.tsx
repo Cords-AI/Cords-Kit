@@ -1,9 +1,9 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { debounce } from "@solid-primitives/scheduled";
 import { createMutation, createQuery } from "@tanstack/solid-query";
-import { For, Show, createSignal } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { useSearchParams } from "~/lib/params";
-import { getSession, useSessionMutation } from "~/lib/session";
+import { getSession, localizedLocation, useSessionMutation } from "~/lib/session";
 import { useTranslation } from "~/translations";
 
 const loader = new Loader({
@@ -64,7 +64,7 @@ const autocomplete = async (
 const Location = () => {
 	const [query] = useSearchParams();
 	const [search, setSearch] = createSignal("");
-	const { t } = useTranslation();
+	const { t, locale } = useTranslation();
 
 	const updateSearch = debounce((query: string) => setSearch(query), 500);
 
@@ -97,9 +97,14 @@ const Location = () => {
 	return (
 		<div class="p-4 flex flex-col gap-4">
 			<div>
-				<p class="font-medium">{session.data?.address.split(",")[0]}</p>
+				<p class="font-medium">
+					{localizedLocation(session.data?.address ?? "", locale())?.split(",")[0]}
+				</p>
 				<p class="text-xs text-steel">
-					{session.data?.address.split(",").slice(1).join(",")}
+					{localizedLocation(session.data?.address ?? "", locale())
+						?.split(",")
+						.slice(1)
+						.join(",")}
 				</p>
 			</div>
 			<hr />
