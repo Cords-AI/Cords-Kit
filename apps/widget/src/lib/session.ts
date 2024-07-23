@@ -1,4 +1,5 @@
 import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
+import { Locale } from "~/translations";
 import { Session } from "~/types";
 
 const updateSession = async (session: Session) => {
@@ -72,4 +73,15 @@ export const useSessionMutation = () => {
 			queryClient.invalidateQueries({ queryKey: ["session"] });
 		},
 	}));
+};
+
+export const localizedLocation = (location: string, locale: Locale) => {
+	if (location === "Your Location, Set by device") {
+		if (locale === "en") {
+			return "Your Location, Set by device";
+		} else {
+			return "Votre emplacement, défini par l'appareil";
+		}
+	}
+	return location;
 };
