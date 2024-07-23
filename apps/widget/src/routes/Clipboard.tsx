@@ -46,7 +46,7 @@ const Clipboard = () => {
 					}
 				>
 					<div class="flex flex-col bg-elevation1 h-full">
-						<div class="p-8 bg-elevation1">
+						<div class="p-6 bg-elevation1">
 							<h4>{t().clipboard.title}</h4>
 							<p class="text-xs text-steel">{t().clipboard.description}</p>
 						</div>

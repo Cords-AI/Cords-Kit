@@ -5,7 +5,7 @@ const en_dict = {
 	"powered-by": "Powered by",
 	home: {
 		similar: {
-			title: "Similar",
+			title: "Similar to the current page",
 			description: "View similar services to the current page",
 		},
 		related: {

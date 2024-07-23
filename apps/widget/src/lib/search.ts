@@ -7,7 +7,7 @@ export const [search, setSearch] = createSignal<{
 }>({
 	q: "",
 	options: {
-		page: 0,
+		page: 1,
 		pageSize: 10,
 		distance: 10,
 		partner: {
