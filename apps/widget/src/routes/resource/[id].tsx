@@ -226,52 +226,63 @@ const Resource = () => {
 									{getLocalizedField(resource().name, locale())}
 								</h4>
 								<hr />
-								<p class="font-medium text-xs text-charcoal">
-									{t().resource.address}
-								</p>
-								<a
-									href={`https://www.google.com/maps/search/?api=1&query=${resource().address.lat},${resource().address.lng}`}
-									target="_blank"
-									class="text-sm text-primary"
-								>
-									{formatServiceAddress(resource().address)}
-								</a>
-								<p class="font-medium text-xs text-charcoal">
-									{t().resource.phone}
-								</p>
-								{resource().phoneNumbers.map((phone) => (
-									<p class="text-sm">
-										{phone.name ? phone.name + ": " : ""}
-										{phone.phone}
+								<Show when={resource().address.lat && resource().address.lng}>
+									<p class="font-medium text-xs text-charcoal">
+										{t().resource.address}
 									</p>
-								))}
-								<p class="font-medium text-xs text-charcoal">
-									{t().resource.email}
-								</p>
-								<p class="text-sm">
 									<a
-										href={`mailto:${getLocalizedField(resource().email, locale())}`}
+										href={`https://www.google.com/maps/search/?api=1&query=${resource().address.lat},${resource().address.lng}`}
+										target="_blank"
+										class="text-sm text-primary"
 									>
-										{getLocalizedField(resource().email, locale())}
+										{formatServiceAddress(resource().address)}
 									</a>
-								</p>
-								<p class="font-medium text-xs text-charcoal">
-									{t().resource.website}
-								</p>
-								<a
-									class="text-sm truncate text-primary"
-									href={
-										getLocalizedField(resource().website, locale())?.startsWith(
-											"http"
-										)
-											? (getLocalizedField(resource().website, locale()) ??
-												"")
-											: `https://${getLocalizedField(resource().website, locale())}`
-									}
-									target="_blank"
-								>
-									{getLocalizedField(resource().website, locale())}
-								</a>
+								</Show>
+								<Show when={resource().phoneNumbers.length > 0}>
+									<p class="font-medium text-xs text-charcoal">
+										{t().resource.phone}
+									</p>
+									{resource().phoneNumbers.map((phone) => (
+										<p class="text-sm">
+											{phone.name ? phone.name + ": " : ""}
+											{phone.phone}
+										</p>
+									))}
+								</Show>
+								<Show when={getLocalizedField(resource().email, locale())}>
+									<p class="font-medium text-xs text-charcoal">
+										{t().resource.email}
+									</p>
+									<p class="text-sm">
+										<a
+											href={`mailto:${getLocalizedField(resource().email, locale())}`}
+										>
+											{getLocalizedField(resource().email, locale())}
+										</a>
+									</p>
+								</Show>
+								<Show when={getLocalizedField(resource().website, locale())}>
+									<p class="font-medium text-xs text-charcoal">
+										{t().resource.website}
+									</p>
+									<a
+										class="text-sm truncate text-primary"
+										href={
+											getLocalizedField(
+												resource().website,
+												locale()
+											)?.startsWith("http")
+												? (getLocalizedField(
+														resource().website,
+														locale()
+													) ?? "")
+												: `https://${getLocalizedField(resource().website, locale())}`
+										}
+										target="_blank"
+									>
+										{getLocalizedField(resource().website, locale())}
+									</a>
+								</Show>
 							</div>
 							<Show when={resource().id}>
 								<Nearest id={resource().id} />
