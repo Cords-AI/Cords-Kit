@@ -116,7 +116,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 	});
 
 	return (
-		<div class="w-full h-full max-w-full max-h-full p-4">
+		<div class="w-full h-full max-w-full max-h-full p-4 bg-transparent">
 			<Transition
 				onEnter={(el, done) => {
 					const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
