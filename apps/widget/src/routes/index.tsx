@@ -51,6 +51,7 @@ const Filters = () => {
 	}));
 
 	const isPristine = form.useStore((state) => state.isPristine);
+	const values = form.useStore((state) => state.values);
 
 	return (
 		<form
@@ -106,9 +107,17 @@ const Filters = () => {
 												// @ts-ignore
 												checked={field().state.value}
 												onBlur={field().handleBlur}
-												onChange={(e) =>
-													field().handleChange(e.target.checked)
-												}
+												onChange={(e) => {
+													const unCheckedCount = Object.values(
+														values()
+													).filter(
+														(x) => typeof x === "boolean" && !x
+													).length;
+													if (unCheckedCount === 4 && !e.target.checked) {
+														return;
+													}
+													field().handleChange(e.target.checked);
+												}}
 												class="sr-only"
 											/>
 											<span
