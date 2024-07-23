@@ -36,4 +36,6 @@ function MyApp() {
 export default MyApp;
 ```
 
+> Note: Your api key should be hidden from git using an environment variable
+
 This example demonstrates how to embed a Cords widget into a React application. The [`CordsWidget`](command:_github.copilot.openSymbolFromReferences?%5B%7B%22%24mid%22%3A1%2C%22path%22%3A%22%2FUsers%2Fbillyhawkes%2FLocal%20Sites%2Fcords-test%2Fapp%2Fpublic%2Fwp-content%2Fplugins%2FCords-WP-Plugin%2Fpackages%2Freact%2Fdist%2Findex.d.ts%22%2C%22scheme%22%3A%22file%22%7D%2C%7B%22line%22%3A2%2C%22character%22%3A0%7D%5D "packages/react/dist/index.d.ts") component takes care of rendering the widget and handling its interactions seamlessly within your app.
