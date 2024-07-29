@@ -78,6 +78,8 @@ type SearchOptions = {
         provincial?: boolean;
         national?: boolean;
     };
+    calculateProvinceFromSearchString?: boolean;
+    calculateCityFromSearchString?: boolean;
 };
 type CordsError = {
     detail: string;
@@ -91,7 +93,7 @@ declare const CordsAPI: ({ apiKey, version, }: {
     apiKey: string;
     version?: "production" | "dev";
 }) => {
-    search: (q: string, options: SearchOptions) => Promise<{
+    search: (q: string, { calculateCityFromSearchString, calculateProvinceFromSearchString, ...options }: SearchOptions) => Promise<{
         data: SearchResourceType[];
         meta: {
             total: number;

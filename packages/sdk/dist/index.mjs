@@ -17,6 +17,18 @@ var __spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var __objRest = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
 var __async = (__this, __arguments, generator) => {
   return new Promise((resolve, reject) => {
     var fulfilled = (value) => {
@@ -60,7 +72,14 @@ var CordsAPI = ({
     }
     return res;
   });
-  const search = (q, options) => __async(void 0, null, function* () {
+  const search = (q, _a) => __async(void 0, null, function* () {
+    var _b = _a, {
+      calculateCityFromSearchString = true,
+      calculateProvinceFromSearchString = true
+    } = _b, options = __objRest(_b, [
+      "calculateCityFromSearchString",
+      "calculateProvinceFromSearchString"
+    ]);
     const url = new URL("/search", baseUrl);
     const params = new URLSearchParams({
       q
@@ -70,6 +89,14 @@ var CordsAPI = ({
     if (options.page) params.append("page", options.page.toString());
     if (options.pageSize) params.append("pageSize", options.pageSize.toString());
     if (options.distance) params.append("distance", options.distance.toString());
+    params.append(
+      "calculateProvinceFromSearchString",
+      calculateProvinceFromSearchString ? "true" : "false"
+    );
+    params.append(
+      "calculateCityFromSearchString",
+      calculateCityFromSearchString ? "true" : "false"
+    );
     if (options.partner) {
       for (const [key, value] of Object.entries(options.partner)) {
         params.append(`filter[${key}]`, value ? "true" : "false");
