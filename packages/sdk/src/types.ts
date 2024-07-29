@@ -86,6 +86,8 @@ export type SearchOptions = {
 		provincial?: boolean;
 		national?: boolean;
 	};
+	calculateProvinceFromSearchString?: boolean;
+	calculateCityFromSearchString?: boolean;
 };
 
 export type CordsError = {

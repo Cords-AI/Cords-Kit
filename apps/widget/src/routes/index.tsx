@@ -287,11 +287,14 @@ const Home: Component = () => {
 	const data = createQuery(() => ({
 		queryKey: ["search", searchParams.q, search()],
 		queryFn: async () => {
+			const isQuerySearch = search().q !== "";
 			const start = performance.now();
-			const res = await cords.search(search().q !== "" ? search().q : searchParams.q!, {
+			const res = await cords.search(isQuerySearch ? search().q : searchParams.q!, {
 				lat: session.data?.lat!,
 				lng: session.data?.lng!,
 				...search().options,
+				calculateCityFromSearchString: isQuerySearch,
+				calculateProvinceFromSearchString: isQuerySearch,
 			});
 			setSearchTime((performance.now() - start) / 1000);
 			setMaxPage(Math.ceil(res.meta.total / 10));

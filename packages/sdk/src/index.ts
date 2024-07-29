@@ -36,7 +36,14 @@ export const CordsAPI = ({
 		return res;
 	};
 
-	const search = async (q: string, options: SearchOptions) => {
+	const search = async (
+		q: string,
+		{
+			calculateCityFromSearchString = true,
+			calculateProvinceFromSearchString = true,
+			...options
+		}: SearchOptions
+	) => {
 		const url = new URL("/search", baseUrl);
 		const params = new URLSearchParams({
 			q,
@@ -49,6 +56,16 @@ export const CordsAPI = ({
 		if (options.page) params.append("page", options.page.toString());
 		if (options.pageSize) params.append("pageSize", options.pageSize.toString());
 		if (options.distance) params.append("distance", options.distance.toString());
+
+		// Add boolean parameters
+		params.append(
+			"calculateProvinceFromSearchString",
+			calculateProvinceFromSearchString ? "true" : "false"
+		);
+		params.append(
+			"calculateCityFromSearchString",
+			calculateCityFromSearchString ? "true" : "false"
+		);
 
 		// Add partner parameters
 		if (options.partner) {
