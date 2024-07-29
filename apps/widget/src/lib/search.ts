@@ -1,5 +1,5 @@
 import { SearchOptions } from "@cords/sdk";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 
 export const [search, setSearch] = createSignal<{
 	q: string;
@@ -27,3 +27,12 @@ export const [search, setSearch] = createSignal<{
 });
 
 export const [mapOpen, setMapOpen] = createSignal(false);
+
+export const [map, setMap] = createSignal<google.maps.Map | null>(null);
+
+createEffect(() => {
+	console.log("Search changed", search());
+	if (search()) {
+		setMap(null);
+	}
+});

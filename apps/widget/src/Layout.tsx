@@ -6,7 +6,7 @@ import { Transition } from "solid-transition-group";
 import Error from "~/components/Error";
 import Footer from "~/components/Footer";
 import { useSearchParams } from "~/lib/params";
-import { setMapOpen, setSearch } from "~/lib/search";
+import { search, setMapOpen, setSearch } from "~/lib/search";
 import { useTranslation } from "~/translations";
 import { getSession } from "./lib/session";
 autofocus;
@@ -165,15 +165,17 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 										<A
 											href={`/?${new URLSearchParams(query).toString()}`}
 											onClick={() => {
-												setSearch((s) => {
-													return {
-														q: "",
-														options: {
-															...s.options,
-															page: 1,
-														},
-													};
-												});
+												if (search().q) {
+													setSearch((s) => {
+														return {
+															q: "",
+															options: {
+																...s.options,
+																page: 1,
+															},
+														};
+													});
+												}
 												setMapOpen(false);
 											}}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"

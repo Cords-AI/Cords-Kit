@@ -53,7 +53,12 @@ type ResourceType = {
         vectorDistance: number;
     } | null;
 };
-type SearchResourceType = Omit<ResourceType, "website" | "email" | "phoneNumbers" | "addresses" | "address">;
+type SearchResourceType = Omit<ResourceType, "website" | "email" | "phoneNumbers" | "addresses" | "address"> & {
+    location: {
+        lat: number | null;
+        lng: number | null;
+    };
+};
 type SearchOptions = {
     lat: number;
     lng: number;

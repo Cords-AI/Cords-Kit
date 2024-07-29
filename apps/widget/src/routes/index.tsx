@@ -1,3 +1,5 @@
+import { SearchResourceType } from "@cords/sdk";
+import { useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import { createQuery } from "@tanstack/solid-query";
 import { Component, createSignal, For, Match, onMount, Show, Switch } from "solid-js";
@@ -7,10 +9,10 @@ import ServiceItem from "~/components/ServiceItem";
 import { useCords } from "~/lib/cords";
 import { loader } from "~/lib/google";
 import { useSearchParams } from "~/lib/params";
-import { mapOpen, search, setMapOpen, setSearch } from "~/lib/search";
+import { map, mapOpen, search, setMap, setMapOpen, setSearch } from "~/lib/search";
 import { getSession } from "~/lib/session";
-import { cn } from "~/lib/utils";
-import { useTranslation } from "~/translations";
+import { cn, getDistanceBetweenTwoPoints } from "~/lib/utils";
+import { getLocalizedField, useTranslation } from "~/translations";
 
 const icons = {
 	"211": "chrome_reader_mode",
@@ -182,18 +184,74 @@ const Filters = () => {
 	);
 };
 
-const Map = ({ lat, lng }: { lat: number; lng: number }) => {
+const Map = ({
+	lat,
+	lng,
+	markers,
+}: {
+	lat: number;
+	lng: number;
+	markers?: SearchResourceType[];
+}) => {
 	let mapContainer: any;
+	const { locale } = useTranslation();
+	const [query] = useSearchParams();
+	const navigate = useNavigate();
+	const [mapLoaded, setMapLoaded] = createSignal(false);
 
 	onMount(async () => {
 		try {
+			const { AdvancedMarkerElement } = (await loader.importLibrary(
+				"marker"
+			)) as google.maps.MarkerLibrary;
 			const { Map } = (await loader.importLibrary("maps")) as google.maps.MapsLibrary;
 			if (mapContainer) {
-				new Map(mapContainer, {
-					center: { lat, lng },
-					zoom: 8,
-					disableDefaultUI: true,
-				});
+				if (map()) {
+					const newMap = new Map(mapContainer, {
+						center: {
+							lat: map()?.getCenter()?.lat()!,
+							lng: map()?.getCenter()?.lng()!,
+						},
+						zoom: map()?.getZoom()!,
+						disableDefaultUI: true,
+						mapId: "e8f872dc3932052d",
+					});
+					setMap(newMap);
+				} else {
+					const map = new Map(mapContainer, {
+						center: { lat, lng },
+						zoom: 12,
+						disableDefaultUI: true,
+						mapId: "e8f872dc3932052d",
+					});
+					const bounds = new google.maps.LatLngBounds();
+					markers?.forEach((resource) => {
+						bounds.extend({
+							lat: resource.location.lat!,
+							lng: resource.location.lng!,
+						});
+					});
+					map.fitBounds(bounds);
+					setMap(map);
+				}
+				if (markers) {
+					markers!.forEach((resource) => {
+						const marker = new AdvancedMarkerElement({
+							position: {
+								lat: resource.location.lat!,
+								lng: resource.location.lng!,
+							},
+							map: map(),
+							title: getLocalizedField(resource.name, locale()),
+						});
+						google.maps.event.addListener(marker, "click", () => {
+							navigate(
+								`/resource/${resource.id}?${new URLSearchParams(query).toString()}`
+							);
+						});
+					});
+				}
+				setMapLoaded(true);
 			}
 		} catch (error) {
 			console.error("Failed to load Google Maps:", error);
@@ -247,13 +305,32 @@ const Home: Component = () => {
 	const start = () => Math.max(0, search().options.page - 3);
 	const end = () => start() + 5;
 
+	const markers = () =>
+		data.data?.data
+			?.filter((resource) => resource.location.lat && resource.location.lng)
+			.filter((resource) => {
+				const distance = getDistanceBetweenTwoPoints(
+					{
+						lat: session.data?.lat!,
+						lng: session.data?.lng!,
+					},
+					{
+						lat: resource.location.lat!,
+						lng: resource.location.lng!,
+					}
+				);
+				if (distance < search().options.distance) {
+					return true;
+				}
+			});
+
 	return (
 		<Switch>
 			<Match when={data.isPending}>
 				<Pending />
 			</Match>
 			<Match when={mapOpen()}>
-				<Map lat={session.data?.lat!} lng={session.data?.lng!} />
+				<Map lat={session.data?.lat!} lng={session.data?.lng!} markers={markers()} />
 			</Match>
 			<Match when={data.isSuccess}>
 				<div class="relative">
@@ -313,14 +390,21 @@ const Home: Component = () => {
 									<For each={data().data}>
 										{(service) => <ServiceItem service={service} />}
 									</For>
-									<button
-										onClick={() => setMapOpen(!mapOpen())}
-										class="fixed bottom-[100px] right-10 btn"
-									>
-										<span class="material-symbols-outlined">map</span>
-									</button>
+									<Show when={markers() && markers()!.length > 0}>
+										<button
+											onClick={() => setMapOpen(!mapOpen())}
+											class="fixed bottom-[calc(75px+16px+8px)] right-[calc(32px+8px)] btn"
+										>
+											<span class="material-symbols-outlined">map</span>
+										</button>
+									</Show>
 								</div>
-								<div class="flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t">
+								<div
+									class={cn(
+										"flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t",
+										markers() && markers()!.length > 0 && "pr-14"
+									)}
+								>
 									<button
 										disabled={search().options.page === 1}
 										onClick={() =>
