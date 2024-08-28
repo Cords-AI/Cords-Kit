@@ -77,14 +77,15 @@ module.exports = __toCommonJS(src_exports);
 var ResourceOptions = {};
 var CordsAPI = ({
   apiKey,
-  version = "production"
+  version = "production",
+  referer
 }) => {
   const baseUrl = version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
   const request = (input, init) => __async(void 0, null, function* () {
     const res = yield fetch(input, __spreadProps(__spreadValues({}, init), {
-      headers: __spreadValues({
+      headers: __spreadValues(__spreadValues({
         "x-api-key": apiKey
-      }, init == null ? void 0 : init.headers)
+      }, referer ? { referer } : {}), init == null ? void 0 : init.headers)
     }));
     if (!res.ok) {
       if (res.status === 403)

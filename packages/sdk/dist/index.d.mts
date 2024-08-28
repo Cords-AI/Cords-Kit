@@ -89,9 +89,10 @@ type CordsError = {
 };
 
 declare const ResourceOptions: {};
-declare const CordsAPI: ({ apiKey, version, }: {
+declare const CordsAPI: ({ apiKey, version, referer, }: {
     apiKey: string;
     version?: "production" | "dev";
+    referer?: string;
 }) => {
     search: (q: string, { calculateCityFromSearchString, calculateProvinceFromSearchString, ...options }: SearchOptions) => Promise<{
         data: SearchResourceType[];
