@@ -43,6 +43,7 @@
     "@tanstack/solid-query": "^5.51.2",
     "@tanstack/zod-form-adapter": "^0.26.4",
     "clsx": "^2.1.0",
+    "drizzle-dbml-generator": "^0.8.0",
     "drizzle-orm": "^0.32.0",
     "drizzle-zod": "^0.5.1",
     "html-to-text": "^9.0.5",

@@ -12,17 +12,22 @@ export const ResourceOptions = {};
 export const CordsAPI = ({
 	apiKey,
 	version = "production",
+	referer,
 }: {
 	apiKey: string;
 	version?: "production" | "dev";
+	referer?: string;
 }) => {
+	// Set the base URL for the Cords API
 	const baseUrl = version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
 
+	// Helper for making requests to the Cords API that applies the api key, referrer, and handles errors
 	const request = async (input: RequestInfo, init?: RequestInit) => {
 		const res = await fetch(input, {
 			...init,
 			headers: {
 				"x-api-key": apiKey,
+				...(referer ? { referer } : {}),
 				...init?.headers,
 			},
 		});
@@ -36,6 +41,7 @@ export const CordsAPI = ({
 		return res;
 	};
 
+	// Search for resources
 	const search = async (
 		q: string,
 		{
@@ -89,6 +95,7 @@ export const CordsAPI = ({
 		};
 	};
 
+	// Get related to a resource
 	const related = async (id: string) => {
 		const url = new URL(`/resource/${id}/related`, baseUrl);
 
@@ -101,6 +108,7 @@ export const CordsAPI = ({
 		return data as { data: ResourceType[] };
 	};
 
+	// Get a single resource by id
 	const resource = async (id: string) => {
 		const url = new URL(`/resource/${id}`, baseUrl);
 
@@ -113,6 +121,7 @@ export const CordsAPI = ({
 		return data as ResourceType;
 	};
 
+	// Get a list of resources by id
 	const resourceList = async (ids: string[]): Promise<{ data: ResourceType[] }> => {
 		if (ids.length === 0)
 			return {
@@ -128,6 +137,7 @@ export const CordsAPI = ({
 		return data as { data: ResourceType[] };
 	};
 
+	// Get the nearest neighbour to a resource
 	const nearestNeighbour = async (
 		id: string,
 		options: {
@@ -160,6 +170,7 @@ export const CordsAPI = ({
 	};
 };
 
+// Helper function to format a service address
 export const formatServiceAddress = (address: ResourceAddressType) => {
 	const street1 = address.street1 ? address.street1 + ", " : "";
 	const street2 = address.street2 ? address.street2 + ", " : "";
