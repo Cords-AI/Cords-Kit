@@ -45,26 +45,6 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 // src/index.ts
 var src_exports = {};
@@ -78,11 +58,12 @@ var ResourceOptions = {};
 var CordsAPI = ({
   apiKey,
   version = "production",
-  referer
+  referer,
+  baseUrl
 }) => {
-  const baseUrl = version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
-  const request = (input, init) => __async(void 0, null, function* () {
-    const res = yield fetch(input, __spreadProps(__spreadValues({}, init), {
+  baseUrl = baseUrl != null ? baseUrl : version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
+  const request = async (input, init) => {
+    const res = await fetch(input, __spreadProps(__spreadValues({}, init), {
       headers: __spreadValues(__spreadValues({
         "x-api-key": apiKey
       }, referer ? { referer } : {}), init == null ? void 0 : init.headers)
@@ -90,13 +71,13 @@ var CordsAPI = ({
     if (!res.ok) {
       if (res.status === 403)
         throw new Error("Bad API key. Ensure you have a valid API key.");
-      const data = yield res.json();
+      const data = await res.json();
       if (data.detail) throw new Error(data.detail);
       else throw new Error("An error occurred");
     }
     return res;
-  });
-  const search = (q, _a) => __async(void 0, null, function* () {
+  };
+  const search = async (q, _a) => {
     var _b = _a, {
       calculateCityFromSearchString = true,
       calculateProvinceFromSearchString = true
@@ -131,31 +112,31 @@ var CordsAPI = ({
         params.append(`filter[delivery][${key}]`, value ? "true" : "false");
       }
     }
-    const res = yield request(`${url.toString()}?${params}`);
-    const data = yield res.json();
+    const res = await request(`${url.toString()}?${params}`);
+    const data = await res.json();
     return data;
-  });
-  const related = (id) => __async(void 0, null, function* () {
+  };
+  const related = async (id) => {
     const url = new URL(`/resource/${id}/related`, baseUrl);
-    const res = yield request(url.toString());
+    const res = await request(url.toString());
     if (!res.ok) {
-      const data2 = yield res.json();
+      const data2 = await res.json();
       throw new Error(data2.detail);
     }
-    const data = yield res.json();
+    const data = await res.json();
     return data;
-  });
-  const resource = (id) => __async(void 0, null, function* () {
+  };
+  const resource = async (id) => {
     const url = new URL(`/resource/${id}`, baseUrl);
-    const res = yield request(url.toString());
+    const res = await request(url.toString());
     if (!res.ok) {
-      const data2 = yield res.json();
+      const data2 = await res.json();
       throw new Error(data2.detail);
     }
-    const data = yield res.json();
+    const data = await res.json();
     return data;
-  });
-  const resourceList = (ids) => __async(void 0, null, function* () {
+  };
+  const resourceList = async (ids) => {
     if (ids.length === 0)
       return {
         data: []
@@ -163,24 +144,24 @@ var CordsAPI = ({
     const params = new URLSearchParams();
     ids.forEach((id, index) => params.append(`ids[${index}]`, id));
     const url = new URL(`/search?${params.toString()}`, baseUrl);
-    const res = yield request(url.toString());
-    const data = yield res.json();
+    const res = await request(url.toString());
+    const data = await res.json();
     return data;
-  });
-  const nearestNeighbour = (id, options) => __async(void 0, null, function* () {
+  };
+  const nearestNeighbour = async (id, options) => {
     const url = new URL(`/resource/${id}/nearest-neighbor`, baseUrl);
     const params = new URLSearchParams({
       lat: options.lat.toString(),
       lng: options.lng.toString()
     });
-    const res = yield request(url.toString() + "?delivery=local&" + params.toString());
+    const res = await request(url.toString() + "?delivery=local&" + params.toString());
     if (!res.ok) {
-      const data2 = yield res.json();
+      const data2 = await res.json();
       throw new Error(data2.detail);
     }
-    const data = yield res.json();
+    const data = await res.json();
     return data;
-  });
+  };
   return {
     search,
     related,
