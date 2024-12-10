@@ -13,7 +13,7 @@ export const CordsAPI = ({
 	apiKey,
 	version = "production",
 	referer,
-	baseUrl,
+	baseUrl: customBaseUrl,
 }: {
 	apiKey: string;
 	version?: "production" | "dev";
@@ -21,13 +21,11 @@ export const CordsAPI = ({
 	baseUrl?: string;
 }) => {
 	// Set the base URL for the Cords API
-	baseUrl =
-		baseUrl ??
-		(version === "production"
+	const baseUrl = customBaseUrl
+		? customBaseUrl?.replace(/\/$/, "")
+		: version === "production"
 			? "https://api.cords.ai"
-			: "https://api.cords.dev");
-
-	baseUrl = baseUrl.replace(/\/$/, "");
+			: "https://api.cords.dev";
 
 	// Helper for making requests to the Cords API that applies the api key, referrer, and handles errors
 	const request = async (input: RequestInfo, init?: RequestInit) => {
@@ -60,7 +58,8 @@ export const CordsAPI = ({
 			...options
 		}: SearchOptions,
 	) => {
-		const url = new URL(`${baseUrl}/search`);
+		const url = new URL(baseUrl);
+		url.pathname += "/search";
 		const params = new URLSearchParams({
 			q,
 		});
@@ -112,7 +111,8 @@ export const CordsAPI = ({
 
 	// Get related to a resource
 	const related = async (id: string) => {
-		const url = new URL(`${baseUrl}/resource/${id}/related`);
+		const url = new URL(baseUrl);
+		url.pathname += `/resource/${id}/related`;
 
 		const res = await request(url.toString());
 		if (!res.ok) {
@@ -125,7 +125,8 @@ export const CordsAPI = ({
 
 	// Get a single resource by id
 	const resource = async (id: string) => {
-		const url = new URL(`${baseUrl}/resource/${id}`);
+		const url = new URL(baseUrl);
+		url.pathname += `/resource/${id}`;
 
 		const res = await request(url.toString());
 		if (!res.ok) {
@@ -147,7 +148,9 @@ export const CordsAPI = ({
 		const params = new URLSearchParams();
 		ids.forEach((id, index) => params.append(`ids[${index}]`, id));
 
-		const url = new URL(`${baseUrl}/search?${params.toString()}`);
+		const url = new URL(baseUrl);
+		url.pathname += "/resource/list";
+		url.search = params.toString();
 
 		const res = await request(url.toString());
 		const data = await res.json();
@@ -162,7 +165,8 @@ export const CordsAPI = ({
 			lng: number;
 		},
 	) => {
-		const url = new URL(`${baseUrl}/resource/${id}/nearest-neighbor`);
+		const url = new URL(baseUrl);
+		url.pathname += `/resource/${id}/nearest-neighbor`;
 
 		const params = new URLSearchParams({
 			lat: options.lat.toString(),
