@@ -3,14 +3,14 @@
   "tasks": {
     "build": {
       "outputs": [
-        "dist/**"
-      ],
-      "dependsOn": [
-        "^build"
-      ]
-    },
-    "dev": {
-      "cache": false,
+				"dist/**"
+			],
+			"dependsOn": [
+				"^build"
+			]
+		},
+		"dev": {
+			"cache": false,
       "persistent": true
     },
     "clean": {}
