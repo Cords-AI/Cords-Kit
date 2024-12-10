@@ -13,13 +13,15 @@ export const CordsAPI = ({
 	apiKey,
 	version = "production",
 	referer,
+	baseUrl,
 }: {
 	apiKey: string;
 	version?: "production" | "dev";
 	referer?: string;
+	baseUrl?: string;
 }) => {
 	// Set the base URL for the Cords API
-	const baseUrl = version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
+	baseUrl = baseUrl ?? (version === "production" ? "https://api.cords.ai" : "https://api.cords.dev");
 
 	// Helper for making requests to the Cords API that applies the api key, referrer, and handles errors
 	const request = async (input: RequestInfo, init?: RequestInit) => {
