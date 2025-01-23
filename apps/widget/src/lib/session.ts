@@ -1,4 +1,8 @@
-import { createMutation, createQuery, useQueryClient } from "@tanstack/solid-query";
+import {
+	createMutation,
+	createQuery,
+	useQueryClient,
+} from "@tanstack/solid-query";
 import { Locale } from "~/translations";
 import { Session } from "~/types";
 
@@ -17,13 +21,17 @@ const updateSession = async (session: Session) => {
 
 export const getSession = (cordsId?: string) =>
 	createQuery(() => ({
-		queryKey: ["session"],
+		queryKey: ["session", cordsId],
 		queryFn: async () => {
-			const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {
-				headers: {
-					"cords-id": cordsId!,
+			console.log("test", cordsId);
+			const res = await fetch(
+				`${import.meta.env.VITE_SITE_URL}/api/session`,
+				{
+					headers: {
+						"cords-id": cordsId!,
+					},
 				},
-			});
+			);
 			let data = (await res.json()) as Session & {
 				clipboardServices: {
 					sessionId: string;
@@ -55,7 +63,7 @@ export const getSession = (cordsId?: string) =>
 					{
 						enableHighAccuracy: false,
 						timeout: 10000,
-					}
+					},
 				);
 			}
 			return data;
