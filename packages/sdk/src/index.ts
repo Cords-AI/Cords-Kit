@@ -27,8 +27,6 @@ export const CordsAPI = ({
 			? "https://api.cords.ai"
 			: "https://api.cords.dev";
 
-	console.log("test", baseUrl);
-
 	// Helper for making requests to the Cords API that applies the api key, referrer, and handles errors
 	const request = async (input: RequestInfo, init?: RequestInit) => {
 		const res = await fetch(input, {
