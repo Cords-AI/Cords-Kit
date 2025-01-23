@@ -1,7 +1,14 @@
 import { autofocus } from "@solid-primitives/autofocus";
 import { A, useLocation } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
-import { Component, ErrorBoundary, JSX, Show, createEffect, createSignal } from "solid-js";
+import {
+	Component,
+	ErrorBoundary,
+	JSX,
+	Show,
+	createEffect,
+	createSignal,
+} from "solid-js";
 import { Transition } from "solid-transition-group";
 import Error from "~/components/Error";
 import Footer from "~/components/Footer";
@@ -39,7 +46,8 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 		},
 		validators: {
 			onChange: ({ value }) => {
-				if (value.query.length < 1) return "Please enter at least 1 character";
+				if (value.query.length < 1)
+					return "Please enter at least 1 character";
 			},
 		},
 	}));
@@ -75,7 +83,9 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 								name={field().name}
 								value={field().state.value}
 								onBlur={field().handleBlur}
-								onInput={(e) => field().handleChange(e.target.value)}
+								onInput={(e) =>
+									field().handleChange(e.target.value)
+								}
 							/>
 						)}
 					/>
@@ -103,13 +113,11 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 				width: open() ? 410 : 60,
 				height: open() ? 700 : 60,
 			},
-			"*"
+			"*",
 		);
 	});
 
 	createEffect(() => {
-		console.log(location.pathname);
-
 		if (!scrollRef) return;
 		scrollRef.scrollTo({
 			top: 0,
@@ -139,7 +147,9 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 							onClick={toggle}
 							class="font-lato fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white shadow-2xl hover:opacity-90 transition-opacity"
 						>
-							<span class="material-symbols-outlined text-3xl">info</span>
+							<span class="material-symbols-outlined text-3xl">
+								info
+							</span>
 						</button>
 					}
 				>
@@ -156,7 +166,9 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 									<button
 										class="border rounded-full w-8 h-8 text-sm font-medium"
 										onClick={() => {
-											setLocale(locale() === "en" ? "fr" : "en");
+											setLocale(
+												locale() === "en" ? "fr" : "en",
+											);
 										}}
 									>
 										{locale() === "fr" ? "EN" : "FR"}
@@ -180,7 +192,9 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 											}}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
-											<span class="material-symbols-outlined">home</span>
+											<span class="material-symbols-outlined">
+												home
+											</span>
 										</A>
 										<A
 											href={`/clipboard?${new URLSearchParams(query).toString()}`}
@@ -188,13 +202,20 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 										>
 											<Show
 												when={
-													session.data?.clipboardServices &&
-													session.data.clipboardServices.length > 0
+													session.data
+														?.clipboardServices &&
+													session.data
+														.clipboardServices
+														.length > 0
 												}
 											>
 												<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
 													<p class="text-[8px] text-white">
-														{session.data?.clipboardServices.length}
+														{
+															session.data
+																?.clipboardServices
+																.length
+														}
 													</p>
 												</div>
 											</Show>
@@ -206,13 +227,17 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 											onClick={() => setSearchMode(true)}
 											class="flex h-7 w-7 items-center justify-center"
 										>
-											<span class="material-symbols-outlined">search</span>
+											<span class="material-symbols-outlined">
+												search
+											</span>
 										</button>
 										<button
 											onClick={toggle}
 											class="flex h-7 w-7 items-center justify-center"
 										>
-											<span class="material-symbols-outlined">close</span>
+											<span class="material-symbols-outlined">
+												close
+											</span>
 										</button>
 									</nav>
 								</header>
@@ -224,7 +249,9 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 							ref={scrollRef}
 							class="overflow-y-auto overscroll-contain flex-1 h-full"
 						>
-							<ErrorBoundary fallback={(error) => <Error error={error} />}>
+							<ErrorBoundary
+								fallback={(error) => <Error error={error} />}
+							>
 								{props.children}
 							</ErrorBoundary>
 						</div>
