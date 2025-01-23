@@ -27,6 +27,8 @@ export const CordsAPI = ({
 			? "https://api.cords.ai"
 			: "https://api.cords.dev";
 
+	console.log("test", baseUrl);
+
 	// Helper for making requests to the Cords API that applies the api key, referrer, and handles errors
 	const request = async (input: RequestInfo, init?: RequestInit) => {
 		const res = await fetch(input, {
@@ -49,6 +51,12 @@ export const CordsAPI = ({
 		return res;
 	};
 
+	const formatUrl = (pathname: string) => {
+		const url = new URL(baseUrl);
+		url.pathname = url.pathname.replace(/\/$/, "") + pathname;
+		return url;
+	};
+
 	// Search for resources
 	const search = async (
 		q: string,
@@ -58,8 +66,7 @@ export const CordsAPI = ({
 			...options
 		}: SearchOptions,
 	) => {
-		const url = new URL(baseUrl);
-		url.pathname += "/search";
+		const url = formatUrl("/search");
 		const params = new URLSearchParams({
 			q,
 		});
@@ -111,8 +118,7 @@ export const CordsAPI = ({
 
 	// Get related to a resource
 	const related = async (id: string) => {
-		const url = new URL(baseUrl);
-		url.pathname += `/resource/${id}/related`;
+		const url = formatUrl(`/resource/${id}/related`);
 
 		const res = await request(url.toString());
 		if (!res.ok) {
@@ -125,8 +131,7 @@ export const CordsAPI = ({
 
 	// Get a single resource by id
 	const resource = async (id: string) => {
-		const url = new URL(baseUrl);
-		url.pathname += `/resource/${id}`;
+		const url = formatUrl(`/resource/${id}`);
 
 		const res = await request(url.toString());
 		if (!res.ok) {
@@ -148,8 +153,7 @@ export const CordsAPI = ({
 		const params = new URLSearchParams();
 		ids.forEach((id, index) => params.append(`ids[${index}]`, id));
 
-		const url = new URL(baseUrl);
-		url.pathname += "/resource/list";
+		const url = formatUrl("/resource/list");
 		url.search = params.toString();
 
 		const res = await request(url.toString());
@@ -165,8 +169,7 @@ export const CordsAPI = ({
 			lng: number;
 		},
 	) => {
-		const url = new URL(baseUrl);
-		url.pathname += `/resource/${id}/nearest-neighbor`;
+		const url = formatUrl(`/resource/${id}/nearest-neighbor`);
 
 		const params = new URLSearchParams({
 			lat: options.lat.toString(),

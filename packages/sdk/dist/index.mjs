@@ -36,9 +36,10 @@ var CordsAPI = ({
   apiKey,
   version = "production",
   referer,
-  baseUrl
+  baseUrl: customBaseUrl
 }) => {
-  baseUrl = baseUrl != null ? baseUrl : version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
+  const baseUrl = customBaseUrl ? customBaseUrl == null ? void 0 : customBaseUrl.replace(/\/$/, "") : version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
+  console.log("test", baseUrl);
   const request = async (input, init) => {
     const res = await fetch(input, __spreadProps(__spreadValues({}, init), {
       headers: __spreadValues(__spreadValues({
@@ -47,12 +48,19 @@ var CordsAPI = ({
     }));
     if (!res.ok) {
       if (res.status === 403)
-        throw new Error("Bad API key. Ensure you have a valid API key.");
+        throw new Error(
+          "Bad API key. Ensure you have a valid API key."
+        );
       const data = await res.json();
       if (data.detail) throw new Error(data.detail);
       else throw new Error("An error occurred");
     }
     return res;
+  };
+  const formatUrl = (pathname) => {
+    const url = new URL(baseUrl);
+    url.pathname = url.pathname.replace(/\/$/, "") + pathname;
+    return url;
   };
   const search = async (q, _a) => {
     var _b = _a, {
@@ -62,15 +70,17 @@ var CordsAPI = ({
       "calculateCityFromSearchString",
       "calculateProvinceFromSearchString"
     ]);
-    const url = new URL("/search", baseUrl);
+    const url = formatUrl("/search");
     const params = new URLSearchParams({
       q
     });
     params.append("lat", options.lat.toString());
     params.append("lng", options.lng.toString());
     if (options.page) params.append("page", options.page.toString());
-    if (options.pageSize) params.append("pageSize", options.pageSize.toString());
-    if (options.distance) params.append("distance", options.distance.toString());
+    if (options.pageSize)
+      params.append("pageSize", options.pageSize.toString());
+    if (options.distance)
+      params.append("distance", options.distance.toString());
     params.append(
       "calculateProvinceFromSearchString",
       calculateProvinceFromSearchString ? "true" : "false"
@@ -86,7 +96,10 @@ var CordsAPI = ({
     }
     if (options.delivery) {
       for (const [key, value] of Object.entries(options.delivery)) {
-        params.append(`filter[delivery][${key}]`, value ? "true" : "false");
+        params.append(
+          `filter[delivery][${key}]`,
+          value ? "true" : "false"
+        );
       }
     }
     const res = await request(`${url.toString()}?${params}`);
@@ -94,7 +107,7 @@ var CordsAPI = ({
     return data;
   };
   const related = async (id) => {
-    const url = new URL(`/resource/${id}/related`, baseUrl);
+    const url = formatUrl(`/resource/${id}/related`);
     const res = await request(url.toString());
     if (!res.ok) {
       const data2 = await res.json();
@@ -104,7 +117,7 @@ var CordsAPI = ({
     return data;
   };
   const resource = async (id) => {
-    const url = new URL(`/resource/${id}`, baseUrl);
+    const url = formatUrl(`/resource/${id}`);
     const res = await request(url.toString());
     if (!res.ok) {
       const data2 = await res.json();
@@ -120,18 +133,21 @@ var CordsAPI = ({
       };
     const params = new URLSearchParams();
     ids.forEach((id, index) => params.append(`ids[${index}]`, id));
-    const url = new URL(`/search?${params.toString()}`, baseUrl);
+    const url = formatUrl("/resource/list");
+    url.search = params.toString();
     const res = await request(url.toString());
     const data = await res.json();
     return data;
   };
   const nearestNeighbour = async (id, options) => {
-    const url = new URL(`/resource/${id}/nearest-neighbor`, baseUrl);
+    const url = formatUrl(`/resource/${id}/nearest-neighbor`);
     const params = new URLSearchParams({
       lat: options.lat.toString(),
       lng: options.lng.toString()
     });
-    const res = await request(url.toString() + "?delivery=local&" + params.toString());
+    const res = await request(
+      url.toString() + "?delivery=local&" + params.toString()
+    );
     if (!res.ok) {
       const data2 = await res.json();
       throw new Error(data2.detail);

@@ -89,7 +89,7 @@ type CordsError = {
 };
 
 declare const ResourceOptions: {};
-declare const CordsAPI: ({ apiKey, version, referer, baseUrl, }: {
+declare const CordsAPI: ({ apiKey, version, referer, baseUrl: customBaseUrl, }: {
     apiKey: string;
     version?: "production" | "dev";
     referer?: string;

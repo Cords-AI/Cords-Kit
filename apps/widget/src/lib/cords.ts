@@ -6,5 +6,9 @@ export const useCords = () => {
 		api_key?: string;
 	}>();
 
-	return CordsAPI({ apiKey: searchParams.api_key ?? "", version: "production" });
+	return CordsAPI({
+		apiKey: searchParams.api_key ?? "",
+		version: "production",
+		baseUrl: `https://app.211.ca/cords`,
+	});
 };
