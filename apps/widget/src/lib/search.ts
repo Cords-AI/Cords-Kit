@@ -31,7 +31,6 @@ export const [mapOpen, setMapOpen] = createSignal(false);
 export const [map, setMap] = createSignal<google.maps.Map | null>(null);
 
 createEffect(() => {
-	console.log("Search changed", search());
 	if (search()) {
 		setMap(null);
 	}

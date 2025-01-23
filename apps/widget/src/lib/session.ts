@@ -23,7 +23,6 @@ export const getSession = (cordsId?: string) =>
 	createQuery(() => ({
 		queryKey: ["session", cordsId],
 		queryFn: async () => {
-			console.log("test", cordsId);
 			const res = await fetch(
 				`${import.meta.env.VITE_SITE_URL}/api/session`,
 				{
