@@ -7,6 +7,8 @@ export const [search, setSearch] = createSignal<{
 }>({
 	q: "",
 	options: {
+		calculateProvinceFromSearchString: true,
+		calculateCityFromSearchString: true,
 		page: 1,
 		pageSize: 10,
 		distance: 10,

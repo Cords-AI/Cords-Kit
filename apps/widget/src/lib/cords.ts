@@ -9,6 +9,5 @@ export const useCords = () => {
 	return CordsAPI({
 		apiKey: searchParams.api_key ?? "",
 		version: "production",
-		baseUrl: `https://app.211.ca/cords`,
 	});
 };
