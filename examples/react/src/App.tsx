@@ -33,10 +33,7 @@ function App() {
 				own cows) are bad for the environment. So, we don’t provide
 				milk.
 			</p>
-			<CordsWidget
-				apiKey={import.meta.env.VITE_CORDS_API_KEY}
-				baseUrl="http://localhost:3000"
-			/>
+			<CordsWidget apiKey={import.meta.env.VITE_CORDS_API_KEY} />
 		</>
 	);
 }
