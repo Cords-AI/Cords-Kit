@@ -39,7 +39,6 @@ var CordsAPI = ({
   baseUrl: customBaseUrl
 }) => {
   const baseUrl = customBaseUrl ? customBaseUrl == null ? void 0 : customBaseUrl.replace(/\/$/, "") : version === "production" ? "https://api.cords.ai" : "https://api.cords.dev";
-  console.log("test", baseUrl);
   const request = async (input, init) => {
     const res = await fetch(input, __spreadProps(__spreadValues({}, init), {
       headers: __spreadValues(__spreadValues({
@@ -89,12 +88,14 @@ var CordsAPI = ({
       "calculateCityFromSearchString",
       calculateCityFromSearchString ? "true" : "false"
     );
-    if (options.partner) {
+    if (options.partner && // Don't add if all values are true (defaults to all)
+    !Object.values(options.partner).every((value) => value === true)) {
       for (const [key, value] of Object.entries(options.partner)) {
         params.append(`filter[${key}]`, value ? "true" : "false");
       }
     }
-    if (options.delivery) {
+    if (options.delivery && // Don't add if all values are true (defaults to all)
+    !Object.values(options.delivery).every((value) => value === true)) {
       for (const [key, value] of Object.entries(options.delivery)) {
         params.append(
           `filter[delivery][${key}]`,

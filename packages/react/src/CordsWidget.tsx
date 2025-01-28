@@ -6,7 +6,16 @@ function extractPageText(htmlContent: string) {
 	const doc = parser.parseFromString(htmlContent, "text/html");
 
 	// Selectors for tags to remove
-	const selectorsToRemove = ["nav", "a", "header", "footer", "script", "form", "button", "a"];
+	const selectorsToRemove = [
+		"nav",
+		"a",
+		"header",
+		"footer",
+		"script",
+		"form",
+		"button",
+		"a",
+	];
 
 	// Function to recursively remove elements matching any selector
 	function removeElements(element: Element) {
@@ -26,12 +35,17 @@ function extractPageText(htmlContent: string) {
 	return doc.body.textContent || "";
 }
 
-const origin = "http://localhost:3000";
-
-export const CordsWidget = ({ apiKey }: { apiKey: string }) => {
+export const CordsWidget = ({
+	apiKey,
+	baseUrl,
+}: {
+	apiKey: string;
+	baseUrl?: string;
+}) => {
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 	const [cordsId, setCordsId] = useState<string | null>(null);
+	const [origin] = useState(baseUrl ?? "https://cords-widget.pages.dev");
 
 	useEffect(() => {
 		const cordsId = document.cookie
@@ -84,7 +98,7 @@ export const CordsWidget = ({ apiKey }: { apiKey: string }) => {
 		>
 			<iframe
 				src={`${origin}?q=${encodeURIComponent(
-					extractPageText(document.body.innerHTML)
+					extractPageText(document.body.innerHTML),
 				)}&api_key=${apiKey}&cordsId=${cordsId}`}
 				style={{
 					pointerEvents: "all",

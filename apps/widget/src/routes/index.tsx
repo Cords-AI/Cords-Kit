@@ -436,8 +436,8 @@ const Home: Component = () => {
 												/>
 												<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
 												<span class="ms-2 text-xs text-steel">
-													{/* @ts-ignore */}
 													{
+														// @ts-ignore
 														t().search.filters
 															.delivery[key]
 													}

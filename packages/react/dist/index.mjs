@@ -4,7 +4,16 @@ import { jsx } from "react/jsx-runtime";
 function extractPageText(htmlContent) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlContent, "text/html");
-  const selectorsToRemove = ["nav", "a", "header", "footer", "script", "form", "button", "a"];
+  const selectorsToRemove = [
+    "nav",
+    "a",
+    "header",
+    "footer",
+    "script",
+    "form",
+    "button",
+    "a"
+  ];
   function removeElements(element) {
     Array.from(element.querySelectorAll("*")).forEach((child) => {
       if (selectorsToRemove.some((selector) => child.matches(selector))) {
@@ -17,11 +26,14 @@ function extractPageText(htmlContent) {
   removeElements(doc.body);
   return doc.body.textContent || "";
 }
-var origin = "http://localhost:3000";
-var CordsWidget = ({ apiKey }) => {
+var CordsWidget = ({
+  apiKey,
+  baseUrl
+}) => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [cordsId, setCordsId] = useState(null);
+  const [origin] = useState(baseUrl != null ? baseUrl : "https://cords-widget.pages.dev");
   useEffect(() => {
     var _a;
     const cordsId2 = (_a = document.cookie.split("; ").find((row) => row.startsWith("cords-id="))) == null ? void 0 : _a.split("=")[1];

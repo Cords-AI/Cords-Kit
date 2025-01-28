@@ -30,7 +30,16 @@ var import_jsx_runtime = require("react/jsx-runtime");
 function extractPageText(htmlContent) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlContent, "text/html");
-  const selectorsToRemove = ["nav", "a", "header", "footer", "script", "form", "button", "a"];
+  const selectorsToRemove = [
+    "nav",
+    "a",
+    "header",
+    "footer",
+    "script",
+    "form",
+    "button",
+    "a"
+  ];
   function removeElements(element) {
     Array.from(element.querySelectorAll("*")).forEach((child) => {
       if (selectorsToRemove.some((selector) => child.matches(selector))) {
@@ -43,11 +52,14 @@ function extractPageText(htmlContent) {
   removeElements(doc.body);
   return doc.body.textContent || "";
 }
-var origin = "http://localhost:3000";
-var CordsWidget = ({ apiKey }) => {
+var CordsWidget = ({
+  apiKey,
+  baseUrl
+}) => {
   const [width, setWidth] = (0, import_react.useState)(0);
   const [height, setHeight] = (0, import_react.useState)(0);
   const [cordsId, setCordsId] = (0, import_react.useState)(null);
+  const [origin] = (0, import_react.useState)(baseUrl != null ? baseUrl : "https://cords-widget.pages.dev");
   (0, import_react.useEffect)(() => {
     var _a;
     const cordsId2 = (_a = document.cookie.split("; ").find((row) => row.startsWith("cords-id="))) == null ? void 0 : _a.split("=")[1];

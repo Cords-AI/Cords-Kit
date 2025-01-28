@@ -90,14 +90,22 @@ export const CordsAPI = ({
 		);
 
 		// Add partner parameters
-		if (options.partner) {
+		if (
+			options.partner &&
+			// Don't add if all values are true (defaults to all)
+			!Object.values(options.partner).every((value) => value === true)
+		) {
 			for (const [key, value] of Object.entries(options.partner)) {
 				params.append(`filter[${key}]`, value ? "true" : "false");
 			}
 		}
 
 		// Add delivery parameters
-		if (options.delivery) {
+		if (
+			options.delivery &&
+			// Don't add if all values are true (defaults to all)
+			!Object.values(options.delivery).every((value) => value === true)
+		) {
 			for (const [key, value] of Object.entries(options.delivery)) {
 				params.append(
 					`filter[delivery][${key}]`,

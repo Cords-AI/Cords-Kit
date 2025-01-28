@@ -1,5 +1,5 @@
 import { autofocus } from "@solid-primitives/autofocus";
-import { A, useLocation } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import {
 	Component,
@@ -29,6 +29,8 @@ const icons = {
 };
 
 const SearchHeader = ({ close }: { close: () => void }) => {
+	const navigate = useNavigate();
+	const [query] = useSearchParams();
 	const form = createForm(() => ({
 		defaultValues: {
 			query: "",
@@ -43,6 +45,7 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 			}));
 			setMapOpen(false);
 			close();
+			navigate(`/?${new URLSearchParams(query).toString()}`);
 		},
 		validators: {
 			onChange: ({ value }) => {
@@ -102,7 +105,6 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 	const toggle = () => setOpen(!open());
 	const [query] = useSearchParams();
 	const { locale, setLocale } = useTranslation();
-	const location = useLocation();
 	let scrollRef: HTMLDivElement | undefined;
 	const session = getSession(query.cordsId);
 
