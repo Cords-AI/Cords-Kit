@@ -59,7 +59,7 @@ var CordsWidget = ({
   const [width, setWidth] = (0, import_react.useState)(0);
   const [height, setHeight] = (0, import_react.useState)(0);
   const [cordsId, setCordsId] = (0, import_react.useState)(null);
-  const [origin] = (0, import_react.useState)(baseUrl != null ? baseUrl : "https://cords-widget.pages.dev");
+  const [origin] = (0, import_react.useState)(baseUrl != null ? baseUrl : "https://cords-prod.nuonn.com");
   (0, import_react.useEffect)(() => {
     var _a;
     const cordsId2 = (_a = document.cookie.split("; ").find((row) => row.startsWith("cords-id="))) == null ? void 0 : _a.split("=")[1];

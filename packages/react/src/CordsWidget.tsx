@@ -45,7 +45,7 @@ export const CordsWidget = ({
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 	const [cordsId, setCordsId] = useState<string | null>(null);
-	const [origin] = useState(baseUrl ?? "https://cords-widget.pages.dev");
+	const [origin] = useState(baseUrl ?? "https://cords-prod.nuonn.com");
 
 	useEffect(() => {
 		const cordsId = document.cookie

@@ -54,7 +54,7 @@ function cords_check_cookie_and_redirect()
 		exit();
 	}
 	if (!isset($_COOKIE['cords-id'])) {
-		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.pages.dev";
+		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-prod.nuonn.com";
 		$redirect_url = is_singular() ? get_permalink() : home_url();
 		wp_redirect($origin . '/login?redirect=' . urlencode($redirect_url));
 		exit();
@@ -102,7 +102,7 @@ function enqueue_cords_widget_script()
 
 	if ($show_widget) {
 		$api_key = get_option('cords_api_key');
-		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-widget.pages.dev";
+		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-prod.nuonn.com";
 ?>
 		<script>
 			function extractPageText(htmlContent) {
