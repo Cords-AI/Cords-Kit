@@ -1,19 +1,17 @@
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/aws-data-api/pg";
+import { Resource } from "sst";
 import * as schema from "./schema";
 
-// Returns database ORM client
-export const getDB = () => {
-	if (!process.env.TURSO_URL || !process.env.TURSO_TOKEN) {
-		throw new Error("TURSO_URL and TURSO_TOKEN must be set");
-	}
+if (!process.env.TENANT_STAGE_NAME) {
+	throw new Error("TENANT_STAGE_NAME is not set: DB");
+}
 
-	const client = createClient({
-		url: process.env.TURSO_URL,
-		authToken: process.env.TURSO_TOKEN,
-	});
-
-	return drizzle(client, {
-		schema,
-	});
-};
+export const db = drizzle({
+	connection: {
+		region: "ca-central-1",
+		database: process.env.TENANT_STAGE_NAME,
+		secretArn: Resource.Aurora.secretArn,
+		resourceArn: Resource.Aurora.clusterArn,
+	},
+	schema,
+});

@@ -1,7 +1,7 @@
 import type { APIEvent } from "@solidjs/start/server";
 import { v4 as uuidv4 } from "uuid";
 import { getCookie, sendRedirect, setCookie } from "vinxi/http";
-import { getDB } from "~/server/db";
+import { db } from "~/server/db";
 import { sessions } from "~/server/schema";
 
 export const GET = async (e: APIEvent) => {
@@ -15,7 +15,6 @@ export const GET = async (e: APIEvent) => {
 	let cordsId = getCookie(e.nativeEvent, "cords-id");
 	if (!cordsId) {
 		cordsId = uuidv4();
-		const db = getDB();
 		await db.insert(sessions).values({
 			id: cordsId,
 			lat: 43.6532,
@@ -28,5 +27,8 @@ export const GET = async (e: APIEvent) => {
 			httpOnly: true,
 		});
 	}
-	sendRedirect(e.nativeEvent, searchParams.get("redirect") + "?cordsId=" + cordsId);
+	sendRedirect(
+		e.nativeEvent,
+		searchParams.get("redirect") + "?cordsId=" + cordsId,
+	);
 };

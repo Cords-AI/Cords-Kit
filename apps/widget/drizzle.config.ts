@@ -1,12 +1,24 @@
 import { defineConfig } from "drizzle-kit";
+import { Resource } from "sst";
+
+if (!process.env.TENANT_STAGE_NAME) {
+	throw new Error("TENANT_STAGE_NAME is not set: Drizzle Studio");
+}
 
 export default defineConfig({
-	schema: "./src/server/schema.ts",
-	out: "./src/server/migrations",
-	dialect: "sqlite",
-	driver: "turso",
+	dialect: "postgresql",
+	schema: ["./src/server/schema.ts"],
+	out: "./migrations",
 	dbCredentials: {
-		url: process.env.TURSO_URL!,
-		authToken: process.env.TURSO_TOKEN!,
+		database: process.env.TENANT_STAGE_NAME,
+		host: Resource.Aurora.host,
+		port: Resource.Aurora.port,
+		user: Resource.Aurora.username,
+		password: Resource.Aurora.password,
+		ssl: {
+			rejectUnauthorized: false,
+		},
 	},
+	verbose: true,
+	strict: true,
 });

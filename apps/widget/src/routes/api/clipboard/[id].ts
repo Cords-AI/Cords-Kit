@@ -1,6 +1,6 @@
 import type { APIEvent } from "@solidjs/start/server";
 import { eq } from "drizzle-orm";
-import { getDB } from "~/server/db";
+import { db } from "~/server/db";
 import { clipboardServices, sessions } from "~/server/schema";
 
 export const PUT = async (e: APIEvent) => {
@@ -8,8 +8,6 @@ export const PUT = async (e: APIEvent) => {
 	if (!cordsId) {
 		return new Response("Missing cords-id header", { status: 400 });
 	}
-
-	const db = getDB();
 
 	const session = await db.query.sessions.findFirst({
 		where: eq(sessions.id, cordsId),
@@ -30,7 +28,9 @@ export const PUT = async (e: APIEvent) => {
 			sessionId: cordsId,
 		});
 	} else {
-		await db.delete(clipboardServices).where(eq(clipboardServices.serviceId, id));
+		await db
+			.delete(clipboardServices)
+			.where(eq(clipboardServices.serviceId, id));
 	}
 
 	return new Response("Success", { status: 200 });
