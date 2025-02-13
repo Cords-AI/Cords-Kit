@@ -22,4 +22,8 @@ lfsa000a21a_e.geojson
 android/
 ios/
 
+apps/widget/.sst/
 .sst/
+.output/
+.vinxi/
+dist/

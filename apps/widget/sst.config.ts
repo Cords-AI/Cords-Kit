@@ -1,5 +1,7 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
+import { z } from "zod";
+
 // GLOBALS //
 const TENANT = "cords";
 const PROFILE = "krak";
@@ -34,6 +36,18 @@ export default $config({
 		// VARIABLES //
 		const stage = `${TENANT}-${rootStage}`;
 		const domain = `${stage}.${ROOT_DOMAIN}`;
+		const env = z
+			.object({
+				VITE_GOOGLE_MAPS_KEY: z.string(),
+			})
+			.parse(process.env);
+		const environment = {
+			TENANT_STAGE_NAME: stage,
+			SITE_URL: LOCAL_STAGES.includes(rootStage)
+				? "http://localhost:3000"
+				: `https://${domain}`,
+			...env,
+		};
 
 		// KRAK RESOURCES (Multi-Tenant) //
 		const vpc = sst.aws.Vpc.get("Vpc", "vpc-08c28b23ee20f3975");
@@ -43,13 +57,6 @@ export default $config({
 		const dns = sst.cloudflare.dns({
 			proxy: true,
 		});
-
-		const environment = {
-			TENANT_STAGE_NAME: stage,
-			SITE_URL: LOCAL_STAGES.includes(rootStage)
-				? "http://localhost:3000"
-				: `https://${domain}`,
-		};
 
 		// WEB //
 		new sst.aws.SolidStart("Web", {
@@ -70,10 +77,5 @@ export default $config({
 			},
 			environment,
 		});
-
-		return {
-			Name: stage,
-			Database: $interpolate`postgres://${aurora.username}:${aurora.password}@${aurora.host}:${aurora.port}/${stage}`,
-		};
 	},
 });

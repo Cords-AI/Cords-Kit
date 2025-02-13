@@ -105,7 +105,7 @@ const Resource = () => {
 	const toggleClipboard = createMutation(() => ({
 		mutationKey: ["clipboard"],
 		mutationFn: async (id: string) => {
-			await fetch(`${process.env.SITE_URL}/api/clipboard/${id}`, {
+			await fetch(`/api/clipboard/${id}`, {
 				method: "PUT",
 				headers: {
 					"cords-id": query.cordsId!,
