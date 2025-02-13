@@ -43,7 +43,7 @@ export default $config({
 			.parse(process.env);
 		const environment = {
 			TENANT_STAGE_NAME: stage,
-			SITE_URL: LOCAL_STAGES.includes(rootStage)
+			VITE_SITE_URL: LOCAL_STAGES.includes(rootStage)
 				? "http://localhost:3000"
 				: `https://${domain}`,
 			...env,

@@ -7,7 +7,7 @@ import { Locale } from "~/translations";
 import { Session } from "~/types";
 
 const updateSession = async (session: Session) => {
-	const res = await fetch("/api/session", {
+	const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
@@ -23,11 +23,14 @@ export const getSession = (cordsId?: string) =>
 	createQuery(() => ({
 		queryKey: ["session", cordsId],
 		queryFn: async () => {
-			const res = await fetch("/api/session", {
-				headers: {
-					"cords-id": cordsId!,
+			const res = await fetch(
+				`${import.meta.env.VITE_SITE_URL}/api/session`,
+				{
+					headers: {
+						"cords-id": cordsId!,
+					},
 				},
-			});
+			);
 			let data = (await res.json()) as Session & {
 				clipboardServices: {
 					sessionId: string;
