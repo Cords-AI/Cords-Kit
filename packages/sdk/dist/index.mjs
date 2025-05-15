@@ -69,6 +69,7 @@ var CordsAPI = ({
       "calculateCityFromSearchString",
       "calculateProvinceFromSearchString"
     ]);
+    var _a2;
     const url = formatUrl("/search");
     const params = new URLSearchParams({
       q
@@ -102,6 +103,11 @@ var CordsAPI = ({
           value ? "true" : "false"
         );
       }
+    }
+    if ((_a2 = options == null ? void 0 : options.meta) == null ? void 0 : _a2.taxonomy) {
+      options.meta.taxonomy.forEach((code) => {
+        params.append("filter[meta][TaxonomyCodes][]", code);
+      });
     }
     const res = await request(`${url.toString()}?${params}`);
     const data = await res.json();

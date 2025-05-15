@@ -20,7 +20,7 @@ export const CordsAPI = ({
 	referer?: string;
 	baseUrl?: string;
 }) => {
-	// Set the base URL for the Cords API
+	// Set the base URL for the Cords AP
 	const baseUrl = customBaseUrl
 		? customBaseUrl?.replace(/\/$/, "")
 		: version === "production"
@@ -112,6 +112,13 @@ export const CordsAPI = ({
 					value ? "true" : "false",
 				);
 			}
+		}
+
+		// Add taxonomy codes
+		if (options?.meta?.taxonomy) {
+			options.meta.taxonomy.forEach((code) => {
+				params.append("filter[meta][TaxonomyCodes][]", code);
+			});
 		}
 
 		const res = await request(`${url.toString()}?${params}`);
