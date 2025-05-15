@@ -39,6 +39,10 @@ export type ResourceType = {
 	email: LocalizedFieldType;
 	address: ResourceAddressType;
 	addresses: ResourceAddressType[];
+	location: {
+		lat: number | null;
+		lng: number | null;
+	};
 	phoneNumbers: {
 		phone: string;
 		name: string;
@@ -60,12 +64,7 @@ export type ResourceType = {
 export type SearchResourceType = Omit<
 	ResourceType,
 	"website" | "email" | "phoneNumbers" | "addresses" | "address"
-> & {
-	location: {
-		lat: number | null;
-		lng: number | null;
-	};
-};
+>;
 
 export type TaxonomyCodeType =
 	| "FN-1700.1300"
