@@ -56,21 +56,25 @@ export const CordsAPI = ({
 	};
 
 	// Search for resources
-	const search = async (
-		q: string,
-		{
-			calculateCityFromSearchString = true,
-			calculateProvinceFromSearchString = true,
-			...options
-		}: SearchOptions,
-	) => {
+	const search = async ({
+		calculateCityFromSearchString = true,
+		calculateProvinceFromSearchString = true,
+		...options
+	}: SearchOptions) => {
 		const url = formatUrl("/search");
-		const params = new URLSearchParams({
-			q,
-		});
+		const params = new URLSearchParams();
 
-		params.append("lat", options.lat.toString());
-		params.append("lng", options.lng.toString());
+		if ("q" in options && "lat" in options && "lng" in options) {
+			params.append("q", options.q);
+			params.append("lat", options.lat.toString());
+			params.append("lng", options.lng.toString());
+		}
+
+		if ("ids" in options) {
+			options.ids.forEach((id, index) => {
+				params.append(`ids[${index}]`, id);
+			});
+		}
 
 		// Add top-level parameters
 		if (options.page) params.append("page", options.page.toString());
@@ -155,25 +159,6 @@ export const CordsAPI = ({
 		return data as ResourceType;
 	};
 
-	// Get a list of resources by id
-	const resourceList = async (
-		ids: string[],
-	): Promise<{ data: ResourceType[] }> => {
-		if (ids.length === 0)
-			return {
-				data: [],
-			};
-		const params = new URLSearchParams();
-		ids.forEach((id, index) => params.append(`ids[${index}]`, id));
-
-		const url = formatUrl("/resource/list");
-		url.search = params.toString();
-
-		const res = await request(url.toString());
-		const data = await res.json();
-		return data as { data: ResourceType[] };
-	};
-
 	// Get the nearest neighbour to a resource
 	const nearestNeighbour = async (
 		id: string,
@@ -204,7 +189,6 @@ export const CordsAPI = ({
 		search,
 		related,
 		resource,
-		resourceList,
 		nearestNeighbour,
 	};
 };

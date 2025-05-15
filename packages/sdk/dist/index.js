@@ -84,7 +84,7 @@ var CordsAPI = ({
     url.pathname = url.pathname.replace(/\/$/, "") + pathname;
     return url;
   };
-  const search = async (q, _a) => {
+  const search = async (_a) => {
     var _b = _a, {
       calculateCityFromSearchString = true,
       calculateProvinceFromSearchString = true
@@ -94,11 +94,17 @@ var CordsAPI = ({
     ]);
     var _a2;
     const url = formatUrl("/search");
-    const params = new URLSearchParams({
-      q
-    });
-    params.append("lat", options.lat.toString());
-    params.append("lng", options.lng.toString());
+    const params = new URLSearchParams();
+    if ("q" in options && "lat" in options && "lng" in options) {
+      params.append("q", options.q);
+      params.append("lat", options.lat.toString());
+      params.append("lng", options.lng.toString());
+    }
+    if ("ids" in options) {
+      options.ids.forEach((id, index) => {
+        params.append(`ids[${index}]`, id);
+      });
+    }
     if (options.page) params.append("page", options.page.toString());
     if (options.pageSize)
       params.append("pageSize", options.pageSize.toString());
@@ -156,19 +162,6 @@ var CordsAPI = ({
     const data = await res.json();
     return data;
   };
-  const resourceList = async (ids) => {
-    if (ids.length === 0)
-      return {
-        data: []
-      };
-    const params = new URLSearchParams();
-    ids.forEach((id, index) => params.append(`ids[${index}]`, id));
-    const url = formatUrl("/resource/list");
-    url.search = params.toString();
-    const res = await request(url.toString());
-    const data = await res.json();
-    return data;
-  };
   const nearestNeighbour = async (id, options) => {
     const url = formatUrl(`/resource/${id}/nearest-neighbor`);
     const params = new URLSearchParams({
@@ -189,7 +182,6 @@ var CordsAPI = ({
     search,
     related,
     resource,
-    resourceList,
     nearestNeighbour
   };
 };

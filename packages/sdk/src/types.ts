@@ -999,9 +999,12 @@ export type TaxonomyCodeType =
 	| "LR-3100.1800 * YB-9000"
 	| "YF-4500";
 
-export type SearchOptions = {
-	lat: number;
-	lng: number;
+export type SearchOptions = (
+	| { q: string; lat: number; lng: number }
+	| {
+			ids: string[];
+	  }
+) & {
 	page?: number;
 	distance?: number;
 	pageSize?: number;
