@@ -1,8 +1,8 @@
 import { A } from "@solidjs/router";
-import logo from "~/assets/logo.svg";
-import { useSearchParams } from "~/lib/params";
-import { getSession, localizedLocation } from "~/lib/session";
-import { useTranslation } from "~/translations";
+import logo from "@/assets/logo.svg";
+import { useSearchParams } from "@/lib/params";
+import { getSession, localizedLocation } from "@/lib/session";
+import { useTranslation } from "@/translations";
 
 const Footer = () => {
 	const { t, locale } = useTranslation();
@@ -16,7 +16,9 @@ const Footer = () => {
 				<div class="flex items-center">
 					<div class="bg-orange-300 w-2 h-2 mr-2 rounded-full" />
 					<span class="font-medium">
-						{session.data ? localizedLocation(session.data.address, locale()) : ""}
+						{session.data
+							? localizedLocation(session.data.address, locale())
+							: ""}
 					</span>
 				</div>
 				<span>•</span>

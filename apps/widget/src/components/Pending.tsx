@@ -1,6 +1,12 @@
-import spinner from "~/assets/spinner.svg";
+import spinner from "@/assets/spinner.svg";
 
-const Pending = ({ width = 50, height = 50 }: { width?: number; height?: number }) => {
+const Pending = ({
+	width = 50,
+	height = 50,
+}: {
+	width?: number;
+	height?: number;
+}) => {
 	return (
 		<div class="h-full flex justify-center items-center">
 			<img

@@ -3,8 +3,8 @@ import {
 	createQuery,
 	useQueryClient,
 } from "@tanstack/solid-query";
-import { Locale } from "~/translations";
-import { Session } from "~/types";
+import { Locale } from "@/translations";
+import { Session } from "@/types";
 
 const updateSession = async (session: Session) => {
 	const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {

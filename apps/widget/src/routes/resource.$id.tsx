@@ -1,28 +1,29 @@
-import { ResourceType, formatServiceAddress } from "@cords/sdk";
-import { A, useNavigate, useParams } from "@solidjs/router";
-import {
-	createMutation,
-	createQuery,
-	useQueryClient,
-} from "@tanstack/solid-query";
+import { type ResourceType, formatServiceAddress } from "@cords/sdk";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/solid-query";
+import { createFileRoute, Link } from "@tanstack/solid-router";
 import { convert } from "html-to-text";
-import { Component, For, Match, Show, Switch } from "solid-js";
-import PartnerLogo from "~/components/PartnerLogo";
-import Pending from "~/components/Pending";
-import { useCords } from "~/lib/cords";
-import { useSearchParams } from "~/lib/params";
-import { getSession } from "~/lib/session";
-import { getLocalizedField, useTranslation } from "~/translations";
+import { type Component, For, Match, Show, Switch } from "solid-js";
+import PartnerLogo from "@/components/PartnerLogo";
+import Pending from "@/components/Pending";
+import { useCords } from "@/lib/cords";
+import { getSession } from "@/lib/session";
+import { getLocalizedField, useTranslation } from "@/translations";
+
+export const Route = createFileRoute("/resource/$id")({
+	component: RouteComponent,
+});
 
 const RelatedItem: Component<{
 	service: ResourceType;
 }> = (props) => {
-	const [query] = useSearchParams();
+	const { query } = Route.useSearch();
 	const { locale } = useTranslation();
 
 	return (
-		<A
-			href={`/resource/${props.service.id}?${new URLSearchParams(query).toString()}`}
+		<Link
+			to="/resource/$id"
+			params={{ id: props.service.id }}
+			from={Route.fullPath}
 			class="bg-primary hover:bg-opacity-10 bg-opacity-5 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start"
 		>
 			<p class="font-header text-sm text-primary">
@@ -33,7 +34,7 @@ const RelatedItem: Component<{
 					getLocalizedField(props.service.description, locale())!,
 				)}
 			</p>
-		</A>
+		</Link>
 	);
 };
 
@@ -42,7 +43,7 @@ const Related: Component<{
 }> = (props) => {
 	const cords = useCords();
 	const { t } = useTranslation();
-	const related = createQuery(() => ({
+	const related = useQuery(() => ({
 		queryKey: ["related", props.id],
 		queryFn: () => cords.related(props.id),
 		throwOnError: true,
@@ -63,9 +64,9 @@ const Nearest: Component<{
 }> = (props) => {
 	const cords = useCords();
 	const { t } = useTranslation();
-	const [query] = useSearchParams();
+	const { query } = Route.useSearch();
 	const session = getSession(query.cordsId);
-	const related = createQuery(() => ({
+	const related = useQuery(() => ({
 		queryKey: ["nearest-neighbour", props.id],
 		queryFn: () =>
 			cords.nearestNeighbour(props.id, {
@@ -86,12 +87,12 @@ const Nearest: Component<{
 	);
 };
 
-const Resource = () => {
+function RouteComponent() {
 	const cords = useCords();
-	const params = useParams();
-	const navigate = useNavigate();
-	const [query] = useSearchParams();
-	const resource = createQuery(() => ({
+	const params = Route.useParams();
+	const navigate = Route.useNavigate();
+	const { query } = Route.useSearch();
+	const resource = useQuery(() => ({
 		queryKey: ["resource", params.id],
 		queryFn: () => cords.resource(params.id),
 		throwOnError: true,
@@ -102,7 +103,7 @@ const Resource = () => {
 
 	const queryClient = useQueryClient();
 
-	const toggleClipboard = createMutation(() => ({
+	const toggleClipboard = useMutation(() => ({
 		mutationKey: ["clipboard"],
 		mutationFn: async (id: string) => {
 			await fetch(
@@ -147,7 +148,7 @@ const Resource = () => {
 												resource().id,
 										)}
 									>
-										<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
+										<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-2">
 											<span class="material-symbols-outlined material-symbols-outlined-thicker text-[10px]">
 												check
 											</span>
@@ -395,6 +396,4 @@ const Resource = () => {
 			</Match>
 		</Switch>
 	);
-};
-
-export default Resource;
+}

@@ -1,10 +1,15 @@
-import { defineConfig } from "@solidjs/start/config";
+import { defineConfig } from "@tanstack/solid-start/config";
+import tsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-	server: {
-		preset: "aws-lambda",
-		rollupConfig: {
-			external: ["node:async_hooks"],
-		},
+	tsr: {
+		appDirectory: "src",
+	},
+	vite: {
+		plugins: [
+			tsConfigPaths({
+				projects: ["./tsconfig.json"],
+			}),
+		],
 	},
 });

@@ -1,25 +1,76 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-body {
-	font-family: "Inter Variable";
+@theme {
+  --color-steel: #6b7b99;
+  --color-slate: #475266;
+  --color-charcoal: #242933;
+  --color-off-white: #f7f9fc;
+  --color-off-white-emphasis: #ebeff5;
+  --color-subdued: #ebeff5;
+  --color-off-black: rgb(0, 4, 13);
+  --color-hairline: hsl(220, 32%, 93%);
+  --color-hairline-subdued: hsl(220, 32%, 93%) / 0.6;
+  --color-blue: #0055ff;
+  --color-blue-dark: #0044cc;
+  --color-blue-active: #0044cc;
+  --color-red: #da4432;
+  --color-warning: #ed9600;
+  --color-positive: #00b98b;
+  --color-primary: #0055ff;
+  --color-quasar-negative: #da4432;
+  --color-elevation1: #fff;
+  --color-elevation2: #f7f9fc;
+  --color-elevation3: #ebeff5;
+  --color-body: #475266;
+  --color-body-background: #fff;
+  --color-link: #0055ff;
+  --color-link-hover: #0044cc;
+  --color-typography-heading-color: #242933;
+  --color-typography-copy-color: #475266;
+  --color-typography-strong-color: #242933;
+
+  --font-weight-header: 500;
+  --font-weight-body: 400;
 }
 
-.material-symbols-outlined {
-	font-variation-settings:
-		"FILL" 0,
-		"wght" 300,
-		"GRAD" 0,
-		"opsz" 24;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
 }
 
-.material-symbols-outlined-thicker {
-	font-variation-settings:
-		"FILL" 0,
-		"wght" 700,
-		"GRAD" 0,
-		"opsz" 24;
+@layer utilities {
+  body {
+    font-family: 'Inter Variable';
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 300,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+
+  .material-symbols-outlined-thicker {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 700,
+      'GRAD' 0,
+      'opsz' 24;
+  }
 }
 
 @layer base {
@@ -46,11 +97,11 @@ body {
 }
 
 .btn {
-	@apply text-sm text-white bg-primary w-min px-3 shadow h-8 flex items-center justify-center rounded cursor-pointer;
+	@apply text-sm text-white bg-primary w-min px-3 shadow-sm h-8 flex items-center justify-center rounded-sm cursor-pointer;
 }
 
 .neutral-btn {
-	@apply text-sm text-slate whitespace-nowrap bg-elevation3 w-min px-3 shadow h-8 flex items-center justify-center rounded cursor-pointer;
+	@apply text-sm text-slate whitespace-nowrap bg-elevation3 w-min px-3 shadow-sm h-8 flex items-center justify-center rounded-sm cursor-pointer;
 }
 
 input[type="text"],

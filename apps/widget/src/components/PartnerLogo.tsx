@@ -1,7 +1,7 @@
 import { ResourceType } from "@cords/sdk";
 import { JSX } from "solid-js";
-import volunteer from "~/assets/volunteer.jpg";
-import { useTranslation } from "~/translations";
+import volunteer from "@/assets/volunteer.jpg";
+import { useTranslation } from "@/translations";
 
 export const partnerMapping: {
 	[key in ResourceType["partner"]]: {
@@ -28,7 +28,10 @@ export const partnerMapping: {
 		label: "Employment",
 		image: (
 			<svg width="22" height="22" viewBox="0 0 64 64">
-				<path fill="#EE203E" d="M32,0L4.3,16v32L32,64l27.7-16V16L32,0z" />
+				<path
+					fill="#EE203E"
+					d="M32,0L4.3,16v32L32,64l27.7-16V16L32,0z"
+				/>
 				<polygon
 					fill="#FFFFFF"
 					points="13.9,18.2 13.9,18.5 13.9,45.8 15,46.5 16.2,45.8 16.2,18.5 16.2,18.2 15,17.5 "
@@ -110,7 +113,15 @@ export const partnerMapping: {
 	},
 	volunteer: {
 		label: "Volunteer",
-		image: <img class="rounded" src={volunteer} width={20} height={20} alt="Volunteer Logo" />,
+		image: (
+			<img
+				class="rounded-sm"
+				src={volunteer}
+				width={20}
+				height={20}
+				alt="Volunteer Logo"
+			/>
+		),
 	},
 };
 
@@ -123,7 +134,8 @@ const PartnerLogo = ({ partner }: { partner: ResourceType["partner"] }) => {
 				{partnerMapping[partner].image}
 			</div>
 			<p class="text-xs">
-				{t().resource["result-from"]} {partner.slice(0, 1).toUpperCase() + partner.slice(1)}
+				{t().resource["result-from"]}{" "}
+				{partner.slice(0, 1).toUpperCase() + partner.slice(1)}
 			</p>
 		</div>
 	);

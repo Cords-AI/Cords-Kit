@@ -1,10 +1,19 @@
 import { debounce } from "@solid-primitives/scheduled";
 import { createMutation, createQuery } from "@tanstack/solid-query";
 import { createSignal, For, Show } from "solid-js";
-import { loader } from "~/lib/google";
-import { useSearchParams } from "~/lib/params";
-import { getSession, localizedLocation, useSessionMutation } from "~/lib/session";
-import { useTranslation } from "~/translations";
+import { loader } from "@/lib/google";
+import { useSearchParams } from "@/lib/params";
+import {
+	getSession,
+	localizedLocation,
+	useSessionMutation,
+} from "@/lib/session";
+import { useTranslation } from "@/translations";
+import { createFileRoute } from "@tanstack/solid-router";
+
+export const Route = createFileRoute("/location")({
+	component: RouteComponent,
+});
 
 let autocompleteService: google.maps.places.AutocompleteService | null = null;
 let placesService: google.maps.places.PlacesService | null = null;
@@ -21,22 +30,26 @@ const getPlace = (placeId: string): Promise<google.maps.places.PlaceResult> => {
 				fields: ["formatted_address", "geometry"],
 			},
 			(place, status) => {
-				if (status === google.maps.places.PlacesServiceStatus.OK && place) {
+				if (
+					status === google.maps.places.PlacesServiceStatus.OK &&
+					place
+				) {
 					resolve(place);
 				} else {
 					reject(status);
 				}
-			}
+			},
 		);
 	});
 };
 
 const autocomplete = async (
-	query: string
+	query: string,
 ): Promise<google.maps.places.AutocompletePrediction[]> => {
 	return new Promise(async (resolve, reject) => {
 		if (!autocompleteService) {
-			const { AutocompleteService } = await loader.importLibrary("places");
+			const { AutocompleteService } =
+				await loader.importLibrary("places");
 			autocompleteService = new AutocompleteService();
 		}
 		autocompleteService.getPlacePredictions(
@@ -46,17 +59,20 @@ const autocomplete = async (
 				componentRestrictions: { country: "ca" },
 			},
 			(predictions, status) => {
-				if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+				if (
+					status !== google.maps.places.PlacesServiceStatus.OK ||
+					!predictions
+				) {
 					reject(status);
 				} else {
 					resolve(predictions);
 				}
-			}
+			},
 		);
 	});
 };
 
-const Location = () => {
+function RouteComponent() {
 	const [query] = useSearchParams();
 	const [search, setSearch] = createSignal("");
 	const { t, locale } = useTranslation();
@@ -93,7 +109,12 @@ const Location = () => {
 		<div class="p-4 flex flex-col gap-4">
 			<div>
 				<p class="font-medium">
-					{localizedLocation(session.data?.address ?? "", locale())?.split(",")[0]}
+					{
+						localizedLocation(
+							session.data?.address ?? "",
+							locale(),
+						)?.split(",")[0]
+					}
 				</p>
 				<p class="text-xs text-steel">
 					{localizedLocation(session.data?.address ?? "", locale())
@@ -104,7 +125,7 @@ const Location = () => {
 			</div>
 			<hr />
 			<button
-				class="w-full bg-primary text-white h-12 text-sm flex items-center gap-2 justify-center rounded"
+				class="w-full bg-primary text-white h-12 text-sm flex items-center gap-2 justify-center rounded-sm"
 				onClick={async () => {
 					navigator.geolocation.getCurrentPosition(
 						(position) => {
@@ -116,7 +137,9 @@ const Location = () => {
 							});
 						},
 						async () => {
-							const res = await fetch("https://api.cords.dev/info");
+							const res = await fetch(
+								"https://api.cords.dev/info",
+							);
 							const data = await res.json();
 							sessionMutation.mutate({
 								id: query.cordsId!,
@@ -128,7 +151,7 @@ const Location = () => {
 						{
 							enableHighAccuracy: false,
 							timeout: 10000,
-						}
+						},
 					);
 				}}
 			>
@@ -136,7 +159,7 @@ const Location = () => {
 				{t().location["use-current"]}
 			</button>
 			<form
-				class="w-full border rounded h-12 flex items-center"
+				class="w-full border rounded-sm h-12 flex items-center"
 				onSubmit={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
@@ -145,7 +168,7 @@ const Location = () => {
 				<input
 					type="text"
 					autocomplete="off"
-					class="outline-none px-4 h-full w-full text-sm rounded placeholder:text-sm"
+					class="outline-hidden px-4 h-full w-full text-sm rounded-sm placeholder:text-sm"
 					placeholder={t().location.search}
 					name="query"
 					value={search()}
@@ -165,7 +188,10 @@ const Location = () => {
 						>
 							<p>{prediction.description.split(",")[0]}</p>
 							<p class="text-xs text-steel">
-								{prediction.description.split(",").slice(1).join(",")}
+								{prediction.description
+									.split(",")
+									.slice(1)
+									.join(",")}
 							</p>
 						</div>
 					)}
@@ -173,6 +199,4 @@ const Location = () => {
 			</Show>
 		</div>
 	);
-};
-
-export default Location;
+}

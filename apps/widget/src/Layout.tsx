@@ -1,5 +1,4 @@
 import { autofocus } from "@solid-primitives/autofocus";
-import { A, useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
 import {
 	Component,
@@ -10,12 +9,13 @@ import {
 	createSignal,
 } from "solid-js";
 import { Transition } from "solid-transition-group";
-import Error from "~/components/Error";
-import Footer from "~/components/Footer";
-import { useSearchParams } from "~/lib/params";
-import { search, setMapOpen, setSearch } from "~/lib/search";
-import { useTranslation } from "~/translations";
-import { getSession } from "./lib/session";
+import Error from "@/components/Error";
+import Footer from "@/components/Footer";
+import { useSearchParams } from "@/lib/params";
+import { search, setMapOpen, setSearch } from "@/lib/search";
+import { useTranslation } from "@/translations";
+import { getSession } from "@/lib/session";
+import { Link, useNavigate } from "@tanstack/solid-router";
 autofocus;
 
 const [searchMode, setSearchMode] = createSignal(false);
@@ -30,7 +30,6 @@ const icons = {
 
 const SearchHeader = ({ close }: { close: () => void }) => {
 	const navigate = useNavigate();
-	const [query] = useSearchParams();
 	const form = createForm(() => ({
 		defaultValues: {
 			query: "",
@@ -45,7 +44,10 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 			}));
 			setMapOpen(false);
 			close();
-			navigate(`/?${new URLSearchParams(query).toString()}`);
+			navigate({
+				to: "/",
+				search: (s) => s,
+			});
 		},
 		validators: {
 			onChange: ({ value }) => {
@@ -65,7 +67,7 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 				}}
 				class="relative flex-1 flex"
 			>
-				<div class="border h-12 flex items-center rounded flex-1">
+				<div class="border h-12 flex items-center rounded-sm flex-1">
 					<span
 						class="material-symbols-outlined flex items-center justify-center h-full text-primary w-14 cursor-pointer"
 						onClick={() => {
@@ -82,7 +84,7 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 								autocomplete="off"
 								use:autofocus
 								autofocus
-								class="outline-none pr-4 h-full w-full rounded-r"
+								class="outline-hidden pr-4 h-full w-full rounded-r"
 								name={field().name}
 								value={field().state.value}
 								onBlur={field().handleBlur}
@@ -176,8 +178,8 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 										{locale() === "fr" ? "EN" : "FR"}
 									</button>
 									<nav class="flex-1 flex justify-end gap-2">
-										<A
-											href={`/?${new URLSearchParams(query).toString()}`}
+										<Link
+											to="/"
 											onClick={() => {
 												if (search().q) {
 													setSearch((s) => {
@@ -197,34 +199,28 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 											<span class="material-symbols-outlined">
 												home
 											</span>
-										</A>
-										<A
-											href={`/clipboard?${new URLSearchParams(query).toString()}`}
+										</Link>
+										<Link
+											to="/clipboard"
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
-											<Show
-												when={
-													session.data
-														?.clipboardServices &&
-													session.data
-														.clipboardServices
-														.length > 0
-												}
-											>
-												<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
-													<p class="text-[8px] text-white">
-														{
-															session.data
-																?.clipboardServices
-																.length
-														}
-													</p>
-												</div>
-											</Show>
+											{session.data?.clipboardServices &&
+												session.data.clipboardServices
+													.length > 0 && (
+													<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-2">
+														<p class="text-[8px] text-white">
+															{
+																session.data
+																	?.clipboardServices
+																	.length
+															}
+														</p>
+													</div>
+												)}
 											<span class="material-symbols-outlined">
 												assignment
 											</span>
-										</A>
+										</Link>
 										<button
 											onClick={() => setSearchMode(true)}
 											class="flex h-7 w-7 items-center justify-center"
