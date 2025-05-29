@@ -1,4 +1,4 @@
-import { useSearchParams } from "@solidjs/router";
+import { useNavigate, useSearch } from "@tanstack/solid-router";
 import { createMemo } from "solid-js";
 
 const en_dict = {
@@ -52,7 +52,8 @@ const en_dict = {
 		description: "View your clipboarded services",
 		empty: {
 			title: "Your clipboard is empty.",
-			description: "Save search results to your clipboard for easy access anytime.",
+			description:
+				"Save search results to your clipboard for easy access anytime.",
 		},
 	},
 	resource: {
@@ -162,7 +163,10 @@ const fr_dict: Dict = {
 	},
 };
 
-export const locationTranslations = new Map<string, LocalizationObject<string>>();
+export const locationTranslations = new Map<
+	string,
+	LocalizationObject<string>
+>();
 locationTranslations.set("Your Location, Set by device", {
 	en: "Your Location, Set by device",
 	fr: "Votre emplacement, défini par l'appareil",
@@ -177,13 +181,19 @@ export const locales = ["en", "fr"] as const;
 export type Locale = "en" | "fr";
 
 export const useTranslation = () => {
-	const [query, setQuery] = useSearchParams<{ lang?: Locale }>();
+	const navigate = useNavigate();
+	const searchParams = useSearch({
+		from: "__root__",
+	});
 	const locale = createMemo(
-		() => (query.lang && ["en", "fr"].includes(query.lang) ? query.lang : "en") as Locale
+		() =>
+			(searchParams().lang && ["en", "fr"].includes(searchParams().lang!)
+				? searchParams().lang
+				: "en") as Locale,
 	);
 
 	const setLocale = (lang: Locale) => {
-		setQuery({ ...query, lang });
+		navigate({ to: ".", search: { lang } });
 	};
 
 	const t = createMemo(() => translations[locale()]);
@@ -198,7 +208,7 @@ export type LocalizationObject<T> = {
 
 export const getLocalizedField = <T>(
 	obj: LocalizationObject<T>,
-	locale: string
+	locale: string,
 ): T | undefined | null => {
 	if (locale === "fr" && obj["fr"] !== "") return obj[locale];
 	else return obj["en"];

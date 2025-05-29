@@ -11,22 +11,12 @@ import {
 import { Transition } from "solid-transition-group";
 import Error from "@/components/Error";
 import Footer from "@/components/Footer";
-import { useSearchParams } from "@/lib/params";
 import { search, setMapOpen, setSearch } from "@/lib/search";
 import { useTranslation } from "@/translations";
-import { getSession } from "@/lib/session";
-import { Link, useNavigate } from "@tanstack/solid-router";
+import { Link, useNavigate, useRouteContext } from "@tanstack/solid-router";
 autofocus;
 
 const [searchMode, setSearchMode] = createSignal(false);
-
-const icons = {
-	"211": "chrome_reader_mode",
-	magnet: "business_center",
-	mentor: "supervisor_account",
-	prosper: "assistant",
-	volunteer: "volunteer_activism",
-};
 
 const SearchHeader = ({ close }: { close: () => void }) => {
 	const navigate = useNavigate();
@@ -105,10 +95,10 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 	// signal for widget open/close
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
-	const [query] = useSearchParams();
 	const { locale, setLocale } = useTranslation();
 	let scrollRef: HTMLDivElement | undefined;
-	const session = getSession(query.cordsId);
+	const context = useRouteContext({ from: "__root__" });
+	const { session } = context();
 
 	createEffect(() => {
 		window.parent.postMessage(
@@ -119,6 +109,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 			},
 			"*",
 		);
+		console.log(open());
 	});
 
 	createEffect(() => {
@@ -204,13 +195,13 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 											to="/clipboard"
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
-											{session.data?.clipboardServices &&
-												session.data.clipboardServices
+											{session?.clipboardServices &&
+												session.clipboardServices
 													.length > 0 && (
 													<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-2">
 														<p class="text-[8px] text-white">
 															{
-																session.data
+																session
 																	?.clipboardServices
 																	.length
 															}

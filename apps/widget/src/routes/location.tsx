@@ -1,13 +1,7 @@
 import { debounce } from "@solid-primitives/scheduled";
-import { createMutation, createQuery } from "@tanstack/solid-query";
+import { useMutation, useQuery } from "@tanstack/solid-query";
 import { createSignal, For, Show } from "solid-js";
 import { loader } from "@/lib/google";
-import { useSearchParams } from "@/lib/params";
-import {
-	getSession,
-	localizedLocation,
-	useSessionMutation,
-} from "@/lib/session";
 import { useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/solid-router";
 
@@ -73,33 +67,31 @@ const autocomplete = async (
 };
 
 function RouteComponent() {
-	const [query] = useSearchParams();
+	const searchParams = Route.useSearch();
+	const context = Route.useRouteContext();
+	const { session } = context();
 	const [search, setSearch] = createSignal("");
 	const { t, locale } = useTranslation();
 
 	const updateSearch = debounce((query: string) => setSearch(query), 500);
 
-	const session = getSession(query.cordsId);
-
-	const data = createQuery(() => ({
+	const data = useQuery(() => ({
 		queryKey: ["location", search()],
 		queryFn: () => autocomplete(search()),
 		enabled: search() !== "",
 		throwOnError: true,
 	}));
 
-	const sessionMutation = useSessionMutation();
-
-	const setPlace = createMutation(() => ({
+	const setPlace = useMutation(() => ({
 		mutationKey: ["place"],
 		mutationFn: async (placeId: string) => {
 			const place = await getPlace(placeId);
-			sessionMutation.mutate({
-				id: query.cordsId!,
-				lat: place.geometry?.location?.lat()!,
-				lng: place.geometry?.location?.lng()!,
-				address: place.formatted_address!,
-			});
+			//sessionMutation.mutate({
+			//	id: searchParams().cordsId,
+			//	lat: place.geometry?.location?.lat()!,
+			//	lng: place.geometry?.location?.lng()!,
+			//	address: place.formatted_address!,
+			//});
 			setSearch("");
 		},
 		throwOnError: true,
@@ -108,20 +100,8 @@ function RouteComponent() {
 	return (
 		<div class="p-4 flex flex-col gap-4">
 			<div>
-				<p class="font-medium">
-					{
-						localizedLocation(
-							session.data?.address ?? "",
-							locale(),
-						)?.split(",")[0]
-					}
-				</p>
-				<p class="text-xs text-steel">
-					{localizedLocation(session.data?.address ?? "", locale())
-						?.split(",")
-						.slice(1)
-						.join(",")}
-				</p>
+				<p class="font-medium">{session.address}</p>
+				<p class="text-xs text-steel">{session.address}</p>
 			</div>
 			<hr />
 			<button
@@ -129,24 +109,24 @@ function RouteComponent() {
 				onClick={async () => {
 					navigator.geolocation.getCurrentPosition(
 						(position) => {
-							sessionMutation.mutate({
-								id: query.cordsId!,
-								lat: position.coords.latitude,
-								lng: position.coords.longitude,
-								address: "Your Location, Set by device",
-							});
+							//sessionMutation.mutate({
+							//	id: searchParams().cordsId,
+							//	lat: position.coords.latitude,
+							//	lng: position.coords.longitude,
+							//	address: "Your Location, Set by device",
+							//});
 						},
 						async () => {
 							const res = await fetch(
 								"https://api.cords.dev/info",
 							);
 							const data = await res.json();
-							sessionMutation.mutate({
-								id: query.cordsId!,
-								lat: data.lat,
-								lng: data.lng,
-								address: "Your Location, Set by device",
-							});
+							//sessionMutation.mutate({
+							//	id: searchParams().cordsId,
+							//	lat: data.lat,
+							//	lng: data.lng,
+							//	address: "Your Location, Set by device",
+							//});
 						},
 						{
 							enableHighAccuracy: false,

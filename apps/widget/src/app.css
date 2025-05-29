@@ -1,36 +1,36 @@
-@import 'tailwindcss';
+@import "tailwindcss" source("../");
 
 @theme {
-  --color-steel: #6b7b99;
-  --color-slate: #475266;
-  --color-charcoal: #242933;
-  --color-off-white: #f7f9fc;
-  --color-off-white-emphasis: #ebeff5;
-  --color-subdued: #ebeff5;
-  --color-off-black: rgb(0, 4, 13);
-  --color-hairline: hsl(220, 32%, 93%);
-  --color-hairline-subdued: hsl(220, 32%, 93%) / 0.6;
-  --color-blue: #0055ff;
-  --color-blue-dark: #0044cc;
-  --color-blue-active: #0044cc;
-  --color-red: #da4432;
-  --color-warning: #ed9600;
-  --color-positive: #00b98b;
-  --color-primary: #0055ff;
-  --color-quasar-negative: #da4432;
-  --color-elevation1: #fff;
-  --color-elevation2: #f7f9fc;
-  --color-elevation3: #ebeff5;
-  --color-body: #475266;
-  --color-body-background: #fff;
-  --color-link: #0055ff;
-  --color-link-hover: #0044cc;
-  --color-typography-heading-color: #242933;
-  --color-typography-copy-color: #475266;
-  --color-typography-strong-color: #242933;
+	--color-steel: #6b7b99;
+	--color-slate: #475266;
+	--color-charcoal: #242933;
+	--color-off-white: #f7f9fc;
+	--color-off-white-emphasis: #ebeff5;
+	--color-subdued: #ebeff5;
+	--color-off-black: rgb(0, 4, 13);
+	--color-hairline: hsl(220, 32%, 93%);
+	--color-hairline-subdued: hsl(220, 32%, 93%) / 0.6;
+	--color-blue: #0055ff;
+	--color-blue-dark: #0044cc;
+	--color-blue-active: #0044cc;
+	--color-red: #da4432;
+	--color-warning: #ed9600;
+	--color-positive: #00b98b;
+	--color-primary: #0055ff;
+	--color-quasar-negative: #da4432;
+	--color-elevation1: #fff;
+	--color-elevation2: #f7f9fc;
+	--color-elevation3: #ebeff5;
+	--color-body: #475266;
+	--color-body-background: #fff;
+	--color-link: #0055ff;
+	--color-link-hover: #0044cc;
+	--color-typography-heading-color: #242933;
+	--color-typography-copy-color: #475266;
+	--color-typography-strong-color: #242933;
 
-  --font-weight-header: 500;
-  --font-weight-body: 400;
+	--font-weight-header: 500;
+	--font-weight-body: 400;
 }
 
 /*
@@ -42,54 +42,69 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
+
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
 }
 
 @layer utilities {
-  body {
-    font-family: 'Inter Variable';
-  }
+	body {
+		font-family: 'Inter', sans-serif;
+	}
 
-  .material-symbols-outlined {
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 300,
-      'GRAD' 0,
-      'opsz' 24;
-  }
+	.material-symbols-outlined {
+		font-variation-settings:
+			'FILL' 0,
+			'wght' 300,
+			'GRAD' 0,
+			'opsz' 24;
+	}
 
-  .material-symbols-outlined-thicker {
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 700,
-      'GRAD' 0,
-      'opsz' 24;
-  }
+	.material-symbols-outlined-thicker {
+		font-variation-settings:
+			'FILL' 0,
+			'wght' 700,
+			'GRAD' 0,
+			'opsz' 24;
+	}
 }
 
 @layer base {
+	html {
+		@apply h-full w-full overflow-hidden bg-transparent;
+
+	}
+
+	body {
+		@apply h-full w-full overflow-hidden bg-transparent;
+
+	}
+
 	h1,
 	.h1 {
 		@apply scroll-m-20 text-3xl font-header tracking-tight lg:text-5xl text-charcoal;
 	}
+
 	h2,
 	.h2 {
 		@apply scroll-m-20 text-2xl font-header tracking-tight text-charcoal;
 	}
+
 	h3,
 	.h3 {
 		@apply scroll-m-20 text-xl font-header tracking-tight text-charcoal;
 	}
+
 	h4,
 	.h4 {
 		@apply scroll-m-20 font-header tracking-tight text-charcoal;
 	}
+
 	p,
 	.p {
 		@apply leading-7 font-body text-slate;

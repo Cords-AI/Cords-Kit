@@ -1,29 +1,31 @@
-import { SearchResourceType } from "@cords/sdk";
-import { useNavigate } from "@solidjs/router";
 import { createForm } from "@tanstack/solid-form";
-import { useQuery } from "@tanstack/solid-query";
-import { createSignal, Match, onMount, Switch } from "solid-js";
+import { createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
-import Pending from "@/components/Pending";
 import ServiceItem from "@/components/ServiceItem";
-import { useCords } from "@/lib/cords";
-import { loader } from "@/lib/google";
-import { useSearchParams } from "@/lib/params";
-import {
-	map,
-	mapOpen,
-	search,
-	setMap,
-	setMapOpen,
-	setSearch,
-} from "@/lib/search";
-import { getSession } from "@/lib/session";
+import { mapOpen, search, setMapOpen, setSearch } from "@/lib/search";
 import { cn, getDistanceBetweenTwoPoints } from "@/lib/utils";
-import { getLocalizedField, useTranslation } from "@/translations";
+import { useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/solid-router";
+import { CordsAPI } from "@cords/sdk";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
+	loaderDeps: ({ search }) => ({ q: search.q, api_key: search.api_key }),
+	loader: async ({ deps }) => {
+		const cords = CordsAPI({
+			apiKey: deps.api_key ?? "",
+			version: "production",
+		});
+		const res = await cords.search({
+			q: deps.q ?? "",
+			lat: 44,
+			lng: -79,
+			pageSize: 10,
+			page: 1,
+			distance: 10,
+		});
+		return res;
+	},
 });
 
 const icons = {
@@ -214,145 +216,25 @@ const Filters = () => {
 	);
 };
 
-const Map = ({
-	lat,
-	lng,
-	markers,
-}: {
-	lat: number;
-	lng: number;
-	markers?: SearchResourceType[];
-}) => {
-	let mapContainer: any;
-	const { locale } = useTranslation();
-	const [query] = useSearchParams();
-	const navigate = useNavigate();
-	const [mapLoaded, setMapLoaded] = createSignal(false);
-
-	onMount(async () => {
-		try {
-			const { AdvancedMarkerElement } = (await loader.importLibrary(
-				"marker",
-			)) as google.maps.MarkerLibrary;
-			const { Map } = (await loader.importLibrary(
-				"maps",
-			)) as google.maps.MapsLibrary;
-			if (mapContainer) {
-				if (map()) {
-					const newMap = new Map(mapContainer, {
-						center: {
-							lat: map()?.getCenter()?.lat()!,
-							lng: map()?.getCenter()?.lng()!,
-						},
-						zoom: map()?.getZoom()!,
-						disableDefaultUI: true,
-						mapId: "e8f872dc3932052d",
-					});
-					setMap(newMap);
-				} else {
-					const map = new Map(mapContainer, {
-						center: { lat, lng },
-						zoom: 12,
-						disableDefaultUI: true,
-						mapId: "e8f872dc3932052d",
-					});
-					const bounds = new google.maps.LatLngBounds();
-					markers?.forEach((resource) => {
-						bounds.extend({
-							lat: resource.location.lat!,
-							lng: resource.location.lng!,
-						});
-					});
-					map.fitBounds(bounds);
-					setMap(map);
-				}
-				if (markers) {
-					markers!.forEach((resource) => {
-						const marker = new AdvancedMarkerElement({
-							position: {
-								lat: resource.location.lat!,
-								lng: resource.location.lng!,
-							},
-							map: map(),
-							title: getLocalizedField(resource.name, locale()),
-						});
-						google.maps.event.addListener(marker, "click", () => {
-							navigate(
-								`/resource/${resource.id}?${new URLSearchParams(query).toString()}`,
-							);
-						});
-					});
-				}
-				setMapLoaded(true);
-			}
-		} catch (error) {
-			console.error("Failed to load Google Maps:", error);
-			// Handle the error, e.g., show an error message to the user
-		}
-	});
-
-	return (
-		<div class="h-full w-full relative">
-			<button
-				onClick={() => setMapOpen(false)}
-				class={cn("absolute top-4 left-4 neutral-btn z-50")}
-				style={{
-					"background-color": "white",
-				}}
-			>
-				<span class="material-symbols-outlined text-[22px] text-primary">
-					arrow_back
-				</span>
-			</button>
-			<div ref={mapContainer} class="h-full w-full"></div>
-		</div>
-	);
-};
-
 function RouteComponent() {
-	const cords = useCords();
-	const [searchTime, setSearchTime] = createSignal(0);
-	const [maxPage, setMaxPage] = createSignal(0);
 	const { t } = useTranslation();
-	const [searchParams] = useSearchParams();
-
-	const session = getSession(searchParams.cordsId);
-
-	const data = useQuery(() => ({
-		queryKey: ["search", searchParams.q, search()],
-		queryFn: async () => {
-			const isQuerySearch = search().q !== "";
-			const start = performance.now();
-			const res = await cords.search({
-				q: isQuerySearch ? search().q : searchParams.q!,
-				lat: session.data?.lat!,
-				lng: session.data?.lng!,
-				...search().options,
-				calculateCityFromSearchString: isQuerySearch,
-				calculateProvinceFromSearchString: isQuerySearch,
-			});
-			setSearchTime((performance.now() - start) / 1000);
-			setMaxPage(Math.ceil(res.meta.total / 10));
-			return res;
-		},
-		gcTime: 0,
-		enabled: (!!search().q || !!searchParams.q) && !!session.data,
-		throwOnError: true,
-	}));
+	const context = Route.useRouteContext();
+	const { session } = context();
+	const data = Route.useLoaderData();
 
 	const start = () => Math.max(0, search().options.page - 3);
 	const end = () => start() + 5;
 
 	const markers = () =>
-		data.data?.data
-			?.filter(
+		data()
+			.data?.filter(
 				(resource) => resource.location.lat && resource.location.lng,
 			)
 			.filter((resource) => {
 				const distance = getDistanceBetweenTwoPoints(
 					{
-						lat: session.data?.lat!,
-						lng: session.data?.lng!,
+						lat: session?.lat!,
+						lng: session?.lng!,
 					},
 					{
 						lat: resource.location.lat!,
@@ -365,167 +247,144 @@ function RouteComponent() {
 			});
 
 	return (
-		<Switch>
-			<Match when={data.isPending}>
-				<Pending />
-			</Match>
-			<Match when={mapOpen()}>
-				<Map
-					lat={session.data?.lat!}
-					lng={session.data?.lng!}
-					markers={markers()}
-				/>
-			</Match>
-			<Match when={data.isSuccess}>
-				<div class="relative">
-					{data.data && (
-						<>
-							<div class="p-6 bg-elevation1">
-								<div class="flex justify-between gap-2 relative">
-									<span>
-										<h4>
-											{search().q !== ""
-												? search().q
-												: t().home.similar.title}
-										</h4>
-										<p class="text-xs text-steel">
-											{t().search.meta.page}{" "}
-											{search().options.page}{" "}
-											{t().search.meta.of}{" "}
-											{data.data.meta.total}{" "}
-											{t().search.meta.results} (
-											{searchTime().toFixed(2)}{" "}
-											{t().search.meta.seconds}){" "}
-											{t().search.meta.within}{" "}
-											{search().options.distance} km
-										</p>
-									</span>
-									<Filters />
-								</div>
-								<div class="pt-4 flex gap-4 flex-wrap">
-									{Object.entries(
-										search().options.delivery,
-									).map(([key, value]) => (
-										<label class="inline-flex items-center cursor-pointer">
-											<input
-												type="checkbox"
-												checked={value}
-												onChange={(e) => {
-													setSearch((search) => ({
-														...search,
-														options: {
-															...search.options,
-															delivery: {
-																...search
-																	.options
-																	.delivery,
-																[key]: e.target
-																	.checked,
-															},
-														},
-													}));
-												}}
-												class="sr-only peer"
-											/>
-											<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
-											<span class="ms-2 text-xs text-steel">
-												{
-													// @ts-ignore
-													t().search.filters.delivery[
-														key
-													]
-												}
-											</span>
-										</label>
-									))}
-								</div>
-							</div>
-							<div class="relative">
-								{data.data.data.map((service) => (
-									<ServiceItem service={service} />
-								))}
-								{markers() && markers()!.length > 0 && (
-									<button
-										onClick={() => setMapOpen(!mapOpen())}
-										class="fixed bottom-[calc(75px+16px+8px)] right-[calc(32px+8px)] btn"
-									>
-										<span class="material-symbols-outlined">
-											map
-										</span>
-									</button>
-								)}
-							</div>
-							<div
-								class={cn(
-									"flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t",
-									markers() &&
-										markers()!.length > 0 &&
-										"pr-14",
-								)}
-							>
-								<button
-									disabled={search().options.page === 1}
-									onClick={() =>
-										setSearch((search) => ({
-											...search,
-											options: {
-												...search.options,
-												page: search.options.page - 1,
-											},
-										}))
-									}
-									class="text-primary p-2 rounded-lg"
-								>
-									<span class="material-symbols-outlined flex items-center">
-										chevron_left
-									</span>
-								</button>
-								{[...Array(maxPage()).keys()]
-									.slice(start(), end())
-									.map((i) => (
-										<button
-											onClick={() =>
+		<div class="relative">
+			{data().data && (
+				<>
+					<div class="p-6 bg-elevation1">
+						<div class="flex justify-between gap-2 relative">
+							<span>
+								<h4>
+									{search().q !== ""
+										? search().q
+										: t().home.similar.title}
+								</h4>
+								<p class="text-xs text-steel">
+									{t().search.meta.page}{" "}
+									{search().options.page} {t().search.meta.of}{" "}
+									{t().search.meta.results}
+									{t().search.meta.within}{" "}
+									{search().options.distance} km
+								</p>
+							</span>
+							<Filters />
+						</div>
+						<div class="pt-4 flex gap-4 flex-wrap">
+							{Object.entries(search().options.delivery).map(
+								([key, value]) => (
+									<label class="inline-flex items-center cursor-pointer">
+										<input
+											type="checkbox"
+											checked={value}
+											onChange={(e) => {
 												setSearch((search) => ({
 													...search,
 													options: {
 														...search.options,
-														page: i + 1,
+														delivery: {
+															...search.options
+																.delivery,
+															[key]: e.target
+																.checked,
+														},
 													},
-												}))
+												}));
+											}}
+											class="sr-only peer"
+										/>
+										<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
+										<span class="ms-2 text-xs text-steel">
+											{
+												// @ts-ignore
+												t().search.filters.delivery[key]
 											}
-											class={`w-7 h-8 rounded text-sm ${
-												i + 1 === search().options.page
-													? "bg-primary text-white"
-													: "text-primary"
-											}`}
-										>
-											{i + 1}
-										</button>
-									))}
+										</span>
+									</label>
+								),
+							)}
+						</div>
+					</div>
+					<div class="relative">
+						{data().data.map((service) => (
+							<ServiceItem service={service} />
+						))}
+						{markers() && markers()!.length > 0 && (
+							<button
+								onClick={() => setMapOpen(!mapOpen())}
+								class="fixed bottom-[calc(75px+16px+8px)] right-[calc(32px+8px)] btn"
+							>
+								<span class="material-symbols-outlined">
+									map
+								</span>
+							</button>
+						)}
+					</div>
+					<div
+						class={cn(
+							"flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t",
+							markers() && markers()!.length > 0 && "pr-14",
+						)}
+					>
+						<button
+							disabled={search().options.page === 1}
+							onClick={() =>
+								setSearch((search) => ({
+									...search,
+									options: {
+										...search.options,
+										page: search.options.page - 1,
+									},
+								}))
+							}
+							class="text-primary p-2 rounded-lg"
+						>
+							<span class="material-symbols-outlined flex items-center">
+								chevron_left
+							</span>
+						</button>
+						{[...Array(data().meta.total / 10).keys()]
+							.slice(start(), end())
+							.map((i) => (
 								<button
-									disabled={
-										search().options.page === maxPage()
-									}
 									onClick={() =>
 										setSearch((search) => ({
 											...search,
 											options: {
 												...search.options,
-												page: search.options.page + 1,
+												page: i + 1,
 											},
 										}))
 									}
-									class="text-primary p-2 rounded-lg"
+									class={`w-7 h-8 rounded text-sm ${
+										i + 1 === search().options.page
+											? "bg-primary text-white"
+											: "text-primary"
+									}`}
 								>
-									<span class="material-symbols-outlined flex items-center">
-										chevron_right
-									</span>
+									{i + 1}
 								</button>
-							</div>
-						</>
-					)}
-				</div>
-			</Match>
-		</Switch>
+							))}
+						<button
+							disabled={
+								search().options.page === data().meta.total / 10
+							}
+							onClick={() =>
+								setSearch((search) => ({
+									...search,
+									options: {
+										...search.options,
+										page: search.options.page + 1,
+									},
+								}))
+							}
+							class="text-primary p-2 rounded-lg"
+						>
+							<span class="material-symbols-outlined flex items-center">
+								chevron_right
+							</span>
+						</button>
+					</div>
+				</>
+			)}
+		</div>
 	);
 }

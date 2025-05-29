@@ -1,94 +1,58 @@
-import {
-	createMutation,
-	createQuery,
-	useQueryClient,
-} from "@tanstack/solid-query";
-import { Locale } from "@/translations";
-import { Session } from "@/types";
+import { db } from "@/server/db";
+import { sessions } from "@/server/schema";
+import { SessionSchema } from "@/types";
+import { createServerFn } from "@tanstack/solid-start";
+import { getCookie } from "@tanstack/solid-start/server";
+import { eq } from "drizzle-orm";
+import { z } from "zod";
 
-const updateSession = async (session: Session) => {
-	const res = await fetch(`${import.meta.env.VITE_SITE_URL}/api/session`, {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-			"cords-id": session.id,
-		},
-		body: JSON.stringify(session),
-	});
-	const data = await res.json();
-	return data as Session;
-};
-
-export const getSession = (cordsId?: string) =>
-	createQuery(() => ({
-		queryKey: ["session", cordsId],
-		queryFn: async () => {
-			const res = await fetch(
-				`${import.meta.env.VITE_SITE_URL}/api/session`,
-				{
-					headers: {
-						"cords-id": cordsId!,
-					},
-				},
-			);
-			let data = (await res.json()) as Session & {
-				clipboardServices: {
-					sessionId: string;
-					serviceId: string;
-				}[];
-			};
-			if (data.address === "Toronto, ON, Canada (Default)") {
-				navigator.geolocation.getCurrentPosition(
-					async (position) => {
-						data = {
-							...data,
-							lat: position.coords.latitude,
-							lng: position.coords.longitude,
-							address: "Your Location, Set by device",
-						};
-						await updateSession(data);
-					},
-					async () => {
-						const res = await fetch("https://api.cords.dev/info");
-						const info = await res.json();
-						data = {
-							...data,
-							lat: info.lat,
-							lng: info.lng,
-							address: "Your Location, Set by device",
-						};
-						await updateSession(data);
-					},
-					{
-						enableHighAccuracy: false,
-						timeout: 10000,
-					},
-				);
-			}
-			return data;
-		},
-		enabled: !!cordsId,
-		gcTime: 0,
-		staleTime: 0,
-	}));
-
-export const useSessionMutation = () => {
-	const queryClient = useQueryClient();
-	return createMutation(() => ({
-		mutationFn: updateSession,
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["session"] });
-		},
-	}));
-};
-
-export const localizedLocation = (location: string, locale: Locale) => {
-	if (location === "Your Location, Set by device") {
-		if (locale === "en") {
-			return "Your Location, Set by device";
-		} else {
-			return "Votre emplacement, défini par l'appareil";
+export const updateSessionFn = createServerFn()
+	.validator(SessionSchema)
+	.handler(async ({ data }) => {
+		const cordsId = getCookie("cords-id");
+		if (!cordsId) {
+			throw new Error("Missing cords-id cookie");
 		}
+
+		const session = await db.query.sessions.findFirst({
+			where: eq(sessions.id, cordsId),
+		});
+		if (!session) {
+			throw new Error("Session not found");
+		}
+
+		const newSession = z
+			.object({
+				lat: z.number(),
+				lng: z.number(),
+				address: z.string().min(1),
+			})
+			.parse(data);
+
+		await db
+			.update(sessions)
+			.set(newSession)
+			.where(eq(sessions.id, cordsId));
+
+		return {
+			id: cordsId,
+			...newSession,
+		};
+	});
+
+export const getSessionFn = createServerFn().handler(async () => {
+	const cordsId = getCookie("cords-id");
+
+	if (!cordsId) {
+		return null;
 	}
-	return location;
-};
+
+	const session = await db.query.sessions.findFirst({
+		where: eq(sessions.id, cordsId),
+		with: {
+			clipboardServices: true,
+		},
+	});
+
+	return session;
+});

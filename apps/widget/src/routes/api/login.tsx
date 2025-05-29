@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "@/server/db";
 import { sessions } from "@/server/schema";
 import { createAPIFileRoute } from "@tanstack/solid-start/api";
-import { redirect } from "@tanstack/solid-router";
 import { getCookie, setCookie } from "@tanstack/solid-start/server";
 
 export const APIRoute = createAPIFileRoute("/api/login")({
@@ -11,7 +10,13 @@ export const APIRoute = createAPIFileRoute("/api/login")({
 		const searchParams = new URLSearchParams(url.search);
 
 		if (!searchParams.get("redirect")) {
-			return { status: 400, body: "Missing redirect parameter" };
+			return new Response(
+				JSON.stringify({
+					status: 400,
+					body: "Missing redirect parameter",
+				}),
+				{ status: 400 },
+			);
 		}
 
 		let cordsId = getCookie("cords-id");
@@ -30,8 +35,8 @@ export const APIRoute = createAPIFileRoute("/api/login")({
 			});
 		}
 
-		throw redirect({
-			href: searchParams.get("redirect") + "?cordsId=" + cordsId,
-		});
+		return Response.redirect(
+			searchParams.get("redirect") + "?cordsId=" + cordsId,
+		);
 	},
 });

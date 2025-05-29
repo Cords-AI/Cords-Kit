@@ -1,16 +1,16 @@
 // app/routes/__root.tsx
-import {
-	Outlet,
-	createRootRoute,
-	HeadContent,
-	Scripts,
-} from "@tanstack/solid-router";
+import { Outlet, createRootRoute } from "@tanstack/solid-router";
 import appCss from "../app.css?url";
 import { z } from "zod";
+import { getSessionFn } from "@/lib/session";
+import { Layout } from "@/Layout";
 
 export const Route = createRootRoute({
 	validateSearch: z.object({
-		query: z.string().optional(),
+		q: z.string({ message: "Search query is required" }),
+		cordsId: z.string({ message: "Cords ID is required" }),
+		api_key: z.string({ message: "API Key is required" }),
+		lang: z.enum(["en", "fr"]).optional(),
 	}),
 	head: () => ({
 		meta: [
@@ -27,10 +27,6 @@ export const Route = createRootRoute({
 		],
 		links: [
 			{
-				rel: "stylesheet",
-				href: appCss,
-			},
-			{
 				rel: "icon",
 				href: "/logo.svg",
 				type: "image/svg+xml",
@@ -44,23 +40,39 @@ export const Route = createRootRoute({
 				href: "https://fonts.gstatic.com",
 			},
 			{
-				href: "https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+				href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200",
 				rel: "stylesheet",
+			},
+			{
+				href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+				rel: "stylesheet",
+			},
+			{
+				rel: "stylesheet",
+				href: appCss,
 			},
 		],
 	}),
 	component: RootComponent,
+	beforeLoad: async () => {
+		const session = await getSessionFn();
+
+		if (!session) {
+			throw new Error("Session not found");
+		}
+
+		return {
+			session,
+		};
+	},
 });
 
 function RootComponent() {
 	return (
-		<html lang="en" class="h-full w-full overflow-hidden bg-transparent">
-			<head>
-				<HeadContent />
-			</head>
-			<body class="h-full w-full overflow-hidden bg-transparent">
-				<div class="w-full h-full flex flex-col justify-center items-center bg-transparent"></div>
-			</body>
-		</html>
+		<div class="w-full h-full flex flex-col justify-center items-center bg-transparent">
+			<Layout>
+				<Outlet />
+			</Layout>
+		</div>
 	);
 }

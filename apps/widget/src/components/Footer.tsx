@@ -1,14 +1,14 @@
-import { A } from "@solidjs/router";
 import logo from "@/assets/logo.svg";
-import { useSearchParams } from "@/lib/params";
-import { getSession, localizedLocation } from "@/lib/session";
 import { useTranslation } from "@/translations";
+import { Link, useRouteContext, useSearch } from "@tanstack/solid-router";
 
 const Footer = () => {
-	const { t, locale } = useTranslation();
-	const [query] = useSearchParams();
-
-	const session = getSession(query.cordsId);
+	const { t } = useTranslation();
+	const searchParams = useSearch({
+		from: "__root__",
+	});
+	const context = useRouteContext({ from: "__root__" });
+	const { session } = context();
 
 	return (
 		<footer class="bg-elevation1 px-4 py-2 gap-0.5 flex flex-col justify-between border-t">
@@ -16,30 +16,30 @@ const Footer = () => {
 				<div class="flex items-center">
 					<div class="bg-orange-300 w-2 h-2 mr-2 rounded-full" />
 					<span class="font-medium">
-						{session.data
-							? localizedLocation(session.data.address, locale())
-							: ""}
+						{session ? session.address : ""}
 					</span>
 				</div>
 				<span>•</span>
-				<A
-					href={`/location?${new URLSearchParams(query).toString()}`}
+				<Link
+					to="/location"
+					params={(p) => p}
+					search={(s) => s}
 					class="text-primary h-full flex items-center"
 				>
 					{t().location.change}
-				</A>
+				</Link>
 			</div>
 			<div class="flex justify-between items-center h-7">
 				<div class="flex gap-2 h-full">
 					<a
-						href={`https://cords.ai/${query.lang ? query.lang : "en"}/privacy-policy`}
+						href={`https://cords.ai/${searchParams().lang ? searchParams().lang : "en"}/privacy-policy`}
 						target="_blank"
 						class="text-[10px] h-full flex items-center"
 					>
 						{t().footer.privacy}
 					</a>
 					<a
-						href={`https://cords.ai/${query.lang ? query.lang : "en"}/terms-of-use`}
+						href={`https://cords.ai/${searchParams().lang ? searchParams().lang : "en"}/terms-of-use`}
 						target="_blank"
 						class="text-[10px] h-full flex items-center"
 					>

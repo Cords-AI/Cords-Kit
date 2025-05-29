@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
-import { primaryKey, real, pgTable, text } from "drizzle-orm/pg-core";
+import { sqliteTable, text, real, primaryKey } from "drizzle-orm/sqlite-core";
 
-export const sessions = pgTable("sessions", {
+export const sessions = sqliteTable("sessions", {
 	id: text("id").notNull().primaryKey(),
 	lat: real("lat").notNull(),
 	lng: real("lng").notNull(),
@@ -12,7 +12,7 @@ export const sessionRelations = relations(sessions, ({ many }) => ({
 	clipboardServices: many(clipboardServices),
 }));
 
-export const clipboardServices = pgTable(
+export const clipboardServices = sqliteTable(
 	"clipboard_services",
 	{
 		sessionId: text("session_id").notNull(),

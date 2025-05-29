@@ -12,6 +12,9 @@ export const [search, setSearch] = createSignal<{
 		page: 1,
 		pageSize: 10,
 		distance: 10,
+		meta: {
+			taxonomy: [],
+		},
 		partner: {
 			"211": true,
 			mentor: true,
