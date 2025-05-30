@@ -7,7 +7,6 @@ import { Link } from "@tanstack/solid-router";
 
 const ServiceItem = (props: { service: SearchResourceType }) => {
 	const { locale } = useTranslation();
-	const { t } = useTranslation();
 
 	return (
 		<Link to="/resource/$id" params={{ id: props.service.id }}>
@@ -20,26 +19,6 @@ const ServiceItem = (props: { service: SearchResourceType }) => {
 						getLocalizedField(props.service.description, locale())!,
 					)}
 				</p>
-				<Show
-					when={
-						props.service.result &&
-						props.service.delivery === "local" &&
-						props.service.result.distance
-					}
-				>
-					{(distance) => (
-						<div class="text-[11px] font-medium">
-							<span class="text-body">
-								{t().resource.distance}
-							</span>{" "}
-							<span class="text-steel">
-								{distance() > 1000
-									? `${(distance() / 1000).toFixed(2)} km`
-									: `${distance()} m`}
-							</span>
-						</div>
-					)}
-				</Show>
 				<div class="flex gap-1 items-center">
 					<div class="border rounded h-6 flex justify-center items-center px-2 border-typography-heading-color text-[10px] font-bold">
 						{partnerMapping[props.service.partner].label}
