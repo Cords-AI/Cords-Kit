@@ -6,7 +6,8 @@
 	"scripts": {
 		"dev": "bunx --bun vinxi dev",
 		"build": "bunx --bun vinxi build",
-		"start": "bunx --bun vinxi start"
+		"start": "bunx --bun vinxi start",
+		"migrate": "drizzle-kit migrate"
 	},
 	"license": "MIT",
 	"devDependencies": {

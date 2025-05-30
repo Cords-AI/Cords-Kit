@@ -1,0 +1,6 @@
+[phases.setup]
+  nixpkgsArchive = '9bc7b72398034d356d100c40e3745c95c5708823'
+  nixPkgs = ['bun']
+ 
+[start]
+  cmd = "bun run migrate && bun run start"
