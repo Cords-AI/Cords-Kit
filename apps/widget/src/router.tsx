@@ -11,7 +11,7 @@ const queryClient = new QueryClient();
 export function createRouter() {
 	const router = createTanStackRouter({
 		routeTree,
-		defaultPreload: "intent",
+		defaultPreload: false,
 		defaultErrorComponent: ErrorComponent,
 		defaultNotFoundComponent: () => <div>404</div>,
 		scrollRestoration: true,

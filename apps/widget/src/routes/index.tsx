@@ -7,9 +7,11 @@ import { useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/solid-router";
 import { CordsAPI } from "@cords/sdk";
 import { z } from "zod";
+import Pending from "@/components/Pending";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
+	pendingComponent: Pending,
 	validateSearch: z.object({
 		search: z.string().optional(),
 		page: z.number().default(1),
@@ -24,6 +26,7 @@ export const Route = createFileRoute("/")({
 		provincial: z.boolean().default(true),
 		national: z.boolean().default(true),
 	}),
+	pendingMs: 0,
 	loaderDeps: ({ search }) => search,
 	loader: async ({ deps, context }) => {
 		const cords = CordsAPI({

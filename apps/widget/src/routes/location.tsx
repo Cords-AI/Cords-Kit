@@ -10,7 +10,6 @@ import { createServerFn } from "@tanstack/solid-start";
 const getPlaceFn = createServerFn()
 	.validator(z.string())
 	.handler(async ({ data: placeId }) => {
-		console.log("HERE", placeId);
 		const res = await fetch(
 			`https://places.googleapis.com/v1/places/${placeId}`,
 			{
@@ -52,13 +51,13 @@ const autocompleteFn = createServerFn()
 export const Route = createFileRoute("/location")({
 	component: RouteComponent,
 	validateSearch: z.object({
-		search: z.string().optional(),
+		locationSearch: z.string().optional(),
 	}),
 	ssr: false,
 	loaderDeps: ({ search }) => search,
 	loader: async ({ deps }) => {
-		return deps.search
-			? autocompleteFn({ data: deps.search })
+		return deps.locationSearch
+			? autocompleteFn({ data: deps.locationSearch })
 			: { suggestions: [] };
 	},
 });
@@ -78,7 +77,7 @@ function RouteComponent() {
 				to: ".",
 				search: (s) => ({
 					...s,
-					search: query,
+					locationSearch: query,
 				}),
 			}),
 		500,
@@ -150,7 +149,7 @@ function RouteComponent() {
 					class="outline-hidden px-4 h-full w-full text-sm rounded-sm placeholder:text-sm"
 					placeholder={t().location.search}
 					name="query"
-					value={searchParams().search ?? ""}
+					value={searchParams().locationSearch ?? ""}
 					onInput={(e) => {
 						updateSearch(e.currentTarget.value);
 					}}
@@ -158,7 +157,7 @@ function RouteComponent() {
 
 				<button type="submit" class="hidden"></button>
 			</form>
-			<Show when={data().suggestions && searchParams().search}>
+			<Show when={data().suggestions && searchParams().locationSearch}>
 				<For each={data().suggestions}>
 					{(prediction) => (
 						<div
@@ -181,7 +180,7 @@ function RouteComponent() {
 									to: ".",
 									search: (s) => ({
 										...s,
-										search: undefined,
+										locationSearch: undefined,
 									}),
 								});
 							}}

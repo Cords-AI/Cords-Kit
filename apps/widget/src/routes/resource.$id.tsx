@@ -39,13 +39,7 @@ const RelatedItem: Component<{
 	const { locale } = useTranslation();
 
 	return (
-		<Link
-			to="/resource/$id"
-			params={{ id: props.service.id }}
-			search={(s) => s}
-			resetScroll
-			from={Route.fullPath}
-		>
+		<Link to="/resource/$id" params={{ id: props.service.id }} resetScroll>
 			<div class="bg-primary/5 hover:bg-primary/10 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start">
 				<p class="font-header text-sm text-primary">
 					{getLocalizedField(props.service.name, locale())}

@@ -8,6 +8,7 @@ import appCss from "../app.css?url";
 import { z } from "zod";
 import { getSessionFn } from "@/lib/session";
 import { Layout } from "@/Layout";
+import Pending from "@/components/Pending";
 
 export const Route = createRootRoute({
 	validateSearch: z.object({
@@ -60,6 +61,7 @@ export const Route = createRootRoute({
 			},
 		],
 	}),
+	pendingComponent: Pending,
 	component: RootComponent,
 	beforeLoad: async ({ search }) => {
 		const session = await getSessionFn({
