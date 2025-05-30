@@ -14,7 +14,6 @@ export function createRouter() {
 		defaultPreload: false,
 		defaultErrorComponent: ErrorComponent,
 		defaultNotFoundComponent: () => <div>404</div>,
-		scrollRestoration: true,
 		Wrap: ({ children }) => (
 			<QueryClientProvider client={queryClient}>
 				{children}

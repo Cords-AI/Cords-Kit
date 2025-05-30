@@ -4,7 +4,12 @@ import { Transition } from "solid-transition-group";
 import Error from "@/components/Error";
 import Footer from "@/components/Footer";
 import { useTranslation } from "@/translations";
-import { Link, useNavigate, useRouteContext } from "@tanstack/solid-router";
+import {
+	Link,
+	useLocation,
+	useNavigate,
+	useRouteContext,
+} from "@tanstack/solid-router";
 autofocus;
 
 const [searchMode, setSearchMode] = createSignal(false);
@@ -58,9 +63,10 @@ export const Layout = (props: { children: JSX.Element }) => {
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
 	const { locale, setLocale } = useTranslation();
-	let scrollRef: HTMLDivElement | undefined;
+	const [scrollRef, setScrollRef] = createSignal<HTMLDivElement>();
 	const context = useRouteContext({ from: "__root__" });
 	const { session } = context();
+	const location = useLocation();
 
 	createEffect(() => {
 		window.parent.postMessage(
@@ -71,14 +77,15 @@ export const Layout = (props: { children: JSX.Element }) => {
 			},
 			"*",
 		);
-		console.log(open());
 	});
 
 	createEffect(() => {
 		if (!scrollRef) return;
-		scrollRef.scrollTo({
-			top: 0,
-		});
+		if (location().pathname && scrollRef()) {
+			scrollRef()!.scrollTo({
+				top: 0,
+			});
+		}
 	});
 
 	return (
@@ -192,14 +199,10 @@ export const Layout = (props: { children: JSX.Element }) => {
 							<SearchHeader close={() => setSearchMode(false)} />
 						</Show>
 						<div
-							ref={scrollRef}
+							ref={setScrollRef}
 							class="overflow-y-auto overscroll-contain flex-1 h-full"
 						>
-							<ErrorBoundary
-								fallback={(error) => <Error error={error} />}
-							>
-								{props.children}
-							</ErrorBoundary>
+							{props.children}
 						</div>
 						<Footer />
 					</div>

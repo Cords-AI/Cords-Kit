@@ -29,11 +29,10 @@ export const Route = createFileRoute("/clipboard")({
 function RouteComponent() {
 	const { t } = useTranslation();
 	const data = Route.useLoaderData();
-	const { clipboard } = data();
 
 	return (
 		<Show
-			when={clipboard.data?.length}
+			when={data().clipboard.data?.length}
 			fallback={
 				<div class="h-full flex justify-center items-center flex-col">
 					<img
@@ -58,7 +57,7 @@ function RouteComponent() {
 						{t().clipboard.description}
 					</p>
 				</div>
-				<For each={clipboard.data}>
+				<For each={data().clipboard.data}>
 					{(service) => <ServiceItem service={service} />}
 				</For>
 			</div>

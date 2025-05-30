@@ -10,9 +10,12 @@ import { type Component, For, Show } from "solid-js";
 import PartnerLogo from "@/components/PartnerLogo";
 import { getLocalizedField, useTranslation } from "@/translations";
 import { updateClipboardFn } from "@/lib/clipboard";
+import Pending from "@/components/Pending";
 
 export const Route = createFileRoute("/resource/$id")({
 	component: RouteComponent,
+	pendingComponent: Pending,
+	pendingMs: 0,
 	loaderDeps: ({ search }) => search,
 	loader: async ({ deps, params, context }) => {
 		const cords = CordsAPI({
@@ -39,7 +42,7 @@ const RelatedItem: Component<{
 	const { locale } = useTranslation();
 
 	return (
-		<Link to="/resource/$id" params={{ id: props.service.id }} resetScroll>
+		<Link to="/resource/$id" params={{ id: props.service.id }}>
 			<div class="bg-primary/5 hover:bg-primary/10 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start">
 				<p class="font-header text-sm text-primary">
 					{getLocalizedField(props.service.name, locale())}
@@ -90,20 +93,19 @@ function RouteComponent() {
 	const loaderData = Route.useLoaderData();
 	const context = Route.useRouteContext();
 	const { session } = context();
-	const { resource, nearest, related } = loaderData();
 
 	const { t, locale } = useTranslation();
 	const router = useRouter();
 
 	return (
 		<div class="flex gap-4 px-4 py-8 flex-col">
-			<h1>{getLocalizedField(resource.name, locale())}</h1>
+			<h1>{getLocalizedField(loaderData().resource.name, locale())}</h1>
 			<div class="flex items-center justify-between">
-				<PartnerLogo partner={resource.partner} />
+				<PartnerLogo partner={loaderData().resource.partner} />
 				<button
 					onClick={async () => {
 						await updateClipboardFn({
-							data: { id: resource.id },
+							data: { id: loaderData().resource.id },
 							headers: {
 								"cords-id": session.id,
 							},
@@ -114,7 +116,8 @@ function RouteComponent() {
 				>
 					<Show
 						when={session.clipboardServices.some(
-							(service) => service.serviceId === resource.id,
+							(service) =>
+								service.serviceId === loaderData().resource.id,
 						)}
 					>
 						<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-2">
@@ -130,36 +133,48 @@ function RouteComponent() {
 			<button onClick={() => router.history.back()} class="btn my-4">
 				{t().resource.close}
 			</button>
-			<Show when={getLocalizedField(resource.description, locale())}>
+			<Show
+				when={getLocalizedField(
+					loaderData().resource.description,
+					locale(),
+				)}
+			>
 				<h3>{t().resource.description}</h3>
 				<p
 					innerHTML={
-						getLocalizedField(resource.description, locale()) ?? ""
-					}
-				/>
-				<hr />
-			</Show>
-			<Show
-				when={getLocalizedField(resource.body, locale())?.eligibility}
-			>
-				<h3>{t().resource.eligability}</h3>
-				<p
-					innerHTML={
-						getLocalizedField(resource.body, locale())?.eligibility
+						getLocalizedField(
+							loaderData().resource.description,
+							locale(),
+						) ?? ""
 					}
 				/>
 				<hr />
 			</Show>
 			<Show
 				when={
-					getLocalizedField(resource.body, locale())
+					getLocalizedField(loaderData().resource.body, locale())
+						?.eligibility
+				}
+			>
+				<h3>{t().resource.eligability}</h3>
+				<p
+					innerHTML={
+						getLocalizedField(loaderData().resource.body, locale())
+							?.eligibility
+					}
+				/>
+				<hr />
+			</Show>
+			<Show
+				when={
+					getLocalizedField(loaderData().resource.body, locale())
 						?.applicationProcess
 				}
 			>
 				<h3>{t().resource.application}</h3>
 				<p
 					innerHTML={
-						getLocalizedField(resource.body, locale())
+						getLocalizedField(loaderData().resource.body, locale())
 							?.applicationProcess
 					}
 				/>
@@ -167,38 +182,50 @@ function RouteComponent() {
 			</Show>
 			<Show
 				when={
-					getLocalizedField(resource.body, locale())?.fees ||
-					getLocalizedField(resource.body, locale())
+					getLocalizedField(loaderData().resource.body, locale())
+						?.fees ||
+					getLocalizedField(loaderData().resource.body, locale())
 						?.documentsRequired ||
-					getLocalizedField(resource.body, locale())?.accessibility
+					getLocalizedField(loaderData().resource.body, locale())
+						?.accessibility
 				}
 			>
 				<h3>{t().resource.additional}</h3>
-				<Show when={getLocalizedField(resource.body, locale())?.fees}>
+				<Show
+					when={
+						getLocalizedField(loaderData().resource.body, locale())
+							?.fees
+					}
+				>
 					<p class="font-medium -mb-2">{t().resource.fees}</p>
 					<p
 						innerHTML={
-							getLocalizedField(resource.body, locale())?.fees
+							getLocalizedField(
+								loaderData().resource.body,
+								locale(),
+							)?.fees
 						}
 					/>
 				</Show>
 				<Show
 					when={
-						getLocalizedField(resource.body, locale())
+						getLocalizedField(loaderData().resource.body, locale())
 							?.documentsRequired
 					}
 				>
 					<p class="font-medium -mb-2">{t().resource.documents}</p>
 					<p
 						innerHTML={
-							getLocalizedField(resource.body, locale())
-								?.documentsRequired
+							getLocalizedField(
+								loaderData().resource.body,
+								locale(),
+							)?.documentsRequired
 						}
 					/>
 				</Show>
 				<Show
 					when={
-						getLocalizedField(resource.body, locale())
+						getLocalizedField(loaderData().resource.body, locale())
 							?.accessibility
 					}
 				>
@@ -207,8 +234,10 @@ function RouteComponent() {
 					</p>
 					<p
 						innerHTML={
-							getLocalizedField(resource.body, locale())
-								?.accessibility
+							getLocalizedField(
+								loaderData().resource.body,
+								locale(),
+							)?.accessibility
 						}
 					/>
 				</Show>
@@ -219,45 +248,63 @@ function RouteComponent() {
 					{t().resource.contact}
 				</p>
 				<h4 class="text-lg">
-					{getLocalizedField(resource.name, locale())}
+					{getLocalizedField(loaderData().resource.name, locale())}
 				</h4>
 				<hr />
-				<Show when={resource.address.lat && resource.address.lng}>
+				<Show
+					when={
+						loaderData().resource.address.lat &&
+						loaderData().resource.address.lng
+					}
+				>
 					<p class="font-medium text-xs text-charcoal">
 						{t().resource.address}
 					</p>
 					<a
-						href={`https://www.google.com/maps/search/?api=1&query=${resource.address.lat},${resource.address.lng}`}
+						href={`https://www.google.com/maps/search/?api=1&query=${loaderData().resource.address.lat},${loaderData().resource.address.lng}`}
 						target="_blank"
 						class="text-sm text-primary"
 					>
-						{formatServiceAddress(resource.address)}
+						{formatServiceAddress(loaderData().resource.address)}
 					</a>
 				</Show>
-				<Show when={resource.phoneNumbers.length > 0}>
+				<Show when={loaderData().resource.phoneNumbers.length > 0}>
 					<p class="font-medium text-xs text-charcoal">
 						{t().resource.phone}
 					</p>
-					{resource.phoneNumbers.map((phone) => (
+					{loaderData().resource.phoneNumbers.map((phone) => (
 						<p class="text-sm">
 							{phone.name ? phone.name + ": " : ""}
 							{phone.phone}
 						</p>
 					))}
 				</Show>
-				<Show when={getLocalizedField(resource.email, locale())}>
+				<Show
+					when={getLocalizedField(
+						loaderData().resource.email,
+						locale(),
+					)}
+				>
 					<p class="font-medium text-xs text-charcoal">
 						{t().resource.email}
 					</p>
 					<p class="text-sm">
 						<a
-							href={`mailto:${getLocalizedField(resource.email, locale())}`}
+							href={`mailto:${getLocalizedField(loaderData().resource.email, locale())}`}
 						>
-							{getLocalizedField(resource.email, locale())}
+							{getLocalizedField(
+								loaderData().resource.email,
+								locale(),
+							)}
 						</a>
 					</p>
 				</Show>
-				<Show when={getLocalizedField(resource.website, locale())}>
+				<Show
+					when={getLocalizedField(
+						loaderData().resource.website,
+						locale(),
+					)}
+				>
 					<p class="font-medium text-xs text-charcoal">
 						{t().resource.website}
 					</p>
@@ -265,26 +312,35 @@ function RouteComponent() {
 						class="text-sm truncate text-primary"
 						href={
 							getLocalizedField(
-								resource.website,
+								loaderData().resource.website,
 								locale(),
 							)?.startsWith("http")
 								? (getLocalizedField(
-										resource.website,
+										loaderData().resource.website,
 										locale(),
 									) ?? "")
-								: `https://${getLocalizedField(resource.website, locale())}`
+								: `https://${getLocalizedField(loaderData().resource.website, locale())}`
 						}
 						target="_blank"
 					>
-						{getLocalizedField(resource.website, locale())}
+						{getLocalizedField(
+							loaderData().resource.website,
+							locale(),
+						)}
 					</a>
 				</Show>
 			</div>
-			<Show when={resource.id}>
-				<Nearest id={resource.id} nearest={nearest.data} />
+			<Show when={loaderData().resource.id}>
+				<Nearest
+					id={loaderData().resource.id}
+					nearest={loaderData().nearest.data}
+				/>
 			</Show>
-			<Show when={resource.id}>
-				<Related id={resource.id} related={related.data} />
+			<Show when={loaderData().resource.id}>
+				<Related
+					id={loaderData().resource.id}
+					related={loaderData().related.data}
+				/>
 			</Show>
 		</div>
 	);
