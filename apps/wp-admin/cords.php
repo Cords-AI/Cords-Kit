@@ -56,7 +56,7 @@ function cords_check_cookie_and_redirect()
 	if (!isset($_COOKIE['cords-id'])) {
 		$origin = wp_get_environment_type() === "local" ? "http://localhost:3000" : "https://cords-prod.nuonn.com";
 		$redirect_url = is_singular() ? get_permalink() : home_url();
-		wp_redirect($origin . '/login?redirect=' . urlencode($redirect_url));
+		wp_redirect($origin . '/api/login?redirect=' . urlencode($redirect_url));
 		exit();
 	}
 }
