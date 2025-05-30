@@ -1,5 +1,7 @@
 import { Loader } from "@googlemaps/js-api-loader";
 
+console.log(import.meta.env.VITE_GOOGLE_MAPS_KEY);
+
 export const loader = new Loader({
 	apiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
 	version: "weekly",

@@ -1,7 +1,5 @@
-import { useQuery } from "@tanstack/solid-query";
-import { For, Match, Show, Switch } from "solid-js";
+import { For, Show } from "solid-js";
 import empty from "@/assets/empty.svg";
-import Pending from "@/components/Pending";
 import ServiceItem from "@/components/ServiceItem";
 import { useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/solid-router";
@@ -14,19 +12,21 @@ export const Route = createFileRoute("/clipboard")({
 		const cords = CordsAPI({
 			apiKey: deps.api_key,
 		});
+		const ids = context.session.clipboardServices.map((s) => s.serviceId);
 		return {
-			clipboard: await cords.search({
-				ids:
-					context.session.clipboardServices.map((s) => s.serviceId) ??
-					[],
-			}),
+			clipboard: ids.length
+				? await cords.search({
+						ids,
+						lat: context.session.lat,
+						lng: context.session.lng,
+						pageSize: 1000,
+					})
+				: { data: [] },
 		};
 	},
 });
 
 function RouteComponent() {
-	const context = Route.useRouteContext();
-	const { session } = context();
 	const { t } = useTranslation();
 	const data = Route.useLoaderData();
 	const { clipboard } = data();

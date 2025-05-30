@@ -2,14 +2,18 @@ import { db } from "@/server/db";
 import { sessions } from "@/server/schema";
 import { SessionSchema } from "@/types";
 import { createServerFn } from "@tanstack/solid-start";
-import { getCookie } from "@tanstack/solid-start/server";
+import { getHeader } from "@tanstack/solid-start/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const updateSessionFn = createServerFn()
-	.validator(SessionSchema)
+	.validator(
+		SessionSchema.omit({
+			id: true,
+		}),
+	)
 	.handler(async ({ data }) => {
-		const cordsId = getCookie("cords-id");
+		const cordsId = getHeader("cords-id");
 		if (!cordsId) {
 			throw new Error("Missing cords-id cookie");
 		}
@@ -41,7 +45,7 @@ export const updateSessionFn = createServerFn()
 	});
 
 export const getSessionFn = createServerFn().handler(async () => {
-	const cordsId = getCookie("cords-id");
+	const cordsId = getHeader("cords-id");
 
 	if (!cordsId) {
 		return null;

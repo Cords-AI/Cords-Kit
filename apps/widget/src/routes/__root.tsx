@@ -54,8 +54,12 @@ export const Route = createRootRoute({
 		],
 	}),
 	component: RootComponent,
-	beforeLoad: async () => {
-		const session = await getSessionFn();
+	beforeLoad: async ({ search }) => {
+		const session = await getSessionFn({
+			headers: {
+				"cords-id": search.cordsId,
+			},
+		});
 
 		if (!session) {
 			throw new Error("Session not found");

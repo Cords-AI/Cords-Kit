@@ -27,3 +27,5 @@ apps/widget/.sst/
 .output/
 .vinxi/
 dist/
+
+sqlite.db

@@ -91,7 +91,7 @@ const SearchHeader = ({ close }: { close: () => void }) => {
 	);
 };
 
-export const Layout: Component<{ children: JSX.Element }> = (props) => {
+export const Layout = (props: { children: JSX.Element }) => {
 	// signal for widget open/close
 	const [open, setOpen] = createSignal(false);
 	const toggle = () => setOpen(!open());
@@ -171,6 +171,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 									<nav class="flex-1 flex justify-end gap-2">
 										<Link
 											to="/"
+											search={(s) => s}
 											onClick={() => {
 												if (search().q) {
 													setSearch((s) => {
@@ -193,6 +194,7 @@ export const Layout: Component<{ children: JSX.Element }> = (props) => {
 										</Link>
 										<Link
 											to="/clipboard"
+											search={(s) => s}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
 											{session?.clipboardServices &&

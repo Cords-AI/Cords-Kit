@@ -1,5 +1,5 @@
 import { createForm } from "@tanstack/solid-form";
-import { createSignal } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { Transition } from "solid-transition-group";
 import ServiceItem from "@/components/ServiceItem";
 import { mapOpen, search, setMapOpen, setSearch } from "@/lib/search";
@@ -248,143 +248,152 @@ function RouteComponent() {
 
 	return (
 		<div class="relative">
-			{data().data && (
-				<>
-					<div class="p-6 bg-elevation1">
-						<div class="flex justify-between gap-2 relative">
-							<span>
-								<h4>
-									{search().q !== ""
-										? search().q
-										: t().home.similar.title}
-								</h4>
-								<p class="text-xs text-steel">
-									{t().search.meta.page}{" "}
-									{search().options.page} {t().search.meta.of}{" "}
-									{t().search.meta.results}
-									{t().search.meta.within}{" "}
-									{search().options.distance} km
-								</p>
-							</span>
-							<Filters />
-						</div>
-						<div class="pt-4 flex gap-4 flex-wrap">
-							{Object.entries(search().options.delivery).map(
-								([key, value]) => (
-									<label class="inline-flex items-center cursor-pointer">
-										<input
-											type="checkbox"
-											checked={value}
-											onChange={(e) => {
-												setSearch((search) => ({
-													...search,
-													options: {
-														...search.options,
-														delivery: {
-															...search.options
-																.delivery,
-															[key]: e.target
-																.checked,
+			<Show when={data()}>
+				{(data) => (
+					<>
+						<div class="p-6 bg-elevation1">
+							<div class="flex justify-between gap-2 relative">
+								<span>
+									<h4>
+										{search().q !== ""
+											? search().q
+											: t().home.similar.title}
+									</h4>
+									<p class="text-xs text-steel">
+										{t().search.meta.page}{" "}
+										{search().options.page}{" "}
+										{t().search.meta.of} {data().meta.total}{" "}
+										{t().search.meta.results} (
+										{t().search.meta.within}{" "}
+										{search().options.distance} km
+									</p>
+								</span>
+								<Filters />
+							</div>
+							<div class="pt-4 flex gap-4 flex-wrap">
+								{Object.entries(search().options.delivery).map(
+									([key, value]) => (
+										<label class="inline-flex items-center cursor-pointer">
+											<input
+												type="checkbox"
+												checked={value}
+												onChange={(e) => {
+													setSearch((search) => ({
+														...search,
+														options: {
+															...search.options,
+															delivery: {
+																...search
+																	.options
+																	.delivery,
+																[key]: e.target
+																	.checked,
+															},
 														},
-													},
-												}));
-											}}
-											class="sr-only peer"
-										/>
-										<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
-										<span class="ms-2 text-xs text-steel">
-											{
-												// @ts-ignore
-												t().search.filters.delivery[key]
-											}
-										</span>
-									</label>
-								),
-							)}
+													}));
+												}}
+												class="sr-only peer"
+											/>
+											<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
+											<span class="ms-2 text-xs text-steel">
+												{
+													// @ts-ignore
+													t().search.filters.delivery[
+														key
+													]
+												}
+											</span>
+										</label>
+									),
+								)}
+							</div>
 						</div>
-					</div>
-					<div class="relative">
-						{data().data.map((service) => (
-							<ServiceItem service={service} />
-						))}
-						{markers() && markers()!.length > 0 && (
+						<div class="relative">
+							<For each={data().data}>
+								{(service) => <ServiceItem service={service} />}
+							</For>
+							<Show when={markers() && markers()!.length > 0}>
+								<button
+									onClick={() => setMapOpen(!mapOpen())}
+									class="fixed bottom-[calc(75px+16px+8px)] right-[calc(32px+8px)] btn"
+								>
+									<span class="material-symbols-outlined">
+										map
+									</span>
+								</button>
+							</Show>
+						</div>
+						<div
+							class={cn(
+								"flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t",
+								markers() && markers()!.length > 0 && "pr-14",
+							)}
+						>
 							<button
-								onClick={() => setMapOpen(!mapOpen())}
-								class="fixed bottom-[calc(75px+16px+8px)] right-[calc(32px+8px)] btn"
+								disabled={search().options.page === 1}
+								onClick={() =>
+									setSearch((search) => ({
+										...search,
+										options: {
+											...search.options,
+											page: search.options.page - 1,
+										},
+									}))
+								}
+								class="text-primary p-2 rounded-lg"
 							>
-								<span class="material-symbols-outlined">
-									map
+								<span class="material-symbols-outlined flex items-center">
+									chevron_left
 								</span>
 							</button>
-						)}
-					</div>
-					<div
-						class={cn(
-							"flex justify-center items-center gap-2 h-12 bg-elevation1 w-full border-t",
-							markers() && markers()!.length > 0 && "pr-14",
-						)}
-					>
-						<button
-							disabled={search().options.page === 1}
-							onClick={() =>
-								setSearch((search) => ({
-									...search,
-									options: {
-										...search.options,
-										page: search.options.page - 1,
-									},
-								}))
-							}
-							class="text-primary p-2 rounded-lg"
-						>
-							<span class="material-symbols-outlined flex items-center">
-								chevron_left
-							</span>
-						</button>
-						{[...Array(data().meta.total / 10).keys()]
-							.slice(start(), end())
-							.map((i) => (
-								<button
-									onClick={() =>
-										setSearch((search) => ({
-											...search,
-											options: {
-												...search.options,
-												page: i + 1,
-											},
-										}))
-									}
-									class={`w-7 h-8 rounded text-sm ${
-										i + 1 === search().options.page
-											? "bg-primary text-white"
-											: "text-primary"
-									}`}
-								>
-									{i + 1}
-								</button>
-							))}
-						<button
-							disabled={
-								search().options.page === data().meta.total / 10
-							}
-							onClick={() =>
-								setSearch((search) => ({
-									...search,
-									options: {
-										...search.options,
-										page: search.options.page + 1,
-									},
-								}))
-							}
-							class="text-primary p-2 rounded-lg"
-						>
-							<span class="material-symbols-outlined flex items-center">
-								chevron_right
-							</span>
-						</button>
-					</div>
-				</>
-			)}
+							<For
+								each={[...Array(5).keys()].slice(
+									start(),
+									end(),
+								)}
+							>
+								{(i) => (
+									<button
+										onClick={() =>
+											setSearch((search) => ({
+												...search,
+												options: {
+													...search.options,
+													page: i + 1,
+												},
+											}))
+										}
+										class={`w-7 h-8 rounded text-sm ${
+											i + 1 === search().options.page
+												? "bg-primary text-white"
+												: "text-primary"
+										}`}
+									>
+										{i + 1}
+									</button>
+								)}
+							</For>
+							<button
+								disabled={search().options.page === 5}
+								onClick={() =>
+									setSearch((search) => ({
+										...search,
+										options: {
+											...search.options,
+											page: search.options.page + 1,
+										},
+									}))
+								}
+								class="text-primary p-2 rounded-lg"
+							>
+								<span class="material-symbols-outlined flex items-center">
+									chevron_right
+								</span>
+							</button>
+						</div>
+					</>
+				)}
+			</Show>
 		</div>
 	);
 }

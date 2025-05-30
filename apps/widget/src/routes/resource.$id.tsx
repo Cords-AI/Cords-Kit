@@ -1,11 +1,15 @@
 import { CordsAPI, type ResourceType, formatServiceAddress } from "@cords/sdk";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/solid-query";
-import { createFileRoute, Link, useRouter } from "@tanstack/solid-router";
+import {
+	createFileRoute,
+	Link,
+	notFound,
+	useRouter,
+} from "@tanstack/solid-router";
 import { convert } from "html-to-text";
-import { type Component, For, Match, Show, Switch } from "solid-js";
+import { type Component, For, Show } from "solid-js";
 import PartnerLogo from "@/components/PartnerLogo";
-import Pending from "@/components/Pending";
 import { getLocalizedField, useTranslation } from "@/translations";
+import { updateClipboardFn } from "@/lib/clipboard";
 
 export const Route = createFileRoute("/resource/$id")({
 	component: RouteComponent,
@@ -14,8 +18,12 @@ export const Route = createFileRoute("/resource/$id")({
 		const cords = CordsAPI({
 			apiKey: deps.api_key,
 		});
+		const resource = await cords.resource(params.id);
+		if (!resource) {
+			throw notFound();
+		}
 		return {
-			resource: await cords.resource(params.id),
+			resource,
 			nearest: await cords.nearestNeighbour(params.id, {
 				lat: context.session.lat,
 				lng: context.session.lng,
@@ -34,10 +42,11 @@ const RelatedItem: Component<{
 		<Link
 			to="/resource/$id"
 			params={{ id: props.service.id }}
+			search={(s) => s}
+			resetScroll
 			from={Route.fullPath}
-			class="bg-primary hover:bg-opacity-10 bg-opacity-5 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start"
 		>
-			<>
+			<div class="bg-primary/5 hover:bg-primary/10 rounded-lg border border-primary p-3 flex flex-col gap-1.5 items-start">
 				<p class="font-header text-sm text-primary">
 					{getLocalizedField(props.service.name, locale())}
 				</p>
@@ -46,7 +55,7 @@ const RelatedItem: Component<{
 						getLocalizedField(props.service.description, locale())!,
 					)}
 				</p>
-			</>
+			</div>
 		</Link>
 	);
 };
@@ -84,7 +93,6 @@ const Nearest: Component<{
 };
 
 function RouteComponent() {
-	const navigate = Route.useNavigate();
 	const loaderData = Route.useLoaderData();
 	const context = Route.useRouteContext();
 	const { session } = context();
@@ -93,29 +101,20 @@ function RouteComponent() {
 	const { t, locale } = useTranslation();
 	const router = useRouter();
 
-	//const toggleClipboard = useMutation(() => ({
-	//	mutationKey: ["clipboard"],
-	//	mutationFn: async (id: string) => {
-	//		await fetch(
-	//			`${import.meta.env.VITE_SITE_URL}/api/clipboard/${id}`,
-	//			{
-	//				method: "PUT",
-	//			},
-	//		);
-	//	},
-	//	onSuccess: () => {
-	//		router.invalidate();
-	//	},
-	//}));
-
 	return (
 		<div class="flex gap-4 px-4 py-8 flex-col">
 			<h1>{getLocalizedField(resource.name, locale())}</h1>
 			<div class="flex items-center justify-between">
 				<PartnerLogo partner={resource.partner} />
 				<button
-					onClick={() => {
-						//toggleClipboard.mutate(resource.id);
+					onClick={async () => {
+						await updateClipboardFn({
+							data: { id: resource.id },
+							headers: {
+								"cords-id": session.id,
+							},
+						});
+						router.invalidate();
 					}}
 					class="flex relative h-7 w-7 items-center justify-center text-slate"
 				>
@@ -125,7 +124,7 @@ function RouteComponent() {
 						)}
 					>
 						<div class="rounded-full absolute -top-1 -right-1 bg-primary text-white h-4 w-4 flex items-center justify-center border-elevation1 border-2">
-							<span class="material-symbols-outlined material-symbols-outlined-thicker text-[10px]">
+							<span class="material-symbols-outlined material-symbols-outlined-thicker">
 								check
 							</span>
 						</div>
@@ -134,7 +133,7 @@ function RouteComponent() {
 				</button>
 			</div>
 			<hr />
-			<button onClick={() => navigate(-1)} class="btn my-4">
+			<button onClick={() => router.history.back()} class="btn my-4">
 				{t().resource.close}
 			</button>
 			<Show when={getLocalizedField(resource.description, locale())}>

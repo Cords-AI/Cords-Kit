@@ -85,6 +85,10 @@
 
 	}
 
+	button {
+		@apply cursor-pointer;
+	}
+
 	h1,
 	.h1 {
 		@apply scroll-m-20 text-3xl font-header tracking-tight lg:text-5xl text-charcoal;
