@@ -3,6 +3,8 @@ import apiFetch from "@wordpress/api-fetch";
 const useState = wp.element.useState;
 const useEffect = wp.element.useEffect;
 
+apiFetch.use(apiFetch.createNonceMiddleware(wpApiSettings.nonce));
+
 const updateOptions = async (options) => {
 	await apiFetch({
 		method: "POST",
