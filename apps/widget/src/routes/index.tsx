@@ -290,7 +290,8 @@ function RouteComponent() {
 							<div class="flex justify-between gap-2 relative">
 								<span>
 									<h4>
-										{searchParams().search !== ""
+										{searchParams().search &&
+										searchParams().search!.length > 0
 											? searchParams().search
 											: t().home.similar.title}
 									</h4>
