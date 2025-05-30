@@ -1,5 +1,9 @@
 // app/routes/__root.tsx
-import { Outlet, createRootRoute } from "@tanstack/solid-router";
+import {
+	Outlet,
+	createRootRoute,
+	retainSearchParams,
+} from "@tanstack/solid-router";
 import appCss from "../app.css?url";
 import { z } from "zod";
 import { getSessionFn } from "@/lib/session";
@@ -12,6 +16,9 @@ export const Route = createRootRoute({
 		api_key: z.string({ message: "API Key is required" }),
 		lang: z.enum(["en", "fr"]).optional(),
 	}),
+	search: {
+		middlewares: [retainSearchParams(true)],
+	},
 	head: () => ({
 		meta: [
 			{

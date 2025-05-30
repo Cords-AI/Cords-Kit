@@ -193,7 +193,7 @@ export const useTranslation = () => {
 	);
 
 	const setLocale = (lang: Locale) => {
-		navigate({ to: ".", search: { lang } });
+		navigate({ to: ".", search: (s) => ({ ...s, lang }) });
 	};
 
 	const t = createMemo(() => translations[locale()]);

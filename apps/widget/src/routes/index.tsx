@@ -2,29 +2,59 @@ import { createForm } from "@tanstack/solid-form";
 import { createSignal, For, Show } from "solid-js";
 import { Transition } from "solid-transition-group";
 import ServiceItem from "@/components/ServiceItem";
-import { mapOpen, search, setMapOpen, setSearch } from "@/lib/search";
 import { cn, getDistanceBetweenTwoPoints } from "@/lib/utils";
 import { useTranslation } from "@/translations";
 import { createFileRoute } from "@tanstack/solid-router";
 import { CordsAPI } from "@cords/sdk";
+import { z } from "zod";
 
 export const Route = createFileRoute("/")({
 	component: RouteComponent,
-	loaderDeps: ({ search }) => ({ q: search.q, api_key: search.api_key }),
-	loader: async ({ deps }) => {
+	validateSearch: z.object({
+		search: z.string().optional(),
+		page: z.number().default(1),
+		"211": z.boolean().default(true),
+		magnet: z.boolean().default(true),
+		mentor: z.boolean().default(true),
+		prosper: z.boolean().default(true),
+		volunteer: z.boolean().default(true),
+		distance: z.number().default(10),
+		local: z.boolean().default(true),
+		regional: z.boolean().default(true),
+		provincial: z.boolean().default(true),
+		national: z.boolean().default(true),
+	}),
+	loaderDeps: ({ search }) => search,
+	loader: async ({ deps, context }) => {
 		const cords = CordsAPI({
 			apiKey: deps.api_key ?? "",
 			version: "production",
 		});
+		const start = performance.now();
 		const res = await cords.search({
-			q: deps.q ?? "",
-			lat: 44,
-			lng: -79,
+			q: deps.search ?? deps.q ?? "food",
+			lat: context.session.lat,
+			lng: context.session.lng,
 			pageSize: 10,
-			page: 1,
-			distance: 10,
+			page: deps.page ?? 1,
+			distance: deps.distance,
+			partner: {
+				"211": deps["211"],
+				magnet: deps.magnet,
+				mentor: deps.mentor,
+				prosper: deps.prosper,
+				volunteer: deps.volunteer,
+			},
+			delivery: {
+				local: deps.local,
+				regional: deps.regional,
+				provincial: deps.provincial,
+				national: deps.national,
+			},
 		});
-		return res;
+		const searchTime = (performance.now() - start) / 1000;
+		const maxPage = Math.ceil(res.meta.total / 10);
+		return { ...res, searchTime, maxPage };
 	},
 });
 
@@ -38,32 +68,32 @@ const icons = {
 
 const Filters = () => {
 	const [open, setOpen] = createSignal(false);
+	const searchParams = Route.useSearch();
 	const { t } = useTranslation();
+	const navigate = Route.useNavigate();
 	const form = createForm(() => ({
 		defaultValues: {
-			distance: 10,
-			too: search().options.partner["211"],
-			magnet: search().options.partner.magnet,
-			mentor: search().options.partner.mentor,
-			prosper: search().options.partner.prosper,
-			volunteer: search().options.partner.volunteer,
+			distance: searchParams().distance,
+			too: searchParams()[211],
+			magnet: searchParams().magnet,
+			mentor: searchParams().mentor,
+			prosper: searchParams().prosper,
+			volunteer: searchParams().volunteer,
 		},
 		onSubmit: async ({ value }) => {
-			setSearch((search) => ({
-				...search,
-				options: {
-					...search.options,
+			navigate({
+				to: ".",
+				search: (s) => ({
+					...s,
 					page: 1,
 					distance: value.distance,
-					partner: {
-						"211": value.too,
-						magnet: value.magnet,
-						mentor: value.mentor,
-						prosper: value.prosper,
-						volunteer: value.volunteer,
-					},
-				},
-			}));
+					"211": value.too,
+					magnet: value.magnet,
+					mentor: value.mentor,
+					prosper: value.prosper,
+					volunteer: value.volunteer,
+				}),
+			});
 		},
 	}));
 
@@ -101,7 +131,7 @@ const Filters = () => {
 					a.finished.then(done);
 				}}
 			>
-				{open() && (
+				<Show when={open()}>
 					<div class="absolute rounded-xl top-14 z-50 right-0 gap-2 flex flex-col bg-elevation1 border border-b-hairline p-4 rounded-b w-full">
 						<p>{t().search.filters.typeTitle}</p>
 						<div class="flex gap-2 flex-wrap">
@@ -113,7 +143,7 @@ const Filters = () => {
 										children={(field) => (
 											<label
 												class={cn(
-													"inline-flex gap-2 items-center cursor-pointer px-3 h-10 rounded-sm border",
+													"inline-flex gap-2 items-center cursor-pointer px-3 h-10 rounded border",
 													field().state.value
 														? "border-primary bg-primary bg-opacity-10"
 														: "border-hairline",
@@ -170,7 +200,7 @@ const Filters = () => {
 						<form.Field
 							name="distance"
 							children={(field) => (
-								<div class="border rounded-sm w-full px-4 pt-2">
+								<div class="border rounded w-full px-4 pt-2">
 									<p class="text-xs">kilometers</p>
 									<input
 										type="number"
@@ -183,13 +213,13 @@ const Filters = () => {
 											)
 										}
 										min="1"
-										class="outline-hidden h-8 w-full"
+										class="outline-none h-8 w-full"
 									/>
 								</div>
 							)}
 						/>
 						<div class="flex justify-between mt-4">
-							{!isPristine() && (
+							<Show when={!isPristine()}>
 								<button
 									class={"neutral-btn"}
 									onClick={() => {
@@ -199,7 +229,7 @@ const Filters = () => {
 								>
 									{t().search.reset}
 								</button>
-							)}
+							</Show>
 							<div class="flex flex-1 justify-end">
 								<input
 									type="submit"
@@ -210,7 +240,7 @@ const Filters = () => {
 							</div>
 						</div>
 					</div>
-				)}
+				</Show>
 			</Transition>
 		</form>
 	);
@@ -221,8 +251,10 @@ function RouteComponent() {
 	const context = Route.useRouteContext();
 	const { session } = context();
 	const data = Route.useLoaderData();
+	const searchParams = Route.useSearch();
+	const navigate = Route.useNavigate();
 
-	const start = () => Math.max(0, search().options.page - 3);
+	const start = () => Math.max(0, searchParams().page - 3);
 	const end = () => start() + 5;
 
 	const markers = () =>
@@ -241,7 +273,7 @@ function RouteComponent() {
 						lng: resource.location.lng!,
 					},
 				);
-				if (distance < search().options.distance) {
+				if (distance < searchParams().distance) {
 					return true;
 				}
 			});
@@ -255,73 +287,60 @@ function RouteComponent() {
 							<div class="flex justify-between gap-2 relative">
 								<span>
 									<h4>
-										{search().q !== ""
-											? search().q
+										{searchParams().search !== ""
+											? searchParams().search
 											: t().home.similar.title}
 									</h4>
 									<p class="text-xs text-steel">
 										{t().search.meta.page}{" "}
-										{search().options.page}{" "}
+										{searchParams().page}{" "}
 										{t().search.meta.of} {data().meta.total}{" "}
 										{t().search.meta.results} (
+										{data().searchTime.toFixed(2)}{" "}
+										{t().search.meta.seconds}){" "}
 										{t().search.meta.within}{" "}
-										{search().options.distance} km
+										{searchParams().distance} km
 									</p>
 								</span>
 								<Filters />
 							</div>
 							<div class="pt-4 flex gap-4 flex-wrap">
-								{Object.entries(search().options.delivery).map(
-									([key, value]) => (
-										<label class="inline-flex items-center cursor-pointer">
-											<input
-												type="checkbox"
-												checked={value}
-												onChange={(e) => {
-													setSearch((search) => ({
-														...search,
-														options: {
-															...search.options,
-															delivery: {
-																...search
-																	.options
-																	.delivery,
-																[key]: e.target
-																	.checked,
-															},
-														},
-													}));
-												}}
-												class="sr-only peer"
-											/>
-											<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
-											<span class="ms-2 text-xs text-steel">
-												{
-													// @ts-ignore
-													t().search.filters.delivery[
-														key
-													]
-												}
-											</span>
-										</label>
-									),
-								)}
+								{Object.entries({
+									local: searchParams().local,
+									regional: searchParams().regional,
+									provincial: searchParams().provincial,
+									national: searchParams().national,
+								} as const).map(([key, value]) => (
+									<label class="inline-flex items-center cursor-pointer">
+										<input
+											type="checkbox"
+											checked={value}
+											onChange={(e) => {
+												navigate({
+													to: ".",
+													search: (s) => ({
+														...s,
+														[key]: e.target.checked,
+													}),
+												});
+											}}
+											class="sr-only peer"
+										/>
+										<div class="relative w-8 h-[18px] bg-slate bg-opacity-50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue"></div>
+										<span class="ms-2 text-xs text-steel">
+											{
+												// @ts-ignore
+												t().search.filters.delivery[key]
+											}
+										</span>
+									</label>
+								))}
 							</div>
 						</div>
 						<div class="relative">
 							<For each={data().data}>
 								{(service) => <ServiceItem service={service} />}
 							</For>
-							<Show when={markers() && markers()!.length > 0}>
-								<button
-									onClick={() => setMapOpen(!mapOpen())}
-									class="fixed bottom-[calc(75px+16px+8px)] right-[calc(32px+8px)] btn"
-								>
-									<span class="material-symbols-outlined">
-										map
-									</span>
-								</button>
-							</Show>
 						</div>
 						<div
 							class={cn(
@@ -330,24 +349,24 @@ function RouteComponent() {
 							)}
 						>
 							<button
-								disabled={search().options.page === 1}
+								disabled={searchParams().page === 1}
 								onClick={() =>
-									setSearch((search) => ({
-										...search,
-										options: {
-											...search.options,
-											page: search.options.page - 1,
-										},
-									}))
+									navigate({
+										to: ".",
+										search: (s) => ({
+											...s,
+											page: searchParams().page - 1,
+										}),
+									})
 								}
-								class="text-primary p-2 rounded-lg"
+								class="text-primary p-2 rounded-lg flex items-center justify-center"
 							>
-								<span class="material-symbols-outlined flex items-center">
+								<span class="material-symbols-outlined">
 									chevron_left
 								</span>
 							</button>
 							<For
-								each={[...Array(5).keys()].slice(
+								each={[...Array(data().maxPage).keys()].slice(
 									start(),
 									end(),
 								)}
@@ -355,16 +374,16 @@ function RouteComponent() {
 								{(i) => (
 									<button
 										onClick={() =>
-											setSearch((search) => ({
-												...search,
-												options: {
-													...search.options,
+											navigate({
+												to: ".",
+												search: (s) => ({
+													...s,
 													page: i + 1,
-												},
-											}))
+												}),
+											})
 										}
 										class={`w-7 h-8 rounded text-sm ${
-											i + 1 === search().options.page
+											i + 1 === searchParams().page
 												? "bg-primary text-white"
 												: "text-primary"
 										}`}
@@ -374,19 +393,21 @@ function RouteComponent() {
 								)}
 							</For>
 							<button
-								disabled={search().options.page === 5}
-								onClick={() =>
-									setSearch((search) => ({
-										...search,
-										options: {
-											...search.options,
-											page: search.options.page + 1,
-										},
-									}))
+								disabled={
+									searchParams().page === data().maxPage
 								}
-								class="text-primary p-2 rounded-lg"
+								onClick={() =>
+									navigate({
+										to: ".",
+										search: (s) => ({
+											...s,
+											page: searchParams().page + 1,
+										}),
+									})
+								}
+								class="text-primary p-2 rounded-lg flex items-center justify-center"
 							>
-								<span class="material-symbols-outlined flex items-center">
+								<span class="material-symbols-outlined">
 									chevron_right
 								</span>
 							</button>

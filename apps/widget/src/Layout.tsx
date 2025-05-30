@@ -1,17 +1,8 @@
 import { autofocus } from "@solid-primitives/autofocus";
-import { createForm } from "@tanstack/solid-form";
-import {
-	Component,
-	ErrorBoundary,
-	JSX,
-	Show,
-	createEffect,
-	createSignal,
-} from "solid-js";
+import { ErrorBoundary, JSX, Show, createEffect, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import Error from "@/components/Error";
 import Footer from "@/components/Footer";
-import { search, setMapOpen, setSearch } from "@/lib/search";
 import { useTranslation } from "@/translations";
 import { Link, useNavigate, useRouteContext } from "@tanstack/solid-router";
 autofocus;
@@ -20,73 +11,44 @@ const [searchMode, setSearchMode] = createSignal(false);
 
 const SearchHeader = ({ close }: { close: () => void }) => {
 	const navigate = useNavigate();
-	const form = createForm(() => ({
-		defaultValues: {
-			query: "",
-		},
-		onSubmit: async ({ value }) => {
-			setSearch((search) => ({
-				q: value.query,
-				options: {
-					...search.options,
-					page: 1,
-				},
-			}));
-			setMapOpen(false);
-			close();
-			navigate({
-				to: "/",
-				search: (s) => s,
-			});
-		},
-		validators: {
-			onChange: ({ value }) => {
-				if (value.query.length < 1)
-					return "Please enter at least 1 character";
-			},
-		},
-	}));
+	const [query, setQuery] = createSignal("");
 
 	return (
 		<header class="flex h-16 bg-elevation1 px-6 gap-1 items-center border-b border-b-hairline z-10">
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-				class="relative flex-1 flex"
-			>
-				<div class="border h-12 flex items-center rounded-sm flex-1">
-					<span
-						class="material-symbols-outlined flex items-center justify-center h-full text-primary w-14 cursor-pointer"
-						onClick={() => {
-							setSearchMode(false);
-						}}
-					>
-						arrow_back
-					</span>
-					<form.Field
-						name="query"
-						children={(field) => (
-							<input
-								type="text"
-								autocomplete="off"
-								use:autofocus
-								autofocus
-								class="outline-hidden pr-4 h-full w-full rounded-r"
-								name={field().name}
-								value={field().state.value}
-								onBlur={field().handleBlur}
-								onInput={(e) =>
-									field().handleChange(e.target.value)
-								}
-							/>
-						)}
-					/>
-					<button type="submit" class="hidden"></button>
-				</div>
-			</form>
+			<div class="border h-12 flex items-center rounded-sm flex-1">
+				<button
+					onClick={() => {
+						setSearchMode(false);
+					}}
+					class="flex items-center justify-center h-full text-primary w-14 cursor-pointer"
+				>
+					<span class="material-symbols-outlined">arrow_back</span>
+				</button>
+				<input
+					type="text"
+					autocomplete="off"
+					use:autofocus
+					autofocus
+					class="outline-hidden pr-4 h-full w-full rounded-r"
+					name="query"
+					value={query()}
+					onInput={(e) => setQuery(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							navigate({
+								to: "/",
+								search: (s) => ({
+									...s,
+									search: query(),
+									page: 1,
+								}),
+							});
+							setQuery("");
+							close();
+						}
+					}}
+				/>
+			</div>
 		</header>
 	);
 };
@@ -171,21 +133,11 @@ export const Layout = (props: { children: JSX.Element }) => {
 									<nav class="flex-1 flex justify-end gap-2">
 										<Link
 											to="/"
-											search={(s) => s}
-											onClick={() => {
-												if (search().q) {
-													setSearch((s) => {
-														return {
-															q: "",
-															options: {
-																...s.options,
-																page: 1,
-															},
-														};
-													});
-												}
-												setMapOpen(false);
-											}}
+											search={(s) => ({
+												...s,
+												search: "",
+												page: 1,
+											})}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
 											<span class="material-symbols-outlined">
@@ -194,22 +146,25 @@ export const Layout = (props: { children: JSX.Element }) => {
 										</Link>
 										<Link
 											to="/clipboard"
-											search={(s) => s}
 											class="flex relative h-7 w-7 items-center justify-center text-slate"
 										>
-											{session?.clipboardServices &&
-												session.clipboardServices
-													.length > 0 && (
-													<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-2">
-														<p class="text-[8px] text-white">
-															{
-																session
-																	?.clipboardServices
-																	.length
-															}
-														</p>
-													</div>
-												)}
+											<Show
+												when={
+													session.clipboardServices &&
+													session.clipboardServices
+														.length > 0
+												}
+											>
+												<div class="rounded-full absolute -top-1 -right-1 bg-primary h-4 w-4 flex items-center justify-center border-elevation1 border-[2px]">
+													<p class="text-[8px] text-white">
+														{
+															session
+																.clipboardServices
+																.length
+														}
+													</p>
+												</div>
+											</Show>
 											<span class="material-symbols-outlined">
 												assignment
 											</span>
