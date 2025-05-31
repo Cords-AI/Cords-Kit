@@ -38,10 +38,11 @@ export const CordsAPI = ({
 			},
 		});
 		if (!res.ok) {
-			if (res.status === 403)
+			if ([401, 403].includes(res.status)) {
 				throw new Error(
 					"Bad API key. Ensure you have a valid API key.",
 				);
+			}
 			const data: CordsError = await res.json();
 			if (data.detail) throw new Error(data.detail);
 			else throw new Error("An error occurred");
